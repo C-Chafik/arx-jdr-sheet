@@ -51,6 +51,7 @@ def test_css_positions_every_field():
 
 
 HOVER_STATS = [a for a in POSITIONED_FIELDS if a != "level"]
+NO_ROLL = ["health", "mana"]  # hover-only icons, not clickable
 
 
 def test_every_icon_has_hover_zone_statbar_and_css():
@@ -58,6 +59,10 @@ def test_every_icon_has_hover_zone_statbar_and_css():
     css = build.build_css("x")
     for name in HOVER_STATS:
         assert f'class="sheet-hover-zone sheet-hover--{name}"' in html, name
+        if name in NO_ROLL:
+            assert f'name="roll_{name}"' not in html, name
+        else:
+            assert f'name="roll_{name}"' in html, name
         assert f'class="sheet-statbar sheet-statbar--{name}"' in html, name
         assert f".sheet-hover--{name} " in css or f".sheet-hover--{name}," in css, name
         assert f".sheet-hover--{name}:hover" in css, name

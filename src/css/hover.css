@@ -7,6 +7,27 @@
   width: 6.6%;
   height: 9.5%;
   cursor: help;
+  /* Invisible zone (the icon is engraved in the background image). */
+  padding: 0;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  /* The golden press-flash fades out smoothly on release. */
+  transition: background 0.35s ease-out, box-shadow 0.35s ease-out;
+}
+
+/* Only roll buttons are clickable; hover-only zones (health, mana) are divs. */
+button.sheet-hover-zone {
+  cursor: pointer;
+}
+
+button.sheet-hover-zone:active {
+  /* Brighten the engraved icon itself, plus a golden halo around the frame. */
+  backdrop-filter: brightness(1.45) saturate(1.25);
+  -webkit-backdrop-filter: brightness(1.45) saturate(1.25);
+  background: radial-gradient(circle, rgba(255, 232, 160, 0.5), rgba(255, 232, 160, 0) 72%);
+  box-shadow: 0 0 22px rgba(255, 220, 130, 0.9);
+  transition: none; /* flash appears instantly on press */
 }
 
 .sheet-statbar {
@@ -27,26 +48,40 @@
 .sheet-hover--dexterity    { left: 74.2%; top: 17.0%; }
 .sheet-hover--constitution { left: 83.2%; top: 17.0%; }
 
-/* Right page — skills 3×3 */
-.sheet-hover--stealth          { left: 57.4%; top: 41.3%; }
-.sheet-hover--technical        { left: 69.6%; top: 41.3%; }
-.sheet-hover--intuition        { left: 81.7%; top: 41.3%; }
-.sheet-hover--ethereal_link    { left: 57.4%; top: 56.5%; }
-.sheet-hover--object_knowledge { left: 69.6%; top: 56.5%; }
-.sheet-hover--casting          { left: 81.7%; top: 56.5%; }
-.sheet-hover--close_combat     { left: 57.4%; top: 71.5%; }
-.sheet-hover--projectile       { left: 69.6%; top: 71.5%; }
-.sheet-hover--defense          { left: 81.7%; top: 71.5%; }
+/* Right page — skills 3×3. Frames measured on the source PNG (99×99 px):
+   columns x 914/1101/1286, rows y 407/560/717. */
+.sheet-hover--stealth, .sheet-hover--technical, .sheet-hover--intuition,
+.sheet-hover--ethereal_link, .sheet-hover--object_knowledge, .sheet-hover--casting,
+.sheet-hover--close_combat, .sheet-hover--projectile, .sheet-hover--defense {
+  width: 6.3%;
+  height: 9.9%;
+}
+.sheet-hover--stealth          { left: 58.0%; top: 40.7%; }
+.sheet-hover--technical        { left: 69.9%; top: 40.7%; }
+.sheet-hover--intuition        { left: 81.7%; top: 40.7%; }
+.sheet-hover--ethereal_link    { left: 58.0%; top: 56.1%; }
+.sheet-hover--object_knowledge { left: 69.9%; top: 56.1%; }
+.sheet-hover--casting          { left: 81.7%; top: 56.1%; }
+.sheet-hover--close_combat     { left: 58.0%; top: 71.8%; }
+.sheet-hover--projectile      { left: 69.9%; top: 71.8%; }
+.sheet-hover--defense          { left: 81.7%; top: 71.8%; }
 
-/* Left page — resistance shields (slightly taller zones) */
-.sheet-hover--armor_class       { left: 11.8%; top: 26.5%; width: 5.5%; height: 10%; }
-.sheet-hover--magic_resistance  { left: 11.4%; top: 42.0%; width: 5.5%; height: 10%; }
-.sheet-hover--poison_resistance { left: 11.2%; top: 58.6%; width: 5.5%; height: 10%; }
+/* Left page — resistance shields, measured on the source PNG.
+   The press-flash is clipped to a shield silhouette (icons aren't square). */
+.sheet-hover--armor_class,
+.sheet-hover--magic_resistance,
+.sheet-hover--poison_resistance {
+  clip-path: polygon(0% 0%, 100% 0%, 100% 62%, 50% 100%, 0% 62%);
+}
+.sheet-hover--armor_class       { left: 11.5%; top: 26.3%; width: 6.0%; height: 9.6%; }
+.sheet-hover--magic_resistance  { left: 11.4%; top: 43.2%; width: 6.1%; height: 9.0%; }
+.sheet-hover--poison_resistance { left: 11.2%; top: 59.7%; width: 6.2%; height: 9.1%; }
 
-/* Left page — vitals */
+/* Left page — vitals. Health and mana are hover-only (no click).
+   The sword (damages) gets one big square covering the whole blade. */
 .sheet-hover--health  { left: 43.6%; top: 25.8%; width: 6%; height: 9.2%; }
 .sheet-hover--mana    { left: 43.9%; top: 42.8%; width: 6%; height: 9.2%; }
-.sheet-hover--damages { left: 43.8%; top: 58.8%; width: 6%; height: 9.2%; }
+.sheet-hover--damages { left: 43.8%; top: 58.6%; width: 6.7%; height: 11.0%; }
 
 /* Reveal rules: CSS cannot pair siblings generically, so one selector per stat. */
 .sheet-hover--strength:hover          ~ .sheet-statbar--strength,

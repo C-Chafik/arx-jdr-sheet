@@ -43,8 +43,15 @@
     ("mana",              "Mana",                     "La réserve d'énergie magique, actuelle et maximum."),
     ("damages",           "Dégâts",                   "Les dégâts infligés par l'attaque équipée."),
 ] %}
+{# Zones = future roll buttons: fill each value with the dice formula when ready.
+   Names in no_roll are hover-only (no click, no roll). #}
+{% set no_roll = ["health", "mana"] %}
 {% for name, label, text in stat_infos %}
+{% if name in no_roll %}
   <div class="sheet-hover-zone sheet-hover--{{ name }}"></div>
+{% else %}
+  <button type="roll" class="sheet-hover-zone sheet-hover--{{ name }}" name="roll_{{ name }}" value=""></button>
+{% endif %}
   <div class="sheet-statbar sheet-statbar--{{ name }}">{{ label }} &mdash; {{ text }}</div>
 {% endfor %}
 </div>
