@@ -1,0 +1,7 @@
+.sheet-arx {
+  position: relative;
+  width: 1100px;
+  height: 698px; /* 1100 × (999 / 1575) */
+  background-image: url('{{ASSET_BASE}}/ARX-BASE.png');
+  background-size: 100% 100%;
+}
