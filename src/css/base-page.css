@@ -1,5 +1,14 @@
 /* Positions measured on ARX-BASE.png (1575 × 999), in % of the container. */
 
+/* Left page — character name, centered between the two top ornaments */
+.sheet-field--character_name { left: 20.8%; top: 11.5%; width: 20.6%; height: 35px; }
+.sheet-field--character_name input {
+  font-size: 24px;
+  /* Extra crispness for this field: darker ink + parchment halo. */
+  color: #140c04;
+  text-shadow: 0 0 4px rgba(255, 246, 214, 0.95), 0 0 1px rgba(255, 246, 214, 0.95);
+}
+
 /* Right page — header */
 .sheet-field--level { left: 63.0%; top: 11.5%; width: 8%; }
 

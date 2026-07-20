@@ -15,7 +15,8 @@
   height: 30px;
 }
 
-.sheet-arx input[type="number"] {
+.sheet-arx input[type="number"],
+.sheet-arx input[type="text"] {
   width: 100%;
   height: 100%;
   padding: 0;
@@ -36,7 +37,8 @@
   margin: 0;
 }
 
-.sheet-arx input[type="number"]:focus {
+.sheet-arx input[type="number"]:focus,
+.sheet-arx input[type="text"]:focus {
   outline: none;
   border-bottom: 1px solid rgba(43, 29, 14, 0.6);
   background: rgba(255, 248, 220, 0.25);

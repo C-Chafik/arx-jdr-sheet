@@ -25,6 +25,7 @@ def test_build_writes_the_four_outputs():
 
 
 ATTRS = [
+    "character_name",
     "level",
     "strength", "mental", "dexterity", "constitution",
     "stealth", "technical", "intuition",
@@ -50,7 +51,7 @@ def test_css_positions_every_field():
         assert f".sheet-field--{name}" in css, name
 
 
-HOVER_STATS = [a for a in POSITIONED_FIELDS if a != "level"]
+HOVER_STATS = [a for a in POSITIONED_FIELDS if a not in ("level", "character_name")]
 NO_ROLL = ["health", "mana"]  # hover-only icons, not clickable
 
 
