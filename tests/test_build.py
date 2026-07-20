@@ -22,3 +22,20 @@ def test_build_writes_the_four_outputs():
     build.build()
     for name in ("sheet.html", "sheet.css", "preview.html", "preview.css"):
         assert (build.BUILD / name).exists(), name
+
+
+ATTRS = [
+    "level",
+    "strength", "mental", "dexterity", "constitution",
+    "stealth", "technical", "intuition",
+    "ethereal_link", "object_knowledge", "casting",
+    "close_combat", "projectile", "defense",
+    "health", "health_max", "mana", "mana_max",
+    "damages", "armor_class", "magic_resistance", "poison_resistance",
+]
+
+
+def test_sheet_html_contains_every_attribute():
+    html = build.render_html()
+    for attr in ATTRS:
+        assert f'name="attr_{attr}"' in html, attr
