@@ -39,3 +39,12 @@ def test_sheet_html_contains_every_attribute():
     html = build.render_html()
     for attr in ATTRS:
         assert f'name="attr_{attr}"' in html, attr
+
+
+POSITIONED_FIELDS = [a for a in ATTRS if not a.endswith("_max")]
+
+
+def test_css_positions_every_field():
+    css = build.build_css("x")
+    for name in POSITIONED_FIELDS:
+        assert f".sheet-field--{name}" in css, name
