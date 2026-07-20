@@ -48,3 +48,16 @@ def test_css_positions_every_field():
     css = build.build_css("x")
     for name in POSITIONED_FIELDS:
         assert f".sheet-field--{name}" in css, name
+
+
+HOVER_STATS = [a for a in POSITIONED_FIELDS if a != "level"]
+
+
+def test_every_icon_has_hover_zone_statbar_and_css():
+    html = build.render_html()
+    css = build.build_css("x")
+    for name in HOVER_STATS:
+        assert f'class="sheet-hover-zone sheet-hover--{name}"' in html, name
+        assert f'class="sheet-statbar sheet-statbar--{name}"' in html, name
+        assert f".sheet-hover--{name} " in css or f".sheet-hover--{name}," in css, name
+        assert f".sheet-hover--{name}:hover" in css, name

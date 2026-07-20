@@ -11,7 +11,7 @@ SRC = ROOT / "src"
 BUILD = ROOT / "build"
 
 # Concatenation order matters: later files override earlier ones.
-CSS_FILES = ["base.css", "base-page.css"]
+CSS_FILES = ["base.css", "base-page.css", "hover.css"]
 
 # Roll20 only loads HTTPS assets; preview uses the local files instead.
 ASSET_BASE = "https://raw.githubusercontent.com/C-Chafik/arx-jdr-sheet/main/assets"

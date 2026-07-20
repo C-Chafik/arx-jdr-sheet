@@ -1,0 +1,72 @@
+/* Hover zones over the engraved icons + stat description shown above the book.
+   One zone per icon; the texts live in src/templates/partials/base-page.html.j2.
+   Coordinates measured on ARX-BASE.png (1575 × 999), in % of the container. */
+
+.sheet-hover-zone {
+  position: absolute;
+  width: 6.6%;
+  height: 9.5%;
+  cursor: help;
+}
+
+.sheet-statbar {
+  display: none;
+  position: absolute;
+  top: 1.5%;
+  left: 2%;
+  width: 96%;
+  text-align: left;
+  color: #fff;
+  font-size: 22px;
+  pointer-events: none;
+}
+
+/* Right page — attributes (top row) */
+.sheet-hover--strength     { left: 56.3%; top: 17.0%; }
+.sheet-hover--mental       { left: 65.3%; top: 17.0%; }
+.sheet-hover--dexterity    { left: 74.2%; top: 17.0%; }
+.sheet-hover--constitution { left: 83.2%; top: 17.0%; }
+
+/* Right page — skills 3×3 */
+.sheet-hover--stealth          { left: 57.4%; top: 41.3%; }
+.sheet-hover--technical        { left: 69.6%; top: 41.3%; }
+.sheet-hover--intuition        { left: 81.7%; top: 41.3%; }
+.sheet-hover--ethereal_link    { left: 57.4%; top: 56.5%; }
+.sheet-hover--object_knowledge { left: 69.6%; top: 56.5%; }
+.sheet-hover--casting          { left: 81.7%; top: 56.5%; }
+.sheet-hover--close_combat     { left: 57.4%; top: 71.5%; }
+.sheet-hover--projectile       { left: 69.6%; top: 71.5%; }
+.sheet-hover--defense          { left: 81.7%; top: 71.5%; }
+
+/* Left page — resistance shields (slightly taller zones) */
+.sheet-hover--armor_class       { left: 11.8%; top: 26.5%; width: 5.5%; height: 10%; }
+.sheet-hover--magic_resistance  { left: 11.4%; top: 42.0%; width: 5.5%; height: 10%; }
+.sheet-hover--poison_resistance { left: 11.2%; top: 58.6%; width: 5.5%; height: 10%; }
+
+/* Left page — vitals */
+.sheet-hover--health  { left: 43.6%; top: 25.8%; width: 6%; height: 9.2%; }
+.sheet-hover--mana    { left: 43.9%; top: 42.8%; width: 6%; height: 9.2%; }
+.sheet-hover--damages { left: 43.8%; top: 58.8%; width: 6%; height: 9.2%; }
+
+/* Reveal rules: CSS cannot pair siblings generically, so one selector per stat. */
+.sheet-hover--strength:hover          ~ .sheet-statbar--strength,
+.sheet-hover--mental:hover            ~ .sheet-statbar--mental,
+.sheet-hover--dexterity:hover         ~ .sheet-statbar--dexterity,
+.sheet-hover--constitution:hover      ~ .sheet-statbar--constitution,
+.sheet-hover--stealth:hover           ~ .sheet-statbar--stealth,
+.sheet-hover--technical:hover         ~ .sheet-statbar--technical,
+.sheet-hover--intuition:hover         ~ .sheet-statbar--intuition,
+.sheet-hover--ethereal_link:hover     ~ .sheet-statbar--ethereal_link,
+.sheet-hover--object_knowledge:hover  ~ .sheet-statbar--object_knowledge,
+.sheet-hover--casting:hover           ~ .sheet-statbar--casting,
+.sheet-hover--close_combat:hover      ~ .sheet-statbar--close_combat,
+.sheet-hover--projectile:hover        ~ .sheet-statbar--projectile,
+.sheet-hover--defense:hover           ~ .sheet-statbar--defense,
+.sheet-hover--armor_class:hover       ~ .sheet-statbar--armor_class,
+.sheet-hover--magic_resistance:hover  ~ .sheet-statbar--magic_resistance,
+.sheet-hover--poison_resistance:hover ~ .sheet-statbar--poison_resistance,
+.sheet-hover--health:hover            ~ .sheet-statbar--health,
+.sheet-hover--mana:hover              ~ .sheet-statbar--mana,
+.sheet-hover--damages:hover           ~ .sheet-statbar--damages {
+  display: block;
+}
