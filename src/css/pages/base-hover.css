@@ -1,5 +1,5 @@
 /* Hover zones over the engraved icons + stat description shown above the book.
-   One zone per icon; the texts live in src/templates/partials/base-page.html.j2.
+   One zone per icon; the texts live in src/templates/data/stats.j2.
    Coordinates measured on ARX-BASE.png (1575 × 999), in % of the container. */
 
 .sheet-hover-zone {

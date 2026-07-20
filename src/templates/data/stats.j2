@@ -1,0 +1,25 @@
+{# Stat descriptions — EDIT THE TEXTS HERE. One entry per icon: (name, label, description).
+   The matching zone coordinates live in src/css/pages/base-hover.css under .sheet-hover--<name>. #}
+{% set stat_infos = [
+    ("strength",          "Force",                    "La puissance physique brute du personnage."),
+    ("mental",            "Mental",                   "L'acuité intellectuelle et la volonté."),
+    ("dexterity",         "Dextérité",                "L'adresse, la précision et les réflexes."),
+    ("constitution",      "Constitution",             "L'endurance et la résistance du corps."),
+    ("stealth",           "Furtivité",                "L'art de se déplacer sans être vu ni entendu."),
+    ("technical",         "Mécanique",                "La maîtrise des mécanismes, pièges et machines."),
+    ("intuition",         "Intuition",                "Percevoir l'invisible et sentir le danger."),
+    ("ethereal_link",     "Lien psychique",           "Le lien avec l'éther et les esprits."),
+    ("object_knowledge",  "Compétence manuelle",      "L'habileté dans les travaux manuels délicats."),
+    ("casting",           "Magie",                    "L'art de canaliser et lancer des sorts."),
+    ("close_combat",      "Combat au corps à corps",  "L'efficacité au corps à corps."),
+    ("projectile",        "Projectile",               "La précision des attaques à distance."),
+    ("defense",           "Défense",                  "L'art de bloquer, parer et esquiver."),
+    ("armor_class",       "Classe d'armure",          "La protection offerte par l'armure."),
+    ("magic_resistance",  "Classe d'armure magique",  "La résistance aux effets magiques."),
+    ("poison_resistance", "Classe de résistance au poison", "La résistance aux poisons et toxines."),
+    ("health",            "Santé",                    "Les points de vie actuels et maximum."),
+    ("mana",              "Mana",                     "La réserve d'énergie magique, actuelle et maximum."),
+    ("damages",           "Dégâts",                   "Les dégâts infligés par l'attaque équipée."),
+] %}
+{# Hover-only icons: no click, no roll button. #}
+{% set no_roll = ["health", "mana"] %}

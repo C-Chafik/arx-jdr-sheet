@@ -1,0 +1,15 @@
+/* Page navigation: the checked sheet-tab radio decides which page is visible.
+   The radios themselves are hidden for now; they will be styled as clickable
+   bookmarks/zones when a second page exists. */
+
+.sheet-tab-radio {
+  display: none;
+}
+
+.sheet-page {
+  display: none;
+}
+
+.sheet-tab-radio--base:checked ~ .sheet-page--base {
+  display: block;
+}

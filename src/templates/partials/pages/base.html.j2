@@ -1,0 +1,37 @@
+{% import "data/stats.j2" as stats %}
+{% set attributes = ["strength", "mental", "dexterity", "constitution"] %}
+{% set skills = ["stealth", "technical", "intuition",
+                 "ethereal_link", "object_knowledge", "casting",
+                 "close_combat", "projectile", "defense"] %}
+{% set gauges = ["health", "mana"] %}
+{% set singles = ["armor_class", "magic_resistance", "poison_resistance", "damages"] %}
+<div class="sheet-page sheet-page--base">
+  {# character_name is Roll20-magic: it syncs with the journal name both ways. #}
+  <div class="sheet-field sheet-field--character_name">
+    <input type="text" name="attr_character_name" value="" />
+  </div>
+  <div class="sheet-field sheet-field--level">
+    <input type="number" name="attr_level" value="1" />
+  </div>
+{% for name in attributes + skills + singles %}
+  <div class="sheet-field sheet-field--{{ name }}">
+    <input type="number" name="attr_{{ name }}" value="0" />
+  </div>
+{% endfor %}
+{% for name in gauges %}
+  <div class="sheet-field sheet-gauge sheet-field--{{ name }}">
+    <input type="number" name="attr_{{ name }}" value="0" />
+    <span class="sheet-gauge-sep">/</span>
+    <input type="number" name="attr_{{ name }}_max" value="0" />
+  </div>
+{% endfor %}
+  {# Zones = future roll buttons: fill each value with the dice formula when ready. #}
+{% for name, label, text in stats.stat_infos %}
+{% if name in stats.no_roll %}
+  <div class="sheet-hover-zone sheet-hover--{{ name }}"></div>
+{% else %}
+  <button type="roll" class="sheet-hover-zone sheet-hover--{{ name }}" name="roll_{{ name }}" value=""></button>
+{% endif %}
+  <div class="sheet-statbar sheet-statbar--{{ name }}">{{ label }} &mdash; {{ text }}</div>
+{% endfor %}
+</div>
