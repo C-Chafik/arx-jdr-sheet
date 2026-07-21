@@ -3,10 +3,18 @@
 .sheet-arx {
   position: relative;
   width: 1100px;
-  height: 698px; /* 1100 × (999 / 1575) */
+  font-family: 'IM Fell English', serif;
+}
+
+/* The book itself: fixed size, all page positions are % of this box.
+   z-index keeps it above the inventory band sliding out from underneath. */
+.sheet-book {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 677px; /* 1100 × (984 / 1598) */
   background-image: url('{{ASSET_BASE}}/ARX-BASE.png');
   background-size: 100% 100%;
-  font-family: 'IM Fell English', serif;
 }
 
 .sheet-field {

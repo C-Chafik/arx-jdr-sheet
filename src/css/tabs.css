@@ -13,3 +13,25 @@
 .sheet-tab-radio--base:checked ~ .sheet-page--base {
   display: block;
 }
+
+/* Navigation ribbons (star / ? / feather), pinned on the left page's top edge.
+   Inert for now — they will become the page tabs. */
+.sheet-nav-btn {
+  position: absolute;
+  top: 25px;
+  width: 42px;
+  height: 42px;
+  z-index: 5;
+  background-size: 100% 100%;
+  cursor: pointer;
+  transition: filter 0.2s ease-out;
+}
+
+.sheet-nav-btn:hover {
+  filter: brightness(1.3) drop-shadow(0 0 6px rgba(255, 220, 130, 0.8));
+}
+
+/* Base-Menu-Button.png is reserved for the other pages (no "go to base" while on base). */
+.sheet-nav--magic     { left: calc(38.3% - 21px); background-image: url('{{ASSET_BASE}}/Magic-Menu-Button.png'); }
+.sheet-nav--map       { left: calc(42.9% - 21px); background-image: url('{{ASSET_BASE}}/Map-Menu-Button.png'); }
+.sheet-nav--questions { left: calc(47.5% - 21px); background-image: url('{{ASSET_BASE}}/Questions-Menu-Button.png'); }

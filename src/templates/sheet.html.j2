@@ -1,4 +1,18 @@
 <div class="sheet-arx">
+  {# Hand state mirrors: MUST stay before .sheet-book and .sheet-inventory so
+     sibling CSS (~) can reach the slots in both containers. #}
+  <input type="hidden" class="sheet-hand-mirror" name="attr_hand" value="" />
+  <input type="hidden" class="sheet-hand-mirror" name="attr_hand_from" value="" />
+  <input type="hidden" class="sheet-hand-mirror" name="attr_hand_cat" value="" />
+  <input type="hidden" class="sheet-hand-mirror" name="attr_fit" value="" />
+  {# Inventory toggle: always visible, whatever the active page. State saved per character. #}
+  <input type="checkbox" class="sheet-inventory-toggle" name="attr_inventory_open" value="1" />
+  <div class="sheet-book">
 {% include "partials/tabs.html.j2" %}
 {% include "partials/pages/base.html.j2" %}
+  </div>
+  {# The leather band slides out from under the book when the toggle is checked. #}
+  <div class="sheet-inventory">
+{% include "partials/inventory-slots.html.j2" %}
+  </div>
 </div>

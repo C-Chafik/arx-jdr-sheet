@@ -1,0 +1,54 @@
+/* Inventory: a leather band (inventaire-down.png, 908 × 185) that slides out
+   from under the book when the always-visible button is checked.
+   Both visuals are separate assets — nothing is baked into ARX-BASE-2. */
+
+/* The button, drawn on the checkbox itself (50 × 50 source → 34 px on sheet).
+   Sits outside the book, hugging its left edge, level with the Armor Class shield. */
+.sheet-inventory-toggle {
+  -webkit-appearance: none;
+  appearance: none;
+  position: absolute;
+  left: 24px;
+  top: 167px;
+  width: 34px;
+  height: 34px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  z-index: 10;
+  cursor: pointer;
+  background-image: url('{{ASSET_BASE}}/Inventory-Button.png');
+  background-size: 100% 100%;
+  transition: filter 0.2s ease-out;
+}
+
+.sheet-inventory-toggle:hover {
+  filter: brightness(1.35) drop-shadow(0 0 6px rgba(255, 220, 130, 0.8));
+}
+
+.sheet-inventory-toggle:checked {
+  filter: brightness(1.2);
+}
+
+/* The band: centered, tucked under the book's bottom edge (negative margin
+   + lower z-index), so it visually slides out from beneath it. */
+.sheet-inventory {
+  position: relative;
+  z-index: 0;
+  width: 900px;  /* Inventory.png is 2042 × 390 */
+  height: 172px; /* 390 × (900 / 2042) */
+  margin: -48px auto 0;
+  background-image: url('{{ASSET_BASE}}/Inventory.png');
+  background-size: 100% 100%;
+  /* Slide-out animation: max-height because display can't animate. */
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease-out;
+}
+
+.sheet-inventory-toggle:checked ~ .sheet-inventory {
+  max-height: 172px;
+  /* Above the book while open, so row-1 slot buttons receive clicks
+     (the book's transparent bottom edge otherwise intercepts them). */
+  z-index: 2;
+}

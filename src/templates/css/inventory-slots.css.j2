@@ -1,0 +1,106 @@
+/* ===== GENERATED from items.json + grid constants — edit the .j2, not the output. ===== */
+
+/* ---- Bag grid constants: 16 × 3 on Inventory.png (2042 × 390), % of .sheet-inventory. ---- */
+{% set cols, rows = 16, 3 %}
+{% set ox, oy = 2.7, 11.5 %}   {# origin of slot (1,1), in % — seams measured at x55/y45 #}
+{% set px_, py_ = 5.91, 26.9 %} {# pitch between slots, in % — 120.7 × 105 px on the 2042×390 band #}
+{% set sw, sh = 5.3, 24.4 %}   {# slot size, in % #}
+
+/* Item icons: hidden by default, shown when the slot input holds a known item id. */
+.sheet-item-icon {
+  display: none;
+  position: absolute;
+  left: 10%;
+  top: 10%;
+  width: 80%;
+  height: 80%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  pointer-events: none;
+}
+{% for item_id, item in items.items() %}
+.sheet-slot input[value="{{ item_id }}"] + .sheet-item-icon {
+  display: block;
+  background-image: url('{{ "{{ASSET_BASE}}" }}/{{ item.icon }}');
+}
+{% endfor %}
+
+/* In the bag, an icon spans its item's footprint (anchored top-left).
+   Spans are relative to the anchor cell box; equipment slots keep the default fit. */
+{% for item_id, item in items.items() %}
+{% set w = (item.size | default("1x1")).split("x")[0] | int %}
+{% set h = (item.size | default("1x1")).split("x")[1] | int %}
+{% if w > 1 or h > 1 %}
+.sheet-inventory .sheet-slot input[value="{{ item_id }}"] + .sheet-item-icon {
+  width: {{ "%.1f" | format(((w - 1) * px_ / sw + 0.8) * 100) }}%;
+  height: {{ "%.1f" | format(((h - 1) * py_ / sh + 0.8) * 100) }}%;
+}
+{% endif %}
+{% endfor %}
+
+/* ---- Slot shell: invisible zone with an action button covering it. ---- */
+.sheet-slot {
+  position: absolute;
+}
+.sheet-slot button[type="action"] {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+/* ---- Bag slot positions. ---- */
+{% for i in range(cols * rows) %}
+.sheet-slot--bag_{{ i + 1 }} { left: {{ "%.2f" | format(ox + (i % cols) * px_) }}%; top: {{ "%.2f" | format(oy + (i // cols) * py_) }}%; width: {{ sw }}%; height: {{ sh }}%; }
+{% endfor %}
+
+/* ---- Equipment slots on ARX-BASE.png (1598 × 984), % of .sheet-book. ---- */
+.sheet-slot--equip_off_hand  { left: 17.2%; top: 11.0%; width: 6.9%; height: 9.9%; }
+.sheet-slot--equip_main_hand { left: 38.8%; top: 11.0%; width: 6.6%; height: 9.3%; }
+.sheet-slot--equip_head      { left: 30.0%; top: 20.1%; width: 4.3%; height: 6.8%; }
+.sheet-slot--equip_torso     { left: 29.9%; top: 33.0%; width: 4.0%; height: 6.8%; }
+.sheet-slot--equip_belt      { left: 29.9%; top: 59.5%; width: 4.2%; height: 6.8%; }
+.sheet-slot--equip_jewel_1   { left: 12.8%; top: 77.7%; width: 6.6%; height: 10.7%; }
+.sheet-slot--equip_jewel_2   { left: 40.7%; top: 76.7%; width: 6.6%; height: 10.7%; }
+
+/* ---- Hand-state visuals (all selectors start at the .sheet-arx mirrors). ---- */
+
+/* Origin slot of the item in hand: dim its icon. */
+{% set all_slots = [] %}
+{% for i in range(1, cols * rows + 1) %}{% set _ = all_slots.append("bag_" ~ i) %}{% endfor %}
+{% for s in ["equip_head", "equip_torso", "equip_belt", "equip_main_hand",
+             "equip_off_hand", "equip_jewel_1", "equip_jewel_2"] %}{% set _ = all_slots.append(s) %}{% endfor %}
+{% for slot in all_slots %}
+input[name="attr_hand_from"][value="{{ slot }}"] ~ .sheet-book .sheet-slot--{{ slot }} .sheet-item-icon,
+input[name="attr_hand_from"][value="{{ slot }}"] ~ .sheet-inventory .sheet-slot--{{ slot }} .sheet-item-icon {
+  filter: brightness(0.5);
+}
+{% endfor %}
+
+/* Valid bag anchors while an item is in hand: the worker publishes them in attr_fit. */
+{% for i in range(1, cols * rows + 1) %}
+input[name="attr_fit"][value*="|bag_{{ i }}|"] ~ .sheet-inventory .sheet-slot--bag_{{ i }} button {
+  background: radial-gradient(circle, rgba(255, 232, 160, 0.35), rgba(255, 232, 160, 0) 75%);
+  box-shadow: 0 0 12px rgba(255, 220, 130, 0.7);
+}
+{% endfor %}
+
+/* Equipment slots glow when the hand item's category matches AND the slot is empty (no swap). */
+{% for cat, slot in [("casque", "equip_head"), ("armure_haute", "equip_torso"),
+                     ("armure_basse", "equip_belt"), ("arme_principale", "equip_main_hand"),
+                     ("arme_secondaire", "equip_off_hand"), ("bouclier", "equip_off_hand"),
+                     ("bijoux", "equip_jewel_1"), ("bijoux", "equip_jewel_2")] %}
+input[name="attr_hand_cat"][value="{{ cat }}"] ~ .sheet-book .sheet-slot--{{ slot }} input[value=""] ~ button {
+  background: radial-gradient(circle, rgba(255, 232, 160, 0.45), rgba(255, 232, 160, 0) 75%);
+  box-shadow: 0 0 14px rgba(255, 220, 130, 0.85);
+}
+{% endfor %}
+
+/* Cursor: grab on a filled slot when nothing is in hand. */
+.sheet-slot input:not([value=""]) ~ button { cursor: grab; }

@@ -1,0 +1,28 @@
+{
+  "krahoz":                 { "label": "Krahoz",                "icon": "item-krahoz.png",                 "cat": "bijoux",          "size": "1x1" },
+  "zohark":                 { "label": "Zohark",                "icon": "item-zohark.png",                 "cat": "bijoux",          "size": "1x1" },
+
+  "one-handed-sword":       { "label": "Épée à une main",       "icon": "item-one-handed-sword.png",       "cat": "arme_principale", "size": "1x3" },
+  "one-handed-sword-light": { "label": "Épée légère",           "icon": "item-one-handed-sword-light.png", "cat": "arme_principale", "size": "1x2" },
+  "wooden-club":            { "label": "Gourdin",               "icon": "item-wooden-club.png",            "cat": "arme_principale", "size": "1x2" },
+  "wooden-shield":          { "label": "Bouclier en bois",      "icon": "item-wooden-shield.png",          "cat": "bouclier",        "size": "2x2" },
+
+  "leather-torso":          { "label": "Torse de cuir",         "icon": "item-leather-torso.png",          "cat": "armure_haute",    "size": "2x2" },
+  "ylside-torso":           { "label": "Torse ylside",          "icon": "item-ylside-torso.png",           "cat": "armure_haute",    "size": "2x2" },
+  "ylside-bottoms":         { "label": "Jambières ylsides",     "icon": "item-ylside-bottoms.png",         "cat": "armure_basse",    "size": "2x2" },
+
+  "apple":                  { "label": "Pomme",                 "icon": "item-apple.png",                  "cat": "objet",           "size": "1x1" },
+  "cooked-bread":           { "label": "Pain",                  "icon": "item-cooked-bread.png",           "cat": "objet",           "size": "1x1" },
+  "cooked-chicken":         { "label": "Poulet rôti",           "icon": "item-cooked-chicken.png",         "cat": "objet",           "size": "1x1" },
+  "cooked-fish":            { "label": "Poisson cuit",          "icon": "item-cooked-fish.png",            "cat": "objet",           "size": "1x1" },
+  "mushroom":               { "label": "Champignon",            "icon": "item-mushroom.png",               "cat": "objet",           "size": "1x1" },
+  "water":                  { "label": "Eau",                   "icon": "item-water.png",                  "cat": "objet",           "size": "1x1" },
+  "health-potion":          { "label": "Potion de vie",         "icon": "item-health-potion.png",          "cat": "objet",           "size": "1x1" },
+
+  "key-1":                  { "label": "Clé",                   "icon": "item-key-1.png",                  "cat": "objet",           "size": "1x1" },
+  "key-2":                  { "label": "Clé ouvragée",          "icon": "item-key-2.png",                  "cat": "objet",           "size": "1x1" },
+  "lockpick":               { "label": "Crochet",               "icon": "item-lockpick.png",               "cat": "objet",           "size": "2x1" },
+  "moulinette":             { "label": "Moulinette",            "icon": "item-moulinette.png",             "cat": "objet",           "size": "1x1" },
+  "action":                 { "label": "Action",                "icon": "item-action.png",                 "cat": "objet",           "size": "1x1" },
+  "extra-backpack":         { "label": "Sac supplémentaire",    "icon": "item-extra-backpack.png",         "cat": "objet",           "size": "2x2" }
+}

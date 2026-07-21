@@ -1,16 +1,21 @@
-/* Positions measured on ARX-BASE.png (1575 × 999), in % of the container. */
+/* Positions measured on ARX-BASE-2.png (1598 × 984), in % of the container. */
 
-/* Left page — character name, centered between the two top ornaments */
-.sheet-field--character_name { left: 20.8%; top: 11.5%; width: 20.6%; height: 35px; }
+/* Left page — character name, centered between the two top slots */
+.sheet-field--character_name { left: 24.4%; top: 10.2%; width: 14.3%; height: 35px; }
 .sheet-field--character_name input {
   font-size: 24px;
   /* Extra crispness for this field: darker ink + parchment halo. */
   color: #140c04;
   text-shadow: 0 0 4px rgba(255, 246, 214, 0.95), 0 0 1px rgba(255, 246, 214, 0.95);
 }
+/* Discoverability: an empty transparent input is invisible without this. */
+.sheet-field--character_name input::placeholder {
+  color: rgba(43, 29, 14, 0.45);
+  text-shadow: none;
+}
 
 /* Right page — header */
-.sheet-field--level { left: 63.0%; top: 11.5%; width: 8%; }
+.sheet-field--level { left: 63.0%; top: 7.3%; width: 4.5%; }
 
 /* The level value sits on the ornamental chain band: lift it with a parchment halo. */
 .sheet-field--level input[type="number"] {
@@ -19,28 +24,28 @@
 }
 
 /* Right page — attributes (values under the 4 icons) */
-.sheet-field--strength     { left: 56.7%; top: 28.5%; }
-.sheet-field--mental       { left: 65.7%; top: 28.5%; }
-.sheet-field--dexterity    { left: 74.6%; top: 28.5%; }
-.sheet-field--constitution { left: 83.6%; top: 28.5%; }
+.sheet-field--strength     { left: 56.9%; top: 23.6%; }
+.sheet-field--mental       { left: 65.8%; top: 23.6%; }
+.sheet-field--dexterity    { left: 74.6%; top: 23.6%; }
+.sheet-field--constitution { left: 83.5%; top: 23.6%; }
 
 /* Right page — skills 3×3 (values under each icon) */
-.sheet-field--stealth          { left: 57.8%; top: 51.5%; }
-.sheet-field--technical        { left: 70.0%; top: 51.5%; }
-.sheet-field--intuition        { left: 82.1%; top: 51.5%; }
-.sheet-field--ethereal_link    { left: 57.8%; top: 66.7%; }
-.sheet-field--object_knowledge { left: 70.0%; top: 66.7%; }
-.sheet-field--casting          { left: 82.1%; top: 66.7%; }
-.sheet-field--close_combat     { left: 57.8%; top: 81.7%; }
-.sheet-field--projectile       { left: 70.0%; top: 81.7%; }
-.sheet-field--defense          { left: 82.1%; top: 81.7%; }
+.sheet-field--stealth          { left: 58.7%; top: 48.2%; }
+.sheet-field--technical        { left: 70.3%; top: 48.2%; }
+.sheet-field--intuition        { left: 81.7%; top: 48.2%; }
+.sheet-field--ethereal_link    { left: 58.7%; top: 64.1%; }
+.sheet-field--object_knowledge { left: 70.3%; top: 64.1%; }
+.sheet-field--casting          { left: 81.7%; top: 64.1%; }
+.sheet-field--close_combat     { left: 58.7%; top: 80.6%; }
+.sheet-field--projectile       { left: 70.3%; top: 80.6%; }
+.sheet-field--defense          { left: 81.7%; top: 80.6%; }
 
 /* Left page — resistances (under the three shields) */
-.sheet-field--armor_class       { left: 11.6%; top: 37.5%; }
-.sheet-field--magic_resistance  { left: 11.2%; top: 53.0%; }
-.sheet-field--poison_resistance { left: 11.1%; top: 69.6%; }
+.sheet-field--armor_class       { left: 12.0%; top: 32.6%; }
+.sheet-field--magic_resistance  { left: 11.8%; top: 50.6%; }
+.sheet-field--poison_resistance { left: 11.7%; top: 67.9%; }
 
 /* Left page — vitals */
-.sheet-field--health  { left: 41.8%; top: 36.0%; }
-.sheet-field--mana    { left: 42.1%; top: 53.0%; }
-.sheet-field--damages { left: 43.9%; top: 69.0%; }
+.sheet-field--health  { left: 42.1%; top: 32.1%; }
+.sheet-field--mana    { left: 42.1%; top: 49.7%; }
+.sheet-field--damages { left: 44.5%; top: 67.4%; }

@@ -34,4 +34,13 @@
 {% endif %}
   <div class="sheet-statbar sheet-statbar--{{ name }}">{{ label }} &mdash; {{ text }}</div>
 {% endfor %}
+  {# Equipment slots on the left page (categories enforced by the worker). #}
+{% for slot in ["equip_head", "equip_torso", "equip_belt", "equip_main_hand",
+                "equip_off_hand", "equip_jewel_1", "equip_jewel_2"] %}
+  <div class="sheet-slot sheet-slot--{{ slot }}">
+    <input type="hidden" name="attr_{{ slot }}" value="" />
+    <span class="sheet-item-icon"></span>
+    <button type="action" name="act_slot_{{ slot }}"></button>
+  </div>
+{% endfor %}
 </div>
