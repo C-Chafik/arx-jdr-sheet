@@ -1,7 +1,7 @@
 /* ===== GENERATED from items.json + grid constants — edit the .j2, not the output. ===== */
 
-/* ---- Bag grid constants: 16 × 3 on Inventory.png (2042 × 390), % of .sheet-inventory. ---- */
-{% set cols, rows = 16, 3 %}
+/* ---- Bag grid constants (cols × rows injected by build.py) on Inventory.png
+   (2042 × 390), % of .sheet-inventory. ---- */
 {% set ox, oy = 2.7, 11.5 %}   {# origin of slot (1,1), in % — seams measured at x55/y45 #}
 {% set px_, py_ = 5.91, 26.9 %} {# pitch between slots, in % — 120.7 × 105 px on the 2042×390 band #}
 {% set sw, sh = 5.3, 24.4 %}   {# slot size, in % #}
@@ -37,6 +37,25 @@
   height: {{ "%.1f" | format(((h - 1) * py_ / sh + 0.8) * 100) }}%;
 }
 {% endif %}
+{% endfor %}
+
+/* In the bag, the ANCHOR's button stretches over the whole footprint (above the
+   covered cells' buttons), so hovering/clicking anywhere on the item acts on it. */
+{% for item_id, item in items.items() %}
+{% set w = (item.size | default("1x1")).split("x")[0] | int %}
+{% set h = (item.size | default("1x1")).split("x")[1] | int %}
+{% if w > 1 or h > 1 %}
+.sheet-inventory .sheet-slot input[value="{{ item_id }}"] ~ button {
+  width: {{ "%.1f" | format(((w - 1) * px_ / sw + 1) * 100) }}%;
+  height: {{ "%.1f" | format(((h - 1) * py_ / sh + 1) * 100) }}%;
+  z-index: 3;
+}
+{% endif %}
+{% endfor %}
+
+/* Item name on hover — reveals the matching billboard generated in sheet.html.j2. */
+{% for item_id in items %}
+.sheet-arx:has(.sheet-slot:hover input[value="{{ item_id }}"]) .sheet-statbar--item-{{ item_id }} { display: block; }
 {% endfor %}
 
 /* ---- Slot shell: invisible zone with an action button covering it. ---- */

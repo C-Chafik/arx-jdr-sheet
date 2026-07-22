@@ -1,7 +1,7 @@
 const ITEMS = {{ITEMS_JSON}};
 
-const COLS = 16;
-const ROWS = 3;
+const COLS = {{GRID_COLS}};
+const ROWS = {{GRID_ROWS}};
 const BAG_SLOTS = [];
 for (let i = 1; i <= COLS * ROWS; i++) { BAG_SLOTS.push("bag_" + i); }
 

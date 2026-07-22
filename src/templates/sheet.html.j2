@@ -10,6 +10,11 @@
   <div class="sheet-book">
 {% include "partials/tabs.html.j2" %}
 {% include "partials/pages/base.html.j2" %}
+  {# Item names on hover — same billboard as the stat descriptions.
+     Revealed by generated :has() rules in css/inventory-slots.css.j2. #}
+{% for item_id, item in items.items() %}
+    <div class="sheet-statbar sheet-statbar--item-{{ item_id }}">{{ item.label }}</div>
+{% endfor %}
   </div>
   {# The leather band slides out from under the book when the toggle is checked. #}
   <div class="sheet-inventory">

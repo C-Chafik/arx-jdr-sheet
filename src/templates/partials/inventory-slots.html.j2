@@ -1,5 +1,6 @@
-{# 48 bag slots, row-major: row 1 = bag_1..bag_16, row 2 = 17..32, row 3 = 33..48. #}
-{% for i in range(1, 49) %}
+{# Bag slots (cols × rows from build.py), row-major numbering.
+   The band's rightmost stitched column is the pouch — not a storage cell. #}
+{% for i in range(1, cols * rows + 1) %}
   <div class="sheet-slot sheet-slot--bag_{{ i }}">
     <input type="hidden" name="attr_bag_{{ i }}" value="" />
     <span class="sheet-item-icon"></span>

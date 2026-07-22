@@ -106,7 +106,8 @@ def test_worker_is_injected_with_catalog():
 
 EQUIP_SLOTS = ["equip_head", "equip_torso", "equip_belt", "equip_main_hand",
                "equip_off_hand", "equip_jewel_1", "equip_jewel_2"]
-ALL_SLOTS = [f"bag_{i}" for i in range(1, 49)] + EQUIP_SLOTS
+BAG_COUNT = build.GRID_COLS * build.GRID_ROWS
+ALL_SLOTS = [f"bag_{i}" for i in range(1, BAG_COUNT + 1)] + EQUIP_SLOTS
 
 
 def test_all_slots_have_input_icon_button_and_css():
@@ -125,8 +126,9 @@ def test_items_have_valid_sizes():
     for item_id, item in build.load_items().items():
         assert re.fullmatch(r"[1-9]\d*x[1-9]\d*", item["size"]), item_id
         w, h = (int(n) for n in item["size"].split("x"))
-        # must fit the 16x3 bag grid, else the item is silently unplaceable
-        assert w <= 16 and h <= 3, f"{item_id}: {item['size']} exceeds the 16x3 grid"
+        # must fit the bag grid, else the item is silently unplaceable
+        assert w <= build.GRID_COLS and h <= build.GRID_ROWS, \
+            f"{item_id}: {item['size']} exceeds the {build.GRID_COLS}x{build.GRID_ROWS} grid"
 
 
 def test_hand_state_css_rules_exist():
@@ -134,8 +136,10 @@ def test_hand_state_css_rules_exist():
     assert 'input[name="attr_hand_from"][value="bag_1"]' in css
     assert 'input[name="attr_hand_cat"][value="casque"]' in css
     # valid bag anchors glow from the worker-published fit mask, one rule per cell
-    for i in (1, 24, 48):
+    for i in (1, BAG_COUNT // 2, BAG_COUNT):
         assert f'input[name="attr_fit"][value*="|bag_{i}|"]' in css, i
+    # no slot beyond the grid (the band's rightmost column is the pouch)
+    assert f"sheet-slot--bag_{BAG_COUNT + 1}" not in css
     # equipment glow requires the slot to be empty (no swap)
     assert 'input[value=""] ~ button' in css
 
@@ -157,6 +161,25 @@ def test_worker_has_pick_place_logic():
     assert "cellsFor" in html      # footprint math
     assert "fitMask" in html       # published valid anchors
     assert 'update[from] = here' not in html  # swap removed
+
+
+def test_item_name_billboards_and_hover_rules():
+    html = build.render_html()
+    css = build.build_css("x")
+    for item_id, item in build.load_items().items():
+        assert f'class="sheet-statbar sheet-statbar--item-{item_id}"' in html, item_id
+        assert item["label"] in html, item_id
+        assert f'.sheet-arx:has(.sheet-slot:hover input[value="{item_id}"])' in css, item_id
+
+
+def test_dev_shim_stays_out_of_the_roll20_deliverable():
+    build.build()
+    preview = (build.BUILD / "preview.html").read_text(encoding="utf-8")
+    sheet = (build.BUILD / "sheet.html").read_text(encoding="utf-8")
+    assert "ARX dev shim" in preview
+    assert "arx-devbar" in preview
+    assert "ARX dev shim" not in sheet
+    assert "arx-devbar" not in sheet
 
 
 def test_mod_script_is_generated():

@@ -1,8 +1,8 @@
 /* ARX Mod script — paste into the game's API tab (Pro account).
    Usage (GM only): select a token, then  !arxgive <item_id>          */
 const ARX_ITEMS = {{ITEMS_JSON}};
-const ARX_COLS = 16;
-const ARX_ROWS = 3;
+const ARX_COLS = {{GRID_COLS}};
+const ARX_ROWS = {{GRID_ROWS}};
 
 function arxSizeOf(itemId) {
   const s = (ARX_ITEMS[itemId] && ARX_ITEMS[itemId].size) || "1x1";
