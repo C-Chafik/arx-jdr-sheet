@@ -4,6 +4,7 @@
   <input type="hidden" class="sheet-hand-mirror" name="attr_hand" value="" />
   <input type="hidden" class="sheet-hand-mirror" name="attr_hand_from" value="" />
   <input type="hidden" class="sheet-hand-mirror" name="attr_hand_cat" value="" />
+  <input type="hidden" class="sheet-hand-mirror" name="attr_hand_effect" value="" />
   <input type="hidden" class="sheet-hand-mirror" name="attr_fit" value="" />
   {# Bag levels: count = unlocked, level = currently displayed. DOM order matters:
      bag_count BEFORE bag_level (nav visibility selectors chain them with ~). #}
@@ -15,9 +16,10 @@
 {% include "partials/tabs.html.j2" %}
 {% include "partials/pages/base.html.j2" %}
   {# Item names on hover — same billboard as the stat descriptions.
-     Revealed by generated :has() rules in css/inventory-slots.css.j2. #}
+     Revealed by generated :has() rules in css/inventory-slots.css.j2.
+     Legendary items get a star marker ahead of their name. #}
 {% for item_id, item in items.items() %}
-    <div class="sheet-statbar sheet-statbar--item-{{ item_id }}">{{ item.label }}</div>
+    <div class="sheet-statbar sheet-statbar--item-{{ item_id }}">{% if item.legendary | default(false) %}★ {% endif %}{{ item.label }}</div>
 {% endfor %}
   </div>
   {# The leather band slides out from under the book when the toggle is checked. #}

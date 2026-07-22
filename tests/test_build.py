@@ -200,6 +200,61 @@ def test_item_name_billboards_and_hover_rules():
         assert f'.sheet-arx:has(.sheet-slot:hover input[value="{item_id}"])' in css, item_id
 
 
+def test_legendary_items_get_permanent_glow_and_red_hover_text():
+    # Synthetic catalog: no item in the real items.json is legendary yet,
+    # so this exercises the actual .j2 templates with controlled input
+    # rather than depending on production data.
+    fake_items = {
+        "legendary-sword": {"label": "Épée légendaire", "icon": "item-fake.png",
+                             "cat": "arme_principale", "size": "1x2", "legendary": True},
+        "plain-apple": {"label": "Pomme", "icon": "item-apple.png",
+                        "cat": "objet", "size": "1x1"},
+    }
+    css = build.jinja_env().get_template("css/inventory-slots.css.j2").render(
+        items=fake_items, cols=build.GRID_COLS, rows=build.GRID_ROWS, bags=build.GRID_BAGS
+    )
+    assert "drop-shadow" in css
+    assert ".sheet-statbar--item-legendary-sword { color: #ff2b2b; }" in css
+    # the non-legendary item must NOT get either effect
+    apple_icon_rule = css.split('input[value="plain-apple"] + .sheet-item-icon {')[1].split("}")[0]
+    assert "drop-shadow" not in apple_icon_rule
+    assert ".sheet-statbar--item-plain-apple { color:" not in css
+
+    html = build.jinja_env().get_template("sheet.html.j2").render(
+        items=fake_items, cols=build.GRID_COLS, rows=build.GRID_ROWS, bags=build.GRID_BAGS
+    )
+    assert '★ Épée légendaire' in html
+    assert '>Pomme<' in html  # non-legendary label carries no star
+
+
+def test_currency_items_have_effect_and_value():
+    for item_id, item in build.load_items().items():
+        if item.get("effect") == "currency":
+            assert isinstance(item.get("value"), int) and item["value"] > 0, item_id
+
+
+def test_purse_gold_system_is_wired():
+    html = build.render_html()
+    css = build.build_css("x")
+    assert 'name="act_slot_purse"' in html
+    assert 'class="sheet-gold-readout"' in html
+    assert 'name="attr_gold"' in html
+    assert 'name="attr_hand_effect"' in html
+    assert "clicked:slot_purse" in html
+    assert '"currency"' in html or "currency" in html
+    assert 'input[name="attr_hand_effect"][value="currency"] ~ .sheet-inventory .sheet-purse' in css
+    assert ".sheet-purse:hover ~ .sheet-gold-readout" in css
+    assert '"gold-one"' in html  # withdraw path spawns a gold-one coin
+
+
+def test_trash_deletes_held_item():
+    html = build.render_html()
+    css = build.build_css("x")
+    assert 'name="act_trash"' in html
+    assert "clicked:trash" in html
+    assert 'input[name="attr_hand"]:not([value=""]) ~ .sheet-inventory .sheet-trash' in css
+
+
 def test_dev_shim_stays_out_of_the_roll20_deliverable():
     build.build()
     preview = (build.BUILD / "preview.html").read_text(encoding="utf-8")

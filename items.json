@@ -1,28 +1,621 @@
 {
-  "krahoz":                 { "label": "Krahoz",                "icon": "item-krahoz.png",                 "cat": "bijoux",          "size": "1x1" },
-  "zohark":                 { "label": "Zohark",                "icon": "item-zohark.png",                 "cat": "bijoux",          "size": "1x1" },
-
-  "one-handed-sword":       { "label": "Épée à une main",       "icon": "item-one-handed-sword.png",       "cat": "arme_principale", "size": "1x3" },
-  "one-handed-sword-light": { "label": "Épée légère",           "icon": "item-one-handed-sword-light.png", "cat": "arme_principale", "size": "1x2" },
-  "wooden-club":            { "label": "Gourdin",               "icon": "item-wooden-club.png",            "cat": "arme_principale", "size": "1x2" },
-  "wooden-shield":          { "label": "Bouclier en bois",      "icon": "item-wooden-shield.png",          "cat": "bouclier",        "size": "2x2" },
-
-  "leather-torso":          { "label": "Torse de cuir",         "icon": "item-leather-torso.png",          "cat": "armure_haute",    "size": "2x2" },
-  "ylside-torso":           { "label": "Torse ylside",          "icon": "item-ylside-torso.png",           "cat": "armure_haute",    "size": "2x2" },
-  "ylside-bottoms":         { "label": "Jambières ylsides",     "icon": "item-ylside-bottoms.png",         "cat": "armure_basse",    "size": "2x2" },
-
-  "apple":                  { "label": "Pomme",                 "icon": "item-apple.png",                  "cat": "objet",           "size": "1x1" },
-  "cooked-bread":           { "label": "Pain",                  "icon": "item-cooked-bread.png",           "cat": "objet",           "size": "1x1" },
-  "cooked-chicken":         { "label": "Poulet rôti",           "icon": "item-cooked-chicken.png",         "cat": "objet",           "size": "1x1" },
-  "cooked-fish":            { "label": "Poisson cuit",          "icon": "item-cooked-fish.png",            "cat": "objet",           "size": "1x1" },
-  "mushroom":               { "label": "Champignon",            "icon": "item-mushroom.png",               "cat": "objet",           "size": "1x1" },
-  "water":                  { "label": "Eau",                   "icon": "item-water.png",                  "cat": "objet",           "size": "1x1" },
-  "health-potion":          { "label": "Potion de vie",         "icon": "item-health-potion.png",          "cat": "objet",           "size": "1x1" },
-
-  "key-1":                  { "label": "Clé",                   "icon": "item-key-1.png",                  "cat": "objet",           "size": "1x1" },
-  "key-2":                  { "label": "Clé ouvragée",          "icon": "item-key-2.png",                  "cat": "objet",           "size": "1x1" },
-  "lockpick":               { "label": "Crochet",               "icon": "item-lockpick.png",               "cat": "objet",           "size": "2x1" },
-  "moulinette":             { "label": "Moulinette",            "icon": "item-moulinette.png",             "cat": "objet",           "size": "1x1" },
-  "action":                 { "label": "Action",                "icon": "item-action.png",                 "cat": "objet",           "size": "1x1" },
-  "extra-backpack":         { "label": "Sac supplémentaire",    "icon": "item-extra-backpack.png",         "cat": "objet",           "size": "2x2", "effect": "extra_bag" }
+  "krahoz": {
+    "label": "Krahoz",
+    "icon": "item-krahoz.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "legendary": true
+  },
+  "zohark": {
+    "label": "Zohark",
+    "icon": "item-zohark.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "legendary": true
+  },
+  "one-handed-sword": {
+    "label": "Épée à une main",
+    "icon": "item-one-handed-sword.png",
+    "cat": "arme_principale",
+    "size": "1x3"
+  },
+  "one-handed-sword-light": {
+    "label": "Épée légère",
+    "icon": "item-one-handed-sword-light.png",
+    "cat": "arme_principale",
+    "size": "1x2"
+  },
+  "wooden-club": {
+    "label": "Gourdin",
+    "icon": "item-wooden-club.png",
+    "cat": "arme_principale",
+    "size": "1x2"
+  },
+  "wooden-shield": {
+    "label": "Bouclier en bois",
+    "icon": "item-wooden-shield.png",
+    "cat": "bouclier",
+    "size": "2x2"
+  },
+  "ylside-chest": {
+    "label": "Plastron ylsides",
+    "icon": "item-ylside-chest.png",
+    "cat": "armure_haute",
+    "size": "2x3",
+    "legendary": true
+  },
+  "ylside-bottoms": {
+    "label": "Jambières ylsides",
+    "icon": "item-ylside-bottoms.png",
+    "cat": "armure_basse",
+    "size": "2x3",
+    "legendary": true
+  },
+  "chest-leather": {
+    "label": "Plastron de cuir",
+    "icon": "item-chest-leather.png",
+    "cat": "armure_haute",
+    "size": "2x2"
+  },
+  "chest-leather-ac": {
+    "label": "Plastron de cuir renforcé",
+    "icon": "item-chest-leather-ac.png",
+    "cat": "armure_haute",
+    "size": "2x2"
+  },
+  "chest-leather-stealth": {
+    "label": "Plastron de cuir souple",
+    "icon": "item-chest-leather-stealth.png",
+    "cat": "armure_haute",
+    "size": "2x2"
+  },
+  "chest-chain": {
+    "label": "Cotte de mailles",
+    "icon": "item-chest-chain.png",
+    "cat": "armure_haute",
+    "size": "2x3"
+  },
+  "chest-chain-rebel": {
+    "label": "Cotte de mailles rebelle",
+    "icon": "item-chest-chain-rebel.png",
+    "cat": "armure_haute",
+    "size": "2x3"
+  },
+  "chestplate": {
+    "label": "Plastron",
+    "icon": "item-chestplate.png",
+    "cat": "armure_haute",
+    "size": "2x3"
+  },
+  "chestplate-ac": {
+    "label": "Plastron renforcé",
+    "icon": "item-chestplate-ac.png",
+    "cat": "armure_haute",
+    "size": "2x3"
+  },
+  "golden-chestplate": {
+    "label": "Plastron doré",
+    "icon": "item-golden-chestplate.png",
+    "cat": "armure_haute",
+    "size": "2x3"
+  },
+  "mythril-chest": {
+    "label": "Cotte de mythril",
+    "icon": "item-mythril-chest.png",
+    "cat": "armure_haute",
+    "size": "2x3",
+    "legendary": true
+  },
+  "legging-chain": {
+    "label": "Jambières de mailles",
+    "icon": "item-legging-chain.png",
+    "cat": "armure_basse",
+    "size": "2x3"
+  },
+  "legging-chain-rebel": {
+    "label": "Jambières de mailles rebelles",
+    "icon": "item-legging-chain-rebel.png",
+    "cat": "armure_basse",
+    "size": "2x3"
+  },
+  "legging-leather": {
+    "label": "Jambières de cuir",
+    "icon": "item-legging-leather.png",
+    "cat": "armure_basse",
+    "size": "2x3"
+  },
+  "legging-leather-ac": {
+    "label": "Jambières de cuir renforcées",
+    "icon": "item-legging-leather-ac.png",
+    "cat": "armure_basse",
+    "size": "2x3"
+  },
+  "legging-leather-stealth": {
+    "label": "Jambières de cuir souples",
+    "icon": "item-legging-leather-stealth.png",
+    "cat": "armure_basse",
+    "size": "2x3"
+  },
+  "legging-mythril": {
+    "label": "Jambières de mythril",
+    "icon": "item-legging-mythril.png",
+    "cat": "armure_basse",
+    "size": "2x3",
+    "legendary": true
+  },
+  "legging-plate": {
+    "label": "Jambières de plaques",
+    "icon": "item-legging-plate.png",
+    "cat": "armure_basse",
+    "size": "2x3"
+  },
+  "legging-plate-ac": {
+    "label": "Jambières de plaques renforcées",
+    "icon": "item-legging-plate-ac.png",
+    "cat": "armure_basse",
+    "size": "2x3"
+  },
+  "golden-legging-plate": {
+    "label": "Jambières de plaques dorées",
+    "icon": "item-golden-legging-plate.png",
+    "cat": "armure_basse",
+    "size": "2x3"
+  },
+  "chain-helmet": {
+    "label": "Casque de mailles",
+    "icon": "item-chain-helmet.png",
+    "cat": "casque",
+    "size": "1x1"
+  },
+  "helmet-leather-stealth": {
+    "label": "Capuche de cuir",
+    "icon": "item-helmet-leather-stealth.png",
+    "cat": "casque",
+    "size": "1x1"
+  },
+  "mythril-helmet": {
+    "label": "Casque de mythril",
+    "icon": "item-mythril-helmet.png",
+    "cat": "casque",
+    "size": "1x1",
+    "legendary": true
+  },
+  "plate-helmet": {
+    "label": "Casque de plaques",
+    "icon": "item-plate-helmet.png",
+    "cat": "casque",
+    "size": "1x1"
+  },
+  "plate-helmet-ac": {
+    "label": "Casque de plaques renforcé",
+    "icon": "item-plate-helmet-ac.png",
+    "cat": "casque",
+    "size": "1x1"
+  },
+  "golden-plate-helmet": {
+    "label": "Casque de plaques doré",
+    "icon": "item-golden-plate-helmet.png",
+    "cat": "casque",
+    "size": "1x1"
+  },
+  "poxelis-helmet": {
+    "label": "Casque de Poxelis",
+    "icon": "item-poxelis-helmet.png",
+    "cat": "casque",
+    "size": "2x2",
+    "legendary": true
+  },
+  "metal-shield": {
+    "label": "Bouclier en métal",
+    "icon": "item-metal-shield.png",
+    "cat": "bouclier",
+    "size": "2x2"
+  },
+  "tower-shield-metal": {
+    "label": "Pavois en métal",
+    "icon": "item-tower-shield-metal.png",
+    "cat": "bouclier",
+    "size": "2x3"
+  },
+  "shield-of-elders": {
+    "label": "Bouclier des Anciens",
+    "icon": "item-shield-of-elders.png",
+    "cat": "bouclier",
+    "size": "2x3",
+    "legendary": true
+  },
+  "ring-gold": {
+    "label": "Anneau en or",
+    "icon": "item-ring-gold.png",
+    "cat": "bijoux",
+    "size": "1x1"
+  },
+  "ring-silver": {
+    "label": "Anneau en argent",
+    "icon": "item-ring-silver.png",
+    "cat": "bijoux",
+    "size": "1x1"
+  },
+  "golden-bracelet": {
+    "label": "Bracelet doré",
+    "icon": "item-golden-bracelet.png",
+    "cat": "bijoux",
+    "size": "1x1"
+  },
+  "golden-neckplace": {
+    "label": "Collier doré",
+    "icon": "item-golden-neckplace.png",
+    "cat": "bijoux",
+    "size": "1x1"
+  },
+  "applepie": {
+    "label": "Tarte aux pommes",
+    "icon": "item-applepie.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "applepie-raw": {
+    "label": "Tarte aux pommes crue",
+    "icon": "item-applepie-raw.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "applepie-wine": {
+    "label": "Tarte aux pommes au vin",
+    "icon": "item-applepie-wine.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "applepie-raw-wine": {
+    "label": "Tarte aux pommes crue au vin",
+    "icon": "item-applepie-raw-wine.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "bottle-empty": {
+    "label": "Bouteille vide",
+    "icon": "item-bottle-empty.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "bottle-wine": {
+    "label": "Bouteille de vin",
+    "icon": "item-bottle-wine.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "bread": {
+    "label": "Miche de pain",
+    "icon": "item-bread.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "bread-half": {
+    "label": "Demi-miche de pain",
+    "icon": "item-bread-half.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "uncooked-bread": {
+    "label": "Pâte à pain",
+    "icon": "item-uncooked-bread.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "cheese": {
+    "label": "Fromage",
+    "icon": "item-cheese.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "flour": {
+    "label": "Farine",
+    "icon": "item-flour.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "potion-mana": {
+    "label": "Potion de mana",
+    "icon": "item-potion-mana.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "gold-one": {
+    "label": "1 pièce d'or",
+    "icon": "item-gold-one.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 1
+  },
+  "gold-two": {
+    "label": "2 pièces d'or",
+    "icon": "item-gold-two.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 2
+  },
+  "gold-three": {
+    "label": "3 pièces d'or",
+    "icon": "item-gold-three.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 3
+  },
+  "gold-four": {
+    "label": "4 pièces d'or",
+    "icon": "item-gold-four.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 4
+  },
+  "gold-nine": {
+    "label": "9 pièces d'or",
+    "icon": "item-gold-nine.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 9
+  },
+  "gold-twenty": {
+    "label": "20 pièces d'or",
+    "icon": "item-gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 20
+  },
+  "gold-fifty": {
+    "label": "50 pièces d'or",
+    "icon": "item-gold-fifty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 50
+  },
+  "golden-bar": {
+    "label": "Lingot d'or",
+    "icon": "item-golden-bar.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "golden-cup": {
+    "label": "Coupe dorée",
+    "icon": "item-golden-cup.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "keyring": {
+    "label": "Trousseau de clés",
+    "icon": "item-keyring.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "keyringfull": {
+    "label": "Trousseau de clés complet",
+    "icon": "item-keyringfull.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "compass": {
+    "label": "Boussole",
+    "icon": "item-compass.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "powerstone": {
+    "label": "Pierre de pouvoir",
+    "icon": "item-powerstone.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "dragonbone": {
+    "label": "Os de dragon",
+    "icon": "item-dragonbone.png",
+    "cat": "objet",
+    "size": "1x2",
+    "legendary": true
+  },
+  "rune-aam": {
+    "label": "Rune : Aam",
+    "icon": "item-rune-aam.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "rune-cetrius": {
+    "label": "Rune : Cetrius",
+    "icon": "item-rune-cetrius.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "rune-comunicatum": {
+    "label": "Rune : Comunicatum",
+    "icon": "item-rune-comunicatum.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "rune-cosum": {
+    "label": "Rune : Cosum",
+    "icon": "item-rune-cosum.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "rune-folgora": {
+    "label": "Rune : Folgora",
+    "icon": "item-rune-folgora.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "rune-fridd": {
+    "label": "Rune : Fridd",
+    "icon": "item-rune-fridd.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "rune-kaom": {
+    "label": "Rune : Kaom",
+    "icon": "item-rune-kaom.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "rune-mega": {
+    "label": "Rune : Mega",
+    "icon": "item-rune-mega.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "rune-morte": {
+    "label": "Rune : Morte",
+    "icon": "item-rune-morte.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "rune-movis": {
+    "label": "Rune : Movis",
+    "icon": "item-rune-movis.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "rune-nhi": {
+    "label": "Rune : Nhi",
+    "icon": "item-rune-nhi.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "rune-rhaa": {
+    "label": "Rune : Rhaa",
+    "icon": "item-rune-rhaa.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "rune-spacium": {
+    "label": "Rune : Spacium",
+    "icon": "item-rune-spacium.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "rune-stregum": {
+    "label": "Rune : Stregum",
+    "icon": "item-rune-stregum.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "rune-taar": {
+    "label": "Rune : Taar",
+    "icon": "item-rune-taar.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "rune-tempus": {
+    "label": "Rune : Tempus",
+    "icon": "item-rune-tempus.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "rune-tera": {
+    "label": "Rune : Tera",
+    "icon": "item-rune-tera.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "rune-vista": {
+    "label": "Rune : Vista",
+    "icon": "item-rune-vista.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "rune-vitae": {
+    "label": "Rune : Vitae",
+    "icon": "item-rune-vitae.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "rune-yok": {
+    "label": "Rune : Yok",
+    "icon": "item-rune-yok.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "apple": {
+    "label": "Pomme",
+    "icon": "item-apple.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "cooked-bread": {
+    "label": "Pain",
+    "icon": "item-cooked-bread.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "cooked-chicken": {
+    "label": "Poulet rôti",
+    "icon": "item-cooked-chicken.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "cooked-fish": {
+    "label": "Poisson cuit",
+    "icon": "item-cooked-fish.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "mushroom": {
+    "label": "Champignon",
+    "icon": "item-mushroom.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "water": {
+    "label": "Eau",
+    "icon": "item-water.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "health-potion": {
+    "label": "Potion de vie",
+    "icon": "item-health-potion.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "key-1": {
+    "label": "Clé",
+    "icon": "item-key-1.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "key-2": {
+    "label": "Clé ouvragée",
+    "icon": "item-key-2.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "lockpick": {
+    "label": "Crochet",
+    "icon": "item-lockpick.png",
+    "cat": "objet",
+    "size": "2x1"
+  },
+  "moulinette": {
+    "label": "Moulinette",
+    "icon": "item-moulinette.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "action": {
+    "label": "Action",
+    "icon": "item-action.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "extra-backpack": {
+    "label": "Sac supplémentaire",
+    "icon": "item-extra-backpack.png",
+    "cat": "objet",
+    "size": "2x2",
+    "effect": "extra_bag"
+  }
 }

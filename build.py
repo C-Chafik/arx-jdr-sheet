@@ -52,6 +52,7 @@ PREVIEW_WRAPPER = """<!doctype html>
 <title>ARX sheet preview</title>
 <link rel="stylesheet" href="preview.css">
 <style>
+  body { background: #111; }
   #arx-devbar { position: fixed; bottom: 0; left: 0; right: 0; background: #1e1a14;
     color: #e8d9b0; font: 13px sans-serif; padding: 6px 10px; display: flex;
     gap: 8px; align-items: center; z-index: 99; }

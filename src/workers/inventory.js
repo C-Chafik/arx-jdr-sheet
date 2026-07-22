@@ -94,6 +94,7 @@ ALL_SLOTS.forEach(function (slot) {
           hand: item,
           hand_from: anchor,
           hand_cat: ITEMS[item].cat,
+          hand_effect: ITEMS[item].effect || "",
           fit: fitMask(v, item, ownCells(anchor, item))
         });
         return;
@@ -101,11 +102,11 @@ ALL_SLOTS.forEach(function (slot) {
 
       /* Cancel: click the origin anchor or any of its covered cells. */
       if (slot === from || here === "#" + from) {
-        setAttrs({ hand: "", hand_from: "", hand_cat: "", fit: "" });
+        setAttrs({ hand: "", hand_from: "", hand_cat: "", hand_effect: "", fit: "" });
         return;
       }
 
-      const clear = { hand: "", hand_from: "", hand_cat: "", fit: "" };
+      const clear = { hand: "", hand_from: "", hand_cat: "", hand_effect: "", fit: "" };
       const own = ownCells(from, hand);
 
       if (slot.indexOf("bag_") === 0) {
@@ -143,11 +144,58 @@ on("clicked:slot_pouch", function () {
     if (!item || item.effect !== "extra_bag") { return; }
     const count = parseInt(v.bag_count, 10) || 1;
     if (count >= BAGS) { return; }
-    const update = { hand: "", hand_from: "", hand_cat: "", fit: "",
+    const update = { hand: "", hand_from: "", hand_cat: "", hand_effect: "", fit: "",
                      bag_count: count + 1 };
     ownCells(v.hand_from || "", hand).forEach(function (c) { update[c] = ""; });
     if ((v.hand_from || "").indexOf("equip_") === 0) { update[v.hand_from] = ""; }
     setAttrs(update);
+  });
+});
+
+/* The purse: with a currency item in hand, consuming it adds its value to
+   attr_gold. With an empty hand, withdraws one "gold-one" coin into the first
+   free bag cell (so it can be carried, moved, or handed to another player). */
+on("clicked:slot_purse", function () {
+  getAttrs(BAG_SLOTS.concat(["hand", "hand_from", "gold", "bag_count"]), function (v) {
+    const hand = v.hand || "";
+
+    if (hand) {
+      const item = ITEMS[hand];
+      if (!item || item.effect !== "currency") { return; }
+      const gold = (parseInt(v.gold, 10) || 0) + (parseInt(item.value, 10) || 0);
+      const update = { hand: "", hand_from: "", hand_cat: "", hand_effect: "", fit: "", gold: gold };
+      ownCells(v.hand_from || "", hand).forEach(function (c) { update[c] = ""; });
+      setAttrs(update);
+      return;
+    }
+
+    const gold = parseInt(v.gold, 10) || 0;
+    if (gold < 1) { return; }
+    const limit = PER_LEVEL * bagCount(v);
+    for (let a = 1; a <= limit; a++) {
+      const slot = "bag_" + a;
+      if (!v[slot]) {
+        const update = { gold: gold - 1 };
+        update[slot] = "gold-one";
+        setAttrs(update);
+        return;
+      }
+    }
+  });
+});
+
+/* Trash: while holding an item, clicking the red cross deletes it outright
+   (frees its footprint, nothing placed anywhere). */
+on("clicked:trash", function () {
+  getAttrs(["hand", "hand_from"], function (v) {
+    const hand = v.hand || "";
+    const from = v.hand_from || "";
+    if (!hand) { return; }
+    const clear = { hand: "", hand_from: "", hand_cat: "", hand_effect: "", fit: "" };
+    const own = ownCells(from, hand);
+    own.forEach(function (c) { clear[c] = ""; });
+    if (own.length === 0) { clear[from] = ""; }
+    setAttrs(clear);
   });
 });
 

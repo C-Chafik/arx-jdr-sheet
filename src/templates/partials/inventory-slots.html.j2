@@ -17,3 +17,9 @@
   {# Level navigation arrows, living on the pouch. #}
   <button type="action" class="sheet-bag-nav sheet-bag-nav--up" name="act_bag_up"></button>
   <button type="action" class="sheet-bag-nav sheet-bag-nav--down" name="act_bag_down"></button>
+  {# The money purse, between the two nav arrows: drop a currency item to add its value to attr_gold. #}
+  <button type="action" class="sheet-purse" name="act_slot_purse"></button>
+  {# Live gold count, shown just above the purse on hover only. #}
+  <div class="sheet-gold-readout"><input type="number" class="sheet-gold-display" name="attr_gold" value="0" /></div>
+  {# Trash: visible only while an item is in hand — deletes it outright. #}
+  <button type="action" class="sheet-trash" name="act_trash"></button>

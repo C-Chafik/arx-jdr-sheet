@@ -25,6 +25,10 @@
 .sheet-slot input[value="{{ item_id }}"] + .sheet-item-icon {
   display: block;
   background-image: url('{{ "{{ASSET_BASE}}" }}/{{ item.icon }}');
+{% if item.legendary | default(false) %}
+  /* Legendary: permanent golden halo around the icon's own silhouette. */
+  filter: drop-shadow(0 0 3px #ffd700) drop-shadow(0 0 6px #ffae00);
+{% endif %}
 }
 {% endfor %}
 
@@ -58,6 +62,13 @@
 /* Item name on hover — reveals the matching billboard generated in sheet.html.j2. */
 {% for item_id in items %}
 .sheet-arx:has(.sheet-slot:hover input[value="{{ item_id }}"]) .sheet-statbar--item-{{ item_id }} { display: block; }
+{% endfor %}
+
+/* Legendary items: their hover name reads in red instead of the default white. */
+{% for item_id, item in items.items() %}
+{% if item.legendary | default(false) %}
+.sheet-statbar--item-{{ item_id }} { color: #ff2b2b; }
+{% endif %}
 {% endfor %}
 
 /* ---- Slot shell: invisible zone with an action button covering it. ---- */
@@ -122,8 +133,8 @@ input[name="attr_bag_level"][value="{{ lvl }}"] ~ .sheet-inventory .sheet-bag-le
   transition: filter 0.2s ease-out;
 }
 .sheet-bag-nav:hover { filter: brightness(1.35) drop-shadow(0 0 5px rgba(255, 220, 130, 0.8)); }
-.sheet-bag-nav--up   { top: 14%; background-image: url('{{ "{{ASSET_BASE}}" }}/Inventory-Up-Button.png'); }
-.sheet-bag-nav--down { top: 62%; background-image: url('{{ "{{ASSET_BASE}}" }}/Inventory-Down-Button.png'); }
+.sheet-bag-nav--up   { top: 24%; background-image: url('{{ "{{ASSET_BASE}}" }}/Inventory-Up-Button.png'); }
+.sheet-bag-nav--down { top: 72%; background-image: url('{{ "{{ASSET_BASE}}" }}/Inventory-Down-Button.png'); }
 
 /* Up is visible whenever we're below the surface level. */
 {% for lvl in range(2, bags + 1) %}
@@ -145,6 +156,92 @@ input[name="attr_hand"][value="{{ item_id }}"] ~ input[name="attr_bag_count"]:no
 }
 {% endif %}
 {% endfor %}
+
+/* ---- The money purse, between the two nav arrows. ---- */
+.sheet-purse {
+  position: absolute;
+  left: 94.9%;
+  top: 47%;
+  width: 4.2%;
+  height: 23%;
+  padding: 0;
+  border: none;
+  z-index: 4;
+  background-color: transparent;
+  background-image: url('{{ "{{ASSET_BASE}}" }}/item-gold-pouch.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: filter 0.2s ease-out, background 0.35s ease-out, box-shadow 0.35s ease-out;
+}
+.sheet-purse:hover { filter: brightness(1.35) drop-shadow(0 0 5px rgba(255, 220, 130, 0.8)); }
+
+/* The purse glows when holding any currency item. */
+input[name="attr_hand_effect"][value="currency"] ~ .sheet-inventory .sheet-purse {
+  background-color: transparent;
+  box-shadow: 0 0 14px rgba(255, 220, 130, 0.8);
+}
+
+/* Gold readout: the live attr_gold input, shown only while hovering the purse,
+   positioned just above it (plain sibling selector — no :has() needed since
+   the purse button precedes this div in the DOM). */
+.sheet-gold-readout {
+  display: none;
+  position: absolute;
+  left: 93.5%;
+  top: 38%;
+  width: 6.5%;
+  text-align: center;
+  pointer-events: none;
+}
+.sheet-purse:hover ~ .sheet-gold-readout { display: block; }
+
+/* Specificity must beat the page-wide ".sheet-arx input[type=number]" rule
+   (base.css) — that rule otherwise wins on specificity regardless of file
+   order and stretches this input to 100% width in dark ink. */
+.sheet-gold-readout input.sheet-gold-display[type="number"] {
+  width: 100%;
+  height: 1.2em;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #fff;
+  font-family: inherit;
+  font-size: 16px;
+  text-align: center;
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.9), 0 1px 2px rgba(0, 0, 0, 0.9);
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+.sheet-gold-readout input.sheet-gold-display[type="number"]::-webkit-outer-spin-button,
+.sheet-gold-readout input.sheet-gold-display[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* ---- Trash: deletes the held item. Hidden unless something is in hand. ---- */
+.sheet-trash {
+  display: none;
+  position: absolute;
+  left: 95.2%;
+  top: 8%;
+  width: 3.6%;
+  height: 13%;
+  padding: 0;
+  border: none;
+  z-index: 4;
+  background: transparent;
+  color: #e53030;
+  font-size: 1.6em;
+  line-height: 1;
+  cursor: pointer;
+  transition: filter 0.2s ease-out;
+}
+.sheet-trash::before { content: "✕"; }
+.sheet-trash:hover { filter: brightness(1.4) drop-shadow(0 0 4px rgba(229, 48, 48, 0.9)); }
+input[name="attr_hand"]:not([value=""]) ~ .sheet-inventory .sheet-trash { display: block; }
 
 /* ---- Equipment slots on ARX-BASE.png (1598 × 984), % of .sheet-book. ---- */
 .sheet-slot--equip_off_hand  { left: 17.2%; top: 11.0%; width: 6.9%; height: 9.9%; }
