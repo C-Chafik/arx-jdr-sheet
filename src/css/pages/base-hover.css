@@ -6,7 +6,7 @@
   position: absolute;
   width: 6.1%;
   height: 10.2%;
-  cursor: help;
+  cursor: url('{{ASSET_BASE}}/points-hover.png') 4 4, help;
   /* Invisible zone (the icon is engraved in the background image). */
   padding: 0;
   border: none;
@@ -18,7 +18,7 @@
 
 /* Only roll buttons are clickable; hover-only zones (health, mana) are divs. */
 button.sheet-hover-zone {
-  cursor: pointer;
+  cursor: url('{{ASSET_BASE}}/points-hover.png') 4 4, pointer;
 }
 
 button.sheet-hover-zone:active {

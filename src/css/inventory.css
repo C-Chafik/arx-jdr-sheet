@@ -16,7 +16,7 @@
   padding: 0;
   border: none;
   z-index: 10;
-  cursor: pointer;
+  cursor: url('{{ASSET_BASE}}/base-hover-2.png') 6 4, pointer;
   background-image: url('{{ASSET_BASE}}/Inventory-Button.png');
   background-size: 100% 100%;
   transition: filter 0.2s ease-out;

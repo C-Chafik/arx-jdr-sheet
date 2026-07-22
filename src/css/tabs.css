@@ -23,7 +23,7 @@
   height: 42px;
   z-index: 5;
   background-size: 100% 100%;
-  cursor: pointer;
+  cursor: url('{{ASSET_BASE}}/base-hover-2.png') 6 4, pointer;
   transition: filter 0.2s ease-out;
 }
 

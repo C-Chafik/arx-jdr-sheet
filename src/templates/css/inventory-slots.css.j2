@@ -112,7 +112,7 @@ input[name="attr_bag_level"][value="{{ lvl }}"] ~ .sheet-inventory .sheet-bag-le
   padding: 0;
   border: none;
   background: transparent;
-  cursor: pointer;
+  cursor: url('{{ "{{ASSET_BASE}}" }}/base-hover-2.png') 6 4, pointer;
   border-radius: 8px;
   transition: background 0.35s ease-out, box-shadow 0.35s ease-out;
 }
@@ -129,7 +129,7 @@ input[name="attr_bag_level"][value="{{ lvl }}"] ~ .sheet-inventory .sheet-bag-le
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  cursor: pointer;
+  cursor: url('{{ "{{ASSET_BASE}}" }}/base-hover-2.png') 6 4, pointer;
   transition: filter 0.2s ease-out;
 }
 .sheet-bag-nav:hover { filter: brightness(1.35) drop-shadow(0 0 5px rgba(255, 220, 130, 0.8)); }
@@ -172,7 +172,7 @@ input[name="attr_hand"][value="{{ item_id }}"] ~ input[name="attr_bag_count"]:no
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  cursor: pointer;
+  cursor: url('{{ "{{ASSET_BASE}}" }}/base-hover-2.png') 6 4, pointer;
   border-radius: 8px;
   transition: filter 0.2s ease-out, background 0.35s ease-out, box-shadow 0.35s ease-out;
 }
@@ -254,6 +254,18 @@ input[name="attr_hand"]:not([value=""]) ~ .sheet-inventory .sheet-trash { displa
 
 /* ---- Hand-state visuals (all selectors start at the .sheet-arx mirrors). ---- */
 
+/* While holding an item: the "selected" cursor replaces every interactive
+   surface's own cursor (slot buttons, hover zones, pouch/purse/trash/nav). */
+input[name="attr_hand"]:not([value=""]) ~ .sheet-book .sheet-slot button,
+input[name="attr_hand"]:not([value=""]) ~ .sheet-inventory .sheet-slot button,
+input[name="attr_hand"]:not([value=""]) ~ .sheet-book .sheet-hover-zone,
+input[name="attr_hand"]:not([value=""]) ~ .sheet-inventory .sheet-pouch,
+input[name="attr_hand"]:not([value=""]) ~ .sheet-inventory .sheet-purse,
+input[name="attr_hand"]:not([value=""]) ~ .sheet-inventory .sheet-trash,
+input[name="attr_hand"]:not([value=""]) ~ .sheet-inventory .sheet-bag-nav {
+  cursor: url('{{ "{{ASSET_BASE}}" }}/selected-hover.png') 8 4, grabbing;
+}
+
 /* Origin slot of the item in hand: dim its icon. */
 {% set all_slots = [] %}
 {% for i in range(1, total + 1) %}{% set _ = all_slots.append("bag_" ~ i) %}{% endfor %}
@@ -286,4 +298,7 @@ input[name="attr_hand_cat"][value="{{ cat }}"] ~ .sheet-book .sheet-slot--{{ slo
 {% endfor %}
 
 /* Cursor: grab on a filled slot when nothing is in hand. */
-.sheet-slot input:not([value=""]) ~ button { cursor: grab; }
+/* Hovering a clickable item still in its original slot (not picked up yet). */
+.sheet-slot input:not([value=""]) ~ button {
+  cursor: url('{{ "{{ASSET_BASE}}" }}/base-hover-2.png') 6 4, grab;
+}

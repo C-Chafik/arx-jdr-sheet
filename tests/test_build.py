@@ -255,6 +255,15 @@ def test_trash_deletes_held_item():
     assert 'input[name="attr_hand"]:not([value=""]) ~ .sheet-inventory .sheet-trash' in css
 
 
+def test_custom_cursors_are_wired():
+    css = build.build_css("x")
+    assert "mouse-hover.png" in css
+    assert "points-hover.png" in css
+    assert "selected-hover.png" in css
+    assert "base-hover-2.png" in css
+    assert 'input[name="attr_hand"]:not([value=""]) ~ .sheet-inventory .sheet-purse' in css
+
+
 def test_dev_shim_stays_out_of_the_roll20_deliverable():
     build.build()
     preview = (build.BUILD / "preview.html").read_text(encoding="utf-8")

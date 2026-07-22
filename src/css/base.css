@@ -10,6 +10,9 @@
   background-image: url('{{ASSET_BASE}}/ARX-BASE-BACKGROUND.png');
   background-size: cover;
   background-position: center;
+  /* Default cursor everywhere on the sheet; overridden on skill hovers
+     (points-hover) and while holding an item (selected-hover). */
+  cursor: url('{{ASSET_BASE}}/mouse-hover.png') 6 4, auto;
 }
 
 /* The book itself: fixed size, all page positions are % of this box.
