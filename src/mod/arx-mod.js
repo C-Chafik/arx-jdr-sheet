@@ -3,6 +3,8 @@
 const ARX_ITEMS = {{ITEMS_JSON}};
 const ARX_COLS = {{GRID_COLS}};
 const ARX_ROWS = {{GRID_ROWS}};
+const ARX_BAGS = {{GRID_BAGS}};
+const ARX_PER_LEVEL = ARX_COLS * ARX_ROWS;
 
 function arxSizeOf(itemId) {
   const s = (ARX_ITEMS[itemId] && ARX_ITEMS[itemId].size) || "1x1";
@@ -10,15 +12,18 @@ function arxSizeOf(itemId) {
   return { w: parseInt(parts[0], 10) || 1, h: parseInt(parts[1], 10) || 1 };
 }
 
-/* Cells covered by a footprint anchored at bag index (1-based); null if out of grid. */
+/* Cells covered by a footprint anchored at bag index (1-based); null if the
+   rectangle leaves the anchor's level grid. Footprints never span levels. */
 function arxCellsFor(anchorIndex, w, h) {
-  const col = (anchorIndex - 1) % ARX_COLS;
-  const row = Math.floor((anchorIndex - 1) / ARX_COLS);
+  const base = Math.floor((anchorIndex - 1) / ARX_PER_LEVEL) * ARX_PER_LEVEL;
+  const idx = (anchorIndex - 1) % ARX_PER_LEVEL;
+  const col = idx % ARX_COLS;
+  const row = Math.floor(idx / ARX_COLS);
   if (col + w > ARX_COLS || row + h > ARX_ROWS) { return null; }
   const cells = [];
   for (let r = 0; r < h; r++) {
     for (let c = 0; c < w; c++) {
-      cells.push("bag_" + (1 + (row + r) * ARX_COLS + col + c));
+      cells.push("bag_" + (base + 1 + (row + r) * ARX_COLS + col + c));
     }
   }
   return cells;
@@ -35,8 +40,13 @@ on("chat:message", function (msg) {
   const charId = token && token.get("represents");
   if (!charId) { whisper("Ce token ne représente aucun personnage."); return; }
 
+  const countAttr = findObjs({ type: "attribute", characterid: charId, name: "bag_count" })[0];
+  let count = countAttr ? parseInt(countAttr.get("current"), 10) : 1;
+  if (!(count >= 1 && count <= ARX_BAGS)) { count = 1; }
+  const limit = ARX_PER_LEVEL * count;
+
   const attrs = {};
-  for (let i = 1; i <= ARX_COLS * ARX_ROWS; i++) {
+  for (let i = 1; i <= limit; i++) {
     const name = "bag_" + i;
     let attr = findObjs({ type: "attribute", characterid: charId, name: name })[0];
     if (!attr) { attr = createObj("attribute", { characterid: charId, name: name, current: "" }); }
@@ -44,7 +54,7 @@ on("chat:message", function (msg) {
   }
 
   const size = arxSizeOf(itemId);
-  for (let a = 1; a <= ARX_COLS * ARX_ROWS; a++) {
+  for (let a = 1; a <= limit; a++) {
     const cells = arxCellsFor(a, size.w, size.h);
     if (!cells) { continue; }
     const free = cells.every(function (c) { return !attrs[c].get("current"); });

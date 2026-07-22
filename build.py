@@ -30,6 +30,9 @@ ITEMS_FILE = ROOT / "items.json"
 # (Column 16 on Inventory.png is the pouch: not a storage cell.)
 GRID_COLS = 15
 GRID_ROWS = 3
+# Bag levels ("étages"): 1 by default, unlocked up to this max by consuming
+# an "effect": "extra_bag" item into the pouch. All levels are pre-wired.
+GRID_BAGS = 4
 
 
 def load_items() -> dict:
@@ -37,7 +40,9 @@ def load_items() -> dict:
 
 
 def inject_grid(code: str) -> str:
-    return code.replace("{{GRID_COLS}}", str(GRID_COLS)).replace("{{GRID_ROWS}}", str(GRID_ROWS))
+    return (code.replace("{{GRID_COLS}}", str(GRID_COLS))
+                .replace("{{GRID_ROWS}}", str(GRID_ROWS))
+                .replace("{{GRID_BAGS}}", str(GRID_BAGS)))
 
 
 PREVIEW_WRAPPER = """<!doctype html>
@@ -91,12 +96,15 @@ __CONTENT__
   });
 
   /* Dev bar: first-fit give + reset (mirrors the mod script's placement). */
-  const COLS = {{GRID_COLS}}, ROWS = {{GRID_ROWS}};
+  const COLS = {{GRID_COLS}}, ROWS = {{GRID_ROWS}}, BAGS = {{GRID_BAGS}};
+  const PER_LEVEL = COLS * ROWS;
   function cellsFor(a, w, h) {
-    const col = (a - 1) % COLS, row = Math.floor((a - 1) / COLS);
+    const base = Math.floor((a - 1) / PER_LEVEL) * PER_LEVEL;
+    const idx = (a - 1) % PER_LEVEL;
+    const col = idx % COLS, row = Math.floor(idx / COLS);
     if (col + w > COLS || row + h > ROWS) { return null; }
     const cells = [];
-    for (let r = 0; r < h; r++) { for (let c = 0; c < w; c++) { cells.push("bag_" + (1 + (row + r) * COLS + col + c)); } }
+    for (let r = 0; r < h; r++) { for (let c = 0; c < w; c++) { cells.push("bag_" + (base + 1 + (row + r) * COLS + col + c)); } }
     return cells;
   }
   const sel = document.getElementById("arx-item");
@@ -108,7 +116,8 @@ __CONTENT__
   });
   function give(id) {
     const s = (ITEMS[id].size || "1x1").split("x"), w = +s[0], h = +s[1];
-    for (let a = 1; a <= COLS * ROWS; a++) {
+    const count = Math.min(BAGS, parseInt(getAttr("bag_count"), 10) || 1);
+    for (let a = 1; a <= PER_LEVEL * count; a++) {
       const cells = cellsFor(a, w, h);
       if (!cells) { continue; }
       if (cells.some(function (c) { return getAttr(c) !== ""; })) { continue; }
@@ -121,10 +130,12 @@ __CONTENT__
   }
   document.getElementById("arx-give").addEventListener("click", function () { give(sel.value); });
   document.getElementById("arx-reset").addEventListener("click", function () {
-    for (let i = 1; i <= COLS * ROWS; i++) { setAttr("bag_" + i, ""); }
+    for (let i = 1; i <= PER_LEVEL * BAGS; i++) { setAttr("bag_" + i, ""); }
     ["equip_head", "equip_torso", "equip_belt", "equip_main_hand", "equip_off_hand",
      "equip_jewel_1", "equip_jewel_2", "hand", "hand_from", "hand_cat", "fit"]
       .forEach(function (n) { setAttr(n, ""); });
+    setAttr("bag_count", "1");
+    setAttr("bag_level", "1");
     document.getElementById("arx-msg").textContent = "Inventaire vidé";
   });
   const q = new URLSearchParams(location.search).get("give");
@@ -143,7 +154,7 @@ def jinja_env() -> Environment:
 
 def render_html() -> str:
     html = jinja_env().get_template("sheet.html.j2").render(
-        items=load_items(), cols=GRID_COLS, rows=GRID_ROWS)
+        items=load_items(), cols=GRID_COLS, rows=GRID_ROWS, bags=GRID_BAGS)
     return html + render_worker()
 
 
@@ -152,7 +163,7 @@ def build_css(asset_base: str) -> str:
     for name in CSS_FILES:
         if name.endswith(".j2"):
             parts.append(jinja_env().get_template(f"css/{name}").render(
-                items=load_items(), cols=GRID_COLS, rows=GRID_ROWS))
+                items=load_items(), cols=GRID_COLS, rows=GRID_ROWS, bags=GRID_BAGS))
         else:
             parts.append((SRC / "css" / name).read_text(encoding="utf-8"))
     return "\n".join(parts).replace("{{ASSET_BASE}}", asset_base)

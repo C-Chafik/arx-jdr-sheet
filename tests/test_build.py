@@ -106,8 +106,9 @@ def test_worker_is_injected_with_catalog():
 
 EQUIP_SLOTS = ["equip_head", "equip_torso", "equip_belt", "equip_main_hand",
                "equip_off_hand", "equip_jewel_1", "equip_jewel_2"]
-BAG_COUNT = build.GRID_COLS * build.GRID_ROWS
-ALL_SLOTS = [f"bag_{i}" for i in range(1, BAG_COUNT + 1)] + EQUIP_SLOTS
+PER_LEVEL = build.GRID_COLS * build.GRID_ROWS
+TOTAL_BAG_SLOTS = PER_LEVEL * build.GRID_BAGS
+ALL_SLOTS = [f"bag_{i}" for i in range(1, TOTAL_BAG_SLOTS + 1)] + EQUIP_SLOTS
 
 
 def test_all_slots_have_input_icon_button_and_css():
@@ -116,8 +117,15 @@ def test_all_slots_have_input_icon_button_and_css():
     for slot in ALL_SLOTS:
         assert f'name="attr_{slot}"' in html, slot
         assert f'name="act_slot_{slot}"' in html, slot
-        assert f".sheet-slot--{slot}" in css, slot
-    for mirror in ("attr_hand", "attr_hand_from", "attr_hand_cat", "attr_fit"):
+        # bag slot positions are shared per-cell across levels (sheet-bag-cell-N),
+        # not one CSS rule per absolute slot index
+        if slot.startswith("bag_"):
+            cell = (int(slot.split("_")[1]) - 1) % PER_LEVEL
+            assert f"sheet-bag-cell-{cell}" in html, slot
+        else:
+            assert f".sheet-slot--{slot}" in css, slot
+    for mirror in ("attr_hand", "attr_hand_from", "attr_hand_cat", "attr_fit",
+                   "attr_bag_count", "attr_bag_level"):
         assert f'name="{mirror}"' in html, mirror
 
 
@@ -136,12 +144,28 @@ def test_hand_state_css_rules_exist():
     assert 'input[name="attr_hand_from"][value="bag_1"]' in css
     assert 'input[name="attr_hand_cat"][value="casque"]' in css
     # valid bag anchors glow from the worker-published fit mask, one rule per cell
-    for i in (1, BAG_COUNT // 2, BAG_COUNT):
+    for i in (1, TOTAL_BAG_SLOTS // 2, TOTAL_BAG_SLOTS):
         assert f'input[name="attr_fit"][value*="|bag_{i}|"]' in css, i
-    # no slot beyond the grid (the band's rightmost column is the pouch)
-    assert f"sheet-slot--bag_{BAG_COUNT + 1}" not in css
+    # no slot beyond the pre-wired levels (the band's rightmost column is the pouch)
+    assert f"sheet-slot--bag_{TOTAL_BAG_SLOTS + 1}" not in css
     # equipment glow requires the slot to be empty (no swap)
     assert 'input[value=""] ~ button' in css
+
+
+def test_bag_levels_pouch_and_nav_are_wired():
+    html = build.render_html()
+    css = build.build_css("x")
+    assert 'name="act_slot_pouch"' in html
+    assert 'name="act_bag_up"' in html
+    assert 'name="act_bag_down"' in html
+    # each level's cells are shown only when attr_bag_level matches
+    for lvl in range(1, build.GRID_BAGS + 1):
+        assert f'input[name="attr_bag_level"][value="{lvl}"] ~ .sheet-inventory .sheet-bag-level-{lvl}' in css, lvl
+    # the pouch glows for the item(s) whose effect is extra_bag
+    extra_bag_items = [i for i, it in build.load_items().items() if it.get("effect") == "extra_bag"]
+    assert extra_bag_items, "expected at least one extra_bag item in the catalog"
+    for item_id in extra_bag_items:
+        assert f'input[name="attr_hand"][value="{item_id}"]' in css, item_id
 
 
 def test_multicell_items_get_span_rules():
@@ -161,6 +185,10 @@ def test_worker_has_pick_place_logic():
     assert "cellsFor" in html      # footprint math
     assert "fitMask" in html       # published valid anchors
     assert 'update[from] = here' not in html  # swap removed
+    assert "clicked:slot_pouch" in html
+    assert "extra_bag" in html
+    assert "clicked:bag_up" in html
+    assert "clicked:bag_down" in html
 
 
 def test_item_name_billboards_and_hover_rules():
