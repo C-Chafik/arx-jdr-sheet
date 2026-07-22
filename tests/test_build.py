@@ -264,6 +264,13 @@ def test_custom_cursors_are_wired():
     assert 'input[name="attr_hand"]:not([value=""]) ~ .sheet-inventory .sheet-purse' in css
 
 
+def test_armor_slots_use_the_enlarged_frame():
+    css = build.build_css("x")
+    assert "Armory-slot.png" in css
+    for slot in ("equip_head", "equip_torso", "equip_belt"):
+        assert f".sheet-slot--{slot}" in css, slot
+
+
 def test_dev_shim_stays_out_of_the_roll20_deliverable():
     build.build()
     preview = (build.BUILD / "preview.html").read_text(encoding="utf-8")
