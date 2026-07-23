@@ -1,0 +1,18 @@
+{# Magic page. Background swaps to ARX-MAGICBOOK.png (see tabs.css).
+   Left side: the 10 numbered spell-page tabs are baked into the artwork
+   (left edge) but not wired yet — deferred, changes what the left page shows.
+   Right side is fixed and never changes: 20 slots reveal a learned rune's
+   magicbook icon, filled in order as the player consumes runes (pick one up,
+   click the grimoire) — see src/workers/inventory.js and magic-slots.css.j2.
+   Positions below are a first pass over the art's blank parchment areas —
+   expect a visual tuning pass. #}
+<div class="sheet-page sheet-page--magic">
+{% for i in range(1, 21) %}
+  <div class="sheet-spellbook-slot sheet-spellbook-slot--{{ i }}">
+    <input type="hidden" name="attr_spellbook_{{ i }}" value="" />
+    <span class="sheet-item-icon"></span>
+  </div>
+{% endfor %}
+  {# The grimoire: drop any consumed rune here to learn it permanently. #}
+  <button type="action" class="sheet-grimoire" name="act_slot_grimoire"></button>
+</div>

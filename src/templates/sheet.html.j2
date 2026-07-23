@@ -15,11 +15,19 @@
   <div class="sheet-book">
 {% include "partials/tabs.html.j2" %}
 {% include "partials/pages/base.html.j2" %}
+{% include "partials/pages/magic.html.j2" %}
   {# Item names on hover — same billboard as the stat descriptions.
      Revealed by generated :has() rules in css/inventory-slots.css.j2.
      Legendary items get a star marker ahead of their name. #}
 {% for item_id, item in items.items() %}
     <div class="sheet-statbar sheet-statbar--item-{{ item_id }}">{% if item.legendary | default(false) %}★ {% endif %}{{ item.label }}</div>
+{% endfor %}
+  {# Learned-rune names on hover (magic page only) — yellow with a star,
+     revealed by :has() rules in css/magic-slots.css.j2. #}
+{% for item_id, item in items.items() %}
+{% if item.effect | default("") == "rune" %}
+    <div class="sheet-statbar sheet-spell-statbar sheet-statbar--spell-{{ item_id }}">★ {{ item.label }}</div>
+{% endif %}
 {% endfor %}
   </div>
   {# The leather band slides out from under the book when the toggle is checked. #}

@@ -271,6 +271,42 @@ def test_armor_slots_use_the_enlarged_frame():
         assert f".sheet-slot--{slot}" in css, slot
 
 
+def test_magic_page_navigation_is_wired():
+    html = build.render_html()
+    css = build.build_css("x")
+    assert 'id="sheet-tab-magic"' in html
+    assert 'for="sheet-tab-magic"' in html
+    assert 'for="sheet-tab-base"' in html
+    assert 'class="sheet-page sheet-page--magic"' in html
+    assert ".sheet-tab-radio--magic:checked ~ .sheet-page--magic" in css
+    assert "ARX-MAGICBOOK.png" in css
+    assert ".sheet-tab-radio--magic:checked ~ .sheet-nav--base" in css
+    assert ".sheet-tab-radio--magic:checked ~ .sheet-nav--magic" in css
+
+
+def test_rune_items_have_rune_effect():
+    for item_id, item in build.load_items().items():
+        if item_id.startswith("rune-"):
+            assert item.get("effect") == "rune", item_id
+
+
+def test_spellbook_and_grimoire_are_wired():
+    html = build.render_html()
+    css = build.build_css("x")
+    for i in range(1, 21):
+        assert f'name="attr_spellbook_{i}"' in html, i
+        assert f".sheet-spellbook-slot--{i}" in css, i
+    assert 'name="act_slot_grimoire"' in html
+    assert "clicked:slot_grimoire" in html
+    assert "item-magicbook-" in css  # derived from item-rune-* via the replace filter
+    assert 'input[name="attr_hand_effect"][value="rune"] ~ .sheet-book .sheet-grimoire' in css
+    rune_ids = [k for k, v in build.load_items().items() if v.get("effect") == "rune"]
+    assert rune_ids
+    for rid in rune_ids:
+        assert f'class="sheet-statbar sheet-spell-statbar sheet-statbar--spell-{rid}"' in html, rid
+        assert f".sheet-spellbook-slot:hover input[value=\"{rid}\"]" in css, rid
+
+
 def test_dev_shim_stays_out_of_the_roll20_deliverable():
     build.build()
     preview = (build.BUILD / "preview.html").read_text(encoding="utf-8")
@@ -279,6 +315,8 @@ def test_dev_shim_stays_out_of_the_roll20_deliverable():
     assert "arx-devbar" in preview
     assert "ARX dev shim" not in sheet
     assert "arx-devbar" not in sheet
+    assert 'id="arx-give-runes"' in preview
+    assert 'id="arx-give-runes"' not in sheet
 
 
 def test_mod_script_is_generated():

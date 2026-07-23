@@ -15,7 +15,7 @@ BUILD = ROOT / "build"
 # Entries ending in .j2 are rendered via Jinja (from src/templates/css/).
 CSS_FILES = ["base.css", "tabs.css", "inventory.css",
              "pages/base.css", "pages/base-hover.css",
-             "inventory-slots.css.j2"]
+             "inventory-slots.css.j2", "magic-slots.css.j2"]
 
 WORKER_FILES = ["inventory.js"]
 
@@ -65,6 +65,7 @@ __CONTENT__
   <strong>DEV</strong>
   <select id="arx-item"></select>
   <button id="arx-give">Donner</button>
+  <button id="arx-give-runes">Toutes les runes</button>
   <button id="arx-reset">Vider</button>
   <span id="arx-msg"></span>
 </div>
@@ -130,6 +131,10 @@ __CONTENT__
     document.getElementById("arx-msg").textContent = "Sac plein !";
   }
   document.getElementById("arx-give").addEventListener("click", function () { give(sel.value); });
+  document.getElementById("arx-give-runes").addEventListener("click", function () {
+    Object.keys(ITEMS).forEach(function (id) { if (ITEMS[id].effect === "rune") { give(id); } });
+    document.getElementById("arx-msg").textContent = "Toutes les runes données";
+  });
   document.getElementById("arx-reset").addEventListener("click", function () {
     for (let i = 1; i <= PER_LEVEL * BAGS; i++) { setAttr("bag_" + i, ""); }
     ["equip_head", "equip_torso", "equip_belt", "equip_main_hand", "equip_off_hand",
