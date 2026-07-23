@@ -45,9 +45,9 @@
 {% endif %}
 {% endfor %}
 
-/* Rune name on hover — yellow with a star, distinct from the regular white
-   item billboard (and shown only while hovering the SPELLBOOK slot, not the
-   rune in the bag). */
+/* Rune/spell name on hover — yellow with a star, distinct from the regular
+   white item billboard (and shown only while hovering the SPELLBOOK slot or
+   the cast 2x2 slot, not the rune in the bag). */
 .sheet-spell-statbar {
   color: #ffd700;
   text-shadow: 0 0 3px rgba(0, 0, 0, 0.9), 0 1px 2px rgba(0, 0, 0, 0.9);
@@ -58,6 +58,11 @@
   display: block;
 }
 {% endif %}
+{% endfor %}
+{% for spell_id, spell in spells.items() %}
+.sheet-arx:has(.sheet-spell-slot--{{ spell_id }}:hover) .sheet-statbar--cast-{{ spell_id }} {
+  display: block;
+}
 {% endfor %}
 
 /* The grimoire: a modest drop-target on the LEFT page (the right page is now
@@ -132,22 +137,36 @@ input[name="attr_hand_effect"][value="rune"] ~ .sheet-book .sheet-grimoire {
   position: absolute;
   width: 17%;
   height: 25%;
+  padding: 0;
+  border: none;
+  background: transparent;
   color: #2b1d0e;
   font-size: 12px;
   text-align: center;
+  cursor: url('{{ "{{ASSET_BASE}}" }}/base-hover-2.png') 6 4, pointer;
 }
-.sheet-spell-slot--slot-1 { left: 8%;  top: 22%; }
-.sheet-spell-slot--slot-2 { left: 30%; top: 22%; }
-.sheet-spell-slot--slot-3 { left: 8%;  top: 53%; }
-.sheet-spell-slot--slot-4 { left: 30%; top: 53%; }
+.sheet-spell-slot:hover .sheet-spell-icon {
+  filter: brightness(1.35) drop-shadow(0 0 6px rgba(255, 220, 130, 0.9));
+}
+.sheet-spell-slot:active .sheet-spell-icon {
+  /* Instant flash on press, brighter than the hover glow. */
+  filter: brightness(1.7) drop-shadow(0 0 12px rgba(255, 220, 130, 1));
+  transition: none;
+}
+.sheet-spell-slot--slot-1 { left: 8%;  top: 14%; }
+.sheet-spell-slot--slot-2 { left: 30%; top: 14%; }
+.sheet-spell-slot--slot-3 { left: 8%;  top: 45%; }
+.sheet-spell-slot--slot-4 { left: 30%; top: 45%; }
 
 .sheet-spell-icon {
   display: block;
-  width: 100%;
-  height: 100%;
+  width: 82%;
+  height: 82%;
+  margin: 9% auto 0;
   background-size: contain; /* the spell's own image, at its own proportions */
   background-repeat: no-repeat;
   background-position: center;
+  transition: filter 0.2s ease-out;
 }
 {% for spell_id, spell in spells.items() %}
 {% if spell.icon %}

@@ -22,7 +22,7 @@
      (spells.json "icon", scaled to fit its box, aspect preserved) once art
      exists — until then it falls back to its text label. #}
 {% for spell_id, spell in spells.items() %}
-  <div class="sheet-spell-slot sheet-spell-slot--slot-{{ spell.slot }} sheet-spell-slot--{{ spell_id }}">{% if spell.icon %}<span class="sheet-spell-icon"></span>{% else %}{{ spell.label }}{% endif %}</div>
+  <button type="action" class="sheet-spell-slot sheet-spell-slot--slot-{{ spell.slot }} sheet-spell-slot--{{ spell_id }}" name="act_cast_{{ spell_id }}">{% if spell.icon %}<span class="sheet-spell-icon"></span>{% else %}{{ spell.label }}{% endif %}</button>
 {% endfor %}
 {% for i in range(1, 21) %}
   <div class="sheet-spellbook-slot sheet-spellbook-slot--{{ i }}">

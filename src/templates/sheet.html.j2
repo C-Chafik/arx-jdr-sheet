@@ -38,6 +38,11 @@
     <div class="sheet-statbar sheet-spell-statbar sheet-statbar--spell-{{ item_id }}">★ {{ item.label }}</div>
 {% endif %}
 {% endfor %}
+  {# Known-spell names on hover (2x2 cast slots) — same yellow+star billboard
+     as learned runes, revealed by :has() rules in css/magic-slots.css.j2. #}
+{% for spell_id, spell in spells.items() %}
+    <div class="sheet-statbar sheet-spell-statbar sheet-statbar--cast-{{ spell_id }}">★ {{ spell.label }}</div>
+{% endfor %}
   </div>
   {# The leather band slides out from under the book when the toggle is checked. #}
   <div class="sheet-inventory">

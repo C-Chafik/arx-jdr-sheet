@@ -1,62 +1,30 @@
 {
-  "boule-celerite": {
-    "label": "Boule de célérité",
-    "runes": ["rune-mega", "rune-movis"],
+  "nyctalopie": {
+    "label": "Vision nocturne",
+    "runes": ["rune-mega", "rune-vista"],
     "page": 1,
-    "slot": 1
+    "slot": 1,
+    "icon": "spell-magic-sight.png"
   },
-  "boule-celeriddsaddsadaste": {
-    "label": "Boule de célérité",
-    "runes": ["rune-mega", "rune-movis"],
-    "page": 2,
-    "slot": 1
+  "projectile_magique": {
+    "label": "Projectile magique",
+    "runes": ["rune-aam", "rune-taar"],
+    "page": 1,
+    "slot": 2,
+    "icon": "spell-magic-bolt.png"
   },
-  "boule-celdasdasdxczeridte": {
-    "label": "Boule de célérité",
-    "runes": ["rune-mega", "rune-movis"],
-    "page": 3,
-    "slot": 1
+  "ignit": {
+    "label": "Etincelle",
+    "runes": ["rune-aam", "rune-yok"],
+    "page": 1,
+    "slot": 3,
+    "icon": "spell-ignit.png"
   },
-  "boule-celedczxcrite": {
-    "label": "Boule de célérité",
-    "runes": ["rune-mega", "rune-movis"],
-    "page": 4,
-    "slot": 1
-  },
-  "boule-celedricvcxvte": {
-    "label": "Boule de célérité",
-    "runes": ["rune-mega", "rune-movis"],
-    "page": 5,
-    "slot": 1
-  },
-  "boule-celerivcxvxcdte": {
-    "label": "Boule de célérité",
-    "runes": ["rune-mega", "rune-movis"],
-    "page": 6,
-    "slot": 1
-  },
-  "boule-celerdsdasdite": {
-    "label": "Boule de célérité",
-    "runes": ["rune-mega", "rune-movis"],
-    "page": 7,
-    "slot": 1
-  },
-  "boule-celedsadzxvvvrite": {
-    "label": "Boule de célérité",
-    "runes": ["rune-mega", "rune-movis"],
-    "page": 8,
-    "slot": 1
-  },
-  "boule-celvvxcweferite": {
-    "label": "Boule de célérité",
-    "runes": ["rune-mega", "rune-movis"],
-    "page": 9,
-    "slot": 1
-  },
-  "boule-celerifsdfdste": {
-    "label": "Boule de célérité",
-    "runes": ["rune-mega", "rune-movis"],
-    "page": 10,
-    "slot": 1
+  "extinction": {
+    "label": "Extinction",
+    "runes": ["rune-nhi", "rune-yok"],
+    "page": 1,
+    "slot": 4,
+    "icon": "spell-douse.png"
   }
 }

@@ -310,7 +310,7 @@ def test_spellbook_and_grimoire_are_wired():
 
 def test_spells_catalog_loads():
     spells = build.load_spells()
-    assert "boule-celerite" in spells
+    assert spells
     for spell in spells.values():
         assert 1 <= spell["page"] <= 10, spell
         assert 1 <= spell["slot"] <= 4, spell
