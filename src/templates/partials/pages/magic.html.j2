@@ -1,20 +1,22 @@
 {# Magic page. Background swaps to ARX-MAGICBOOK.png (see tabs.css).
    Left side: the 10 numbered spell-page tabs baked into the artwork (left
-   edge) are now wired to attr_spell_page (pure label/radio, no worker) — it
-   picks which 4 of the up-to-40 spells (spells.json, page × 4 slots) occupy
-   the 4 fixed slot positions. A spell only shows once every rune it needs
-   has been learned (see magic-slots.css.j2 for the page+rune AND-chain).
+   edge) are buttons + the sheet worker set attr_spell_page (radio/label with
+   id/for is unreliable on Roll20 — multiple sheet copies can be in the DOM
+   at once, ids collide) — it picks which 4 of the up-to-40 spells
+   (spells.json, page × 4 slots) occupy the 4 fixed slot positions. A spell
+   only shows once every rune it needs has been learned (see
+   magic-slots.css.j2 for the page+rune AND-chain).
    Right side is fixed and never changes: 20 slots reveal a learned rune's
    magicbook icon, filled in order as the player consumes runes (pick one up,
    click the grimoire) — see src/workers/inventory.js and magic-slots.css.j2.
    Positions below are a first pass over the art's blank parchment areas —
    expect a visual tuning pass. #}
 <div class="sheet-page sheet-page--magic">
-  {# Spell-page navigation: one radio per numbered tab (1-10), saved via
-     attr_spell_page. Labels sit over the tabs baked into the left edge. #}
+  {# Spell-page navigation: one button per numbered tab (1-10); the worker
+     sets attr_spell_page on click (see src/workers/inventory.js). #}
+  <input type="hidden" name="attr_spell_page" value="1" />
 {% for p in range(1, 11) %}
-  <input type="radio" id="sheet-spell-page-{{ p }}" class="sheet-spell-page-radio sheet-spell-page-radio--{{ p }}" name="attr_spell_page" value="{{ p }}"{% if p == 1 %} checked="checked"{% endif %} />
-  <label for="sheet-spell-page-{{ p }}" class="sheet-spell-page-tab sheet-spell-page-tab--{{ p }}"></label>
+  <button type="action" class="sheet-spell-page-tab sheet-spell-page-tab--{{ p }}" name="act_goto_spellpage_{{ p }}"></button>
 {% endfor %}
   {# The 4 fixed slot positions (2×2: 1=top-left, 2=top-right, 3=bottom-left,
      4=bottom-right); which spell (if any) shows in each depends on the active
@@ -37,9 +39,8 @@
      presets.json) — obtaining one (scroll item / action sequence) isn't
      wired yet, this only renders whatever attr_preset_slot_N holds. #}
 {% for n in range(1, 4) %}
-  {# TEMP: defaults to "fireball" on all 3 to check the position/visuals live — remove once placement is validated. #}
   <button type="action" class="sheet-preset-slot sheet-preset-slot--{{ n }}" name="act_preset_{{ n }}">
-    <input type="hidden" name="attr_preset_slot_{{ n }}" value="fireball" />
+    <input type="hidden" name="attr_preset_slot_{{ n }}" value="" />
     <span class="sheet-preset-icon"></span>
   </button>
 {% endfor %}

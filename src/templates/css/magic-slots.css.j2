@@ -94,13 +94,15 @@ input[name="attr_hand_effect"][value="rune"] ~ .sheet-book .sheet-grimoire {
    every rune of AT LEAST ONE spell assigned to that page — not merely
    because spells.json happens to define a spell there. Page 1 is always
    shown (it's the entry point) even before any rune is known. ---- */
-.sheet-spell-page-radio { display: none; }
 .sheet-spell-page-tab {
   display: none;
   position: absolute;
   left: 1.6%;
   width: 7.2%;
   height: 5.5%;
+  padding: 0;
+  border: none;
+  background-color: transparent;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -183,9 +185,12 @@ input[name="attr_hand_effect"][value="rune"] ~ .sheet-book .sheet-grimoire {
 
 /* A spell shows only on its assigned page, once every rune it requires is
    known — one :has() per condition composes as AND regardless of where in
-   the tree each piece (radio, known-flag mirror) actually lives. */
+   the tree each piece (hidden page mirror, known-flag mirror) actually
+   lives. attr_spell_page is a plain hidden input set by the worker on
+   button click (see tabs.html.j2/magic.html.j2 + inventory.js), not a
+   radio's :checked state. */
 {% for spell_id, spell in spells.items() %}
-.sheet-arx:has(input[name="attr_spell_page"][value="{{ spell.page }}"]:checked){% for rune in spell.runes %}:has(input[name="attr_known_{{ rune[5:] }}"][value="1"]){% endfor %} .sheet-spell-slot--{{ spell_id }} {
+.sheet-arx:has(input[name="attr_spell_page"][value="{{ spell.page }}"]){% for rune in spell.runes %}:has(input[name="attr_known_{{ rune[5:] }}"][value="1"]){% endfor %} .sheet-spell-slot--{{ spell_id }} {
   display: block;
 }
 {% endfor %}

@@ -253,3 +253,25 @@ on("clicked:bag_down", function () {
     if (lvl < count) { setAttrs({ bag_level: lvl + 1 }); }
   });
 });
+
+/* Page navigation (base <-> magic) and the inventory band toggle: buttons +
+   this worker, not a radio/checkbox styled with CSS-only tricks — Roll20
+   discourages label[for]/input[id] pairing (multiple sheet copies can be in
+   the DOM at once), so this is the same button+worker mechanism already used
+   for every other interactive element on the sheet (grimoire, trash, purse,
+   bag nav). CSS reads the resulting attribute value directly (see tabs.css,
+   inventory.css). */
+on("clicked:goto_magic", function () { setAttrs({ sheet_tab: "magic" }); });
+on("clicked:goto_base", function () { setAttrs({ sheet_tab: "base" }); });
+
+on("clicked:inventory_toggle", function () {
+  getAttrs(["inventory_open"], function (v) {
+    setAttrs({ inventory_open: v.inventory_open === "1" ? "0" : "1" });
+  });
+});
+
+/* Spell-page navigation (1-10): same button+worker mechanism, same reason
+   (no radio/label id/for). */
+for (let p = 1; p <= 10; p++) {
+  on("clicked:goto_spellpage_" + p, function () { setAttrs({ spell_page: p }); });
+}

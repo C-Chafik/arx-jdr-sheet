@@ -1,12 +1,16 @@
-{# Page navigation: one radio per page, saved per character via attr_sheet_tab.
-   Ribbons are <label>s wired to their radio's id — pure HTML/CSS, no worker
-   needed to switch pages. CSS in src/css/tabs.css shows the page + ribbon set
-   matching the checked radio; the .sheet-book background swap lives there too.
-   To add a page: add a radio + label here, a partial in partials/pages/, its
-   CSS in src/css/pages/, and the matching rules in tabs.css. #}
-<input type="radio" id="sheet-tab-base" class="sheet-tab-radio sheet-tab-radio--base" name="attr_sheet_tab" value="base" checked="checked" />
-<input type="radio" id="sheet-tab-magic" class="sheet-tab-radio sheet-tab-radio--magic" name="attr_sheet_tab" value="magic" />
-<label for="sheet-tab-magic" class="sheet-nav-btn sheet-nav--magic"></label>
-<label for="sheet-tab-base" class="sheet-nav-btn sheet-nav--base"></label>
+{# Page navigation: attr_sheet_tab is set by the sheet worker on button click
+   (see src/workers/inventory.js), not by a radio's :checked state. Roll20
+   discourages label[for]/input[id] pairing (multiple copies of the same
+   sheet can be in the DOM at once, one per open character, so ids collide)
+   — a plain radio/label pair is unreliable there. Buttons + worker is the
+   same mechanism already used for every other interactive element on the
+   sheet (grimoire, trash, purse, bag nav), so it's proven to work.
+   CSS in src/css/tabs.css shows the page + ribbon set matching
+   attr_sheet_tab's value directly; the .sheet-book background swap lives
+   there too. To add a page: add a button here, a partial in partials/pages/,
+   its CSS in src/css/pages/, and the matching rules in tabs.css. #}
+<input type="hidden" class="sheet-hand-mirror" name="attr_sheet_tab" value="base" />
+<button type="action" class="sheet-nav-btn sheet-nav--magic" name="act_goto_magic"></button>
+<button type="action" class="sheet-nav-btn sheet-nav--base" name="act_goto_base"></button>
 <div class="sheet-nav-btn sheet-nav--map"></div>
 <div class="sheet-nav-btn sheet-nav--questions"></div>

@@ -1,37 +1,32 @@
-/* Page navigation: the checked sheet-tab radio decides which page is visible.
-   The radios themselves are hidden for now; they will be styled as clickable
-   bookmarks/zones when a second page exists. */
-
-.sheet-tab-radio {
-  display: none;
-}
+/* Page navigation: attr_sheet_tab's value (set by the worker on button click,
+   see tabs.html.j2 + inventory.js) decides which page/ribbon is shown. */
 
 .sheet-page {
   display: none;
 }
 
-.sheet-tab-radio--base:checked ~ .sheet-page--base {
+.sheet-arx:has(input[name="attr_sheet_tab"][value="base"]) .sheet-page--base {
   display: block;
 }
-.sheet-tab-radio--magic:checked ~ .sheet-page--magic {
+.sheet-arx:has(input[name="attr_sheet_tab"][value="magic"]) .sheet-page--magic {
   display: block;
 }
 
-/* The book's own background swaps with the active page. :has() is needed
-   here (not a plain sibling selector) because .sheet-book is the radios'
-   ancestor, not a following sibling. */
-.sheet-arx:has(.sheet-tab-radio--magic:checked) .sheet-book {
+/* The book's own background swaps with the active page. */
+.sheet-arx:has(input[name="attr_sheet_tab"][value="magic"]) .sheet-book {
   background-image: url('{{ASSET_BASE}}/ARX-MAGICBOOK.png');
 }
 
-/* Navigation ribbons (star / ? / feather), pinned on the left page's top edge.
-   Inert for now — they will become the page tabs. */
+/* Navigation ribbons (star / ? / feather), pinned on the left page's top edge. */
 .sheet-nav-btn {
   position: absolute;
   top: 25px;
   width: 42px;
   height: 42px;
   z-index: 5;
+  padding: 0;
+  border: none;
+  background-color: transparent;
   background-size: 100% 100%;
   cursor: url('{{ASSET_BASE}}/base-hover-2.png') 6 4, pointer;
   transition: filter 0.2s ease-out;
@@ -49,5 +44,5 @@
 .sheet-nav--questions { left: calc(47.5% - 21px); background-image: url('{{ASSET_BASE}}/Questions-Menu-Button.png'); }
 
 /* On the magic page: hide the Magic ribbon (already there), show Base (to leave). */
-.sheet-tab-radio--magic:checked ~ .sheet-nav--magic { display: none; }
-.sheet-tab-radio--magic:checked ~ .sheet-nav--base  { display: block; }
+.sheet-arx:has(input[name="attr_sheet_tab"][value="magic"]) .sheet-nav--magic { display: none; }
+.sheet-arx:has(input[name="attr_sheet_tab"][value="magic"]) .sheet-nav--base  { display: block; }

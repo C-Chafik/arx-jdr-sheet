@@ -60,7 +60,9 @@ def test_inventory_toggle_and_band_are_wired():
     css = build.build_css("x")
     assert 'name="attr_inventory_open"' in html
     assert 'class="sheet-inventory"' in html
-    assert ".sheet-inventory-toggle:checked ~ .sheet-inventory" in css
+    assert 'name="act_inventory_toggle"' in html
+    assert "clicked:inventory_toggle" in html
+    assert '.sheet-arx:has(input[name="attr_inventory_open"][value="1"]) .sheet-inventory {' in css
     assert "Inventory-Button.png" in css
     assert "Inventory.png" in css
 
@@ -275,14 +277,15 @@ def test_armor_slots_use_the_enlarged_frame():
 def test_magic_page_navigation_is_wired():
     html = build.render_html()
     css = build.build_css("x")
-    assert 'id="sheet-tab-magic"' in html
-    assert 'for="sheet-tab-magic"' in html
-    assert 'for="sheet-tab-base"' in html
+    assert 'name="act_goto_magic"' in html
+    assert 'name="act_goto_base"' in html
+    assert "clicked:goto_magic" in html
+    assert "clicked:goto_base" in html
     assert 'class="sheet-page sheet-page--magic"' in html
-    assert ".sheet-tab-radio--magic:checked ~ .sheet-page--magic" in css
+    assert '.sheet-arx:has(input[name="attr_sheet_tab"][value="magic"]) .sheet-page--magic' in css
     assert "ARX-MAGICBOOK.png" in css
-    assert ".sheet-tab-radio--magic:checked ~ .sheet-nav--base" in css
-    assert ".sheet-tab-radio--magic:checked ~ .sheet-nav--magic" in css
+    assert '.sheet-arx:has(input[name="attr_sheet_tab"][value="magic"]) .sheet-nav--base' in css
+    assert '.sheet-arx:has(input[name="attr_sheet_tab"][value="magic"]) .sheet-nav--magic' in css
 
 
 def test_rune_items_have_rune_effect():
@@ -323,9 +326,9 @@ def test_spell_page_navigation_is_wired():
     html = build.render_html()
     css = build.build_css("x")
     spells = build.load_spells()
+    assert '"clicked:goto_spellpage_" + p' in html
     for p in range(1, 11):
-        assert f'id="sheet-spell-page-{p}"' in html, p
-        assert f'for="sheet-spell-page-{p}"' in html, p
+        assert f'name="act_goto_spellpage_{p}"' in html, p
         assert f".sheet-spell-page-tab--{p} {{ background-image: url('x/magic-nav-{p}.png'); }}" in css, p
     # page 1 is always visible, even with no rune known yet
     assert ".sheet-spell-page-tab--1 { display: block; }" in css
@@ -369,7 +372,7 @@ def test_spell_visibility_requires_page_and_all_runes():
     css = build.build_css("x")
     for spell_id, spell in build.load_spells().items():
         assert f'class="sheet-spell-slot sheet-spell-slot--slot-{spell["slot"]} sheet-spell-slot--{spell_id}"' in html, spell_id
-        expected = f'.sheet-arx:has(input[name="attr_spell_page"][value="{spell["page"]}"]:checked)'
+        expected = f'.sheet-arx:has(input[name="attr_spell_page"][value="{spell["page"]}"])'
         for rune_id in spell["runes"]:
             expected += f':has(input[name="attr_known_{rune_id[5:]}"][value="1"])'
         expected += f" .sheet-spell-slot--{spell_id}"
@@ -395,5 +398,9 @@ def test_mod_script_is_generated():
     build.build()
     mod = (build.BUILD / "arx-mod.js").read_text(encoding="utf-8")
     assert "!arxgive" in mod
+    assert "!arxlearnall" in mod
+    assert "!arxpreset" in mod
+    assert "!arxpage" in mod
+    assert "!arxtab" in mod
     for item_id in build.load_items():
         assert f'"{item_id}"' in mod, item_id

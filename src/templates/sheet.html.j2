@@ -20,7 +20,15 @@
 {% endif %}
 {% endfor %}
   {# Inventory toggle: always visible, whatever the active page. State saved per character. #}
-  <input type="checkbox" class="sheet-inventory-toggle" name="attr_inventory_open" value="1" />
+  {# Inventory toggle: attr_inventory_open is set by the sheet worker on
+     button click (see src/workers/inventory.js), not by a checkbox's
+     :checked state — a checkbox styled with appearance:none doesn't
+     reliably hide its native rendering cross-browser, and Roll20
+     discourages label[for]/input[id] pairing anyway. Buttons + worker is
+     the same mechanism already used for every other interactive element
+     on the sheet. #}
+  <input type="hidden" class="sheet-hand-mirror" name="attr_inventory_open" value="0" />
+  <button type="action" class="sheet-inventory-toggle" name="act_inventory_toggle"></button>
   <div class="sheet-book">
 {% include "partials/tabs.html.j2" %}
 {% include "partials/pages/base.html.j2" %}

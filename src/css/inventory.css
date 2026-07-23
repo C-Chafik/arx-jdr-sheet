@@ -2,11 +2,9 @@
    from under the book when the always-visible button is checked.
    Both visuals are separate assets — nothing is baked into ARX-BASE-2. */
 
-/* The button, drawn on the checkbox itself (50 × 50 source → 34 px on sheet).
-   Sits outside the book, hugging its bottom-right corner. */
+/* The button (50 × 50 source → 34 px on sheet). Sits outside the book,
+   hugging its bottom-right corner. */
 .sheet-inventory-toggle {
-  -webkit-appearance: none;
-  appearance: none;
   position: absolute;
   left: 1065px;
   top: 670px;
@@ -15,6 +13,7 @@
   margin: 0;
   padding: 0;
   border: none;
+  background-color: transparent;
   z-index: 10;
   cursor: url('{{ASSET_BASE}}/base-hover-2.png') 6 4, pointer;
   background-image: url('{{ASSET_BASE}}/Inventory-Button.png');
@@ -26,7 +25,7 @@
   filter: brightness(1.35) drop-shadow(0 0 6px rgba(255, 220, 130, 0.8));
 }
 
-.sheet-inventory-toggle:checked {
+.sheet-arx:has(input[name="attr_inventory_open"][value="1"]) .sheet-inventory-toggle {
   filter: brightness(1.2);
 }
 
@@ -46,7 +45,7 @@
   transition: max-height 0.4s ease-out;
 }
 
-.sheet-inventory-toggle:checked ~ .sheet-inventory {
+.sheet-arx:has(input[name="attr_inventory_open"][value="1"]) .sheet-inventory {
   max-height: 172px;
   /* Above the book while open, so row-1 slot buttons receive clicks
      (the book's transparent bottom edge otherwise intercepts them). */
