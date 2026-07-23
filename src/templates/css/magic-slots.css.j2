@@ -90,8 +90,10 @@ input[name="attr_hand_effect"][value="rune"] ~ .sheet-book .sheet-grimoire {
 
 /* ---- Spell-page navigation: ARX-MAGICBOOK.png no longer bakes the numbered
    tabs into the artwork, so magic-nav-N.png IS the tab now (always drawn,
-   not just on hover). A tab only appears once at least one spell exists on
-   that page — page 1 is always shown (it's the entry point) even if empty. ---- */
+   not just on hover). A tab opens as soon as the character has consumed
+   every rune of AT LEAST ONE spell assigned to that page — not merely
+   because spells.json happens to define a spell there. Page 1 is always
+   shown (it's the entry point) even before any rune is known. ---- */
 .sheet-spell-page-radio { display: none; }
 .sheet-spell-page-tab {
   display: none;
@@ -109,12 +111,15 @@ input[name="attr_hand_effect"][value="rune"] ~ .sheet-book .sheet-grimoire {
   filter: brightness(1.3);
   box-shadow: 0 0 10px rgba(255, 220, 130, 0.85);
 }
-.sheet-spell-page-tab--1 { display: block; } /* always visible, even with no spell yet */
-{% set pages_with_spells = spells.values() | map(attribute="page") | unique | list %}
+.sheet-spell-page-tab--1 { display: block; } /* always visible, even with no rune known yet */
 {% for p in range(1, 11) %}
 .sheet-spell-page-tab--{{ p }} { background-image: url('{{ "{{ASSET_BASE}}" }}/magic-nav-{{ p }}.png'); }
-{% if p in pages_with_spells %}
-.sheet-spell-page-tab--{{ p }} { display: block; }
+{% set spells_here = spells.values() | selectattr("page", "equalto", p) | list %}
+{% if spells_here %}
+{% for spell in spells_here %}.sheet-arx{% for rune in spell.runes %}:has(input[name="attr_known_{{ rune[5:] }}"][value="1"]){% endfor %} .sheet-spell-page-tab--{{ p }}{% if not loop.last %},
+{% endif %}{% endfor %} {
+  display: block;
+}
 {% endif %}
 {% endfor %}
 .sheet-spell-page-tab--1  { top: 12.5%; }

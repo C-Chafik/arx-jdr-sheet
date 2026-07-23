@@ -26,5 +26,260 @@
     "page": 1,
     "slot": 4,
     "icon": "spell-douse.png"
+  },
+  "health": {
+    "label": "Sphère de soin",
+    "runes": ["rune-mega", "rune-vitae"],
+    "page": 2,
+    "slot": 1,
+    "icon": "spell-heal.png"
+  },
+  "trap-detection": {
+    "label": "Détection des pièges",
+    "runes": ["rune-morte", "rune-cosum", "rune-vista"],
+    "page": 2,
+    "slot": 2,
+    "icon": "spell-trap-detection.png"
+  },
+  "protection": {
+    "label": "Aura de protection",
+    "runes": ["rune-mega", "rune-kaom"],
+    "page": 2,
+    "slot": 3,
+    "icon": "spell-armor.png"
+  },
+  "vulnerability": {
+    "label": "Vulnérabilité",
+    "runes": ["rune-rhaa", "rune-kaom"],
+    "page": 2,
+    "slot": 4,
+    "icon": "spell-vulnerability.png"
+  },
+
+  "celerity": {
+    "label": "Célérité",
+    "runes": ["rune-mega", "rune-movis"],
+    "page": 3,
+    "slot": 1,
+    "icon": "spell-celerity.png"
+  },
+  "revelation": {
+    "label": "Révélation",
+    "runes": ["rune-nhi", "rune-stregum", "rune-vista"],
+    "page": 3,
+    "slot": 2,
+    "icon": "spell-reveal.png"
+  },
+  "fireball": {
+    "label": "Boule de feu",
+    "runes": ["rune-aam", "rune-yok", "rune-taar"],
+    "page": 3,
+    "slot": 3,
+    "icon": "spell-fireball.png"
+  },
+  "sustentation": {
+    "label": "Sustentation",
+    "runes": ["rune-aam", "rune-vitae", "rune-cosum"],
+    "page": 3,
+    "slot": 4,
+    "icon": "spell-sustentation.png"
+  },
+
+  "blessing": {
+    "label": "Bénédiction",
+    "runes": ["rune-mega", "rune-stregum", "rune-vitae"],
+    "page": 4,
+    "slot": 1,
+    "icon": "spell-blessing.png"
+  },
+  "negate_field": {
+    "label": "Negation de champ",
+    "runes": ["rune-nhi", "rune-spacium"],
+    "page": 4,
+    "slot": 2,
+    "icon": "spell-dispell-field.png"
+  },
+  "fire_protection": {
+    "label": "Protection contre le feu",
+    "runes": ["rune-yok", "rune-kaom"],
+    "page": 4,
+    "slot": 3,
+    "icon": "spell-fire-protection.png"
+  },
+  "telekinezie": {
+    "label": "Télékinezie",
+    "runes": ["rune-spacium", "rune-comunicatum"],
+    "page": 4,
+    "slot": 4,
+    "icon": "spell-telekinezis.png"
+  },
+  "rune_guarding": {
+    "label": "Rune explosive",
+    "runes": ["rune-aam", "rune-morte", "rune-cosum"],
+    "page": 5,
+    "slot": 1,
+    "icon": "spell-rune-guarding.png"
+  },
+  "levitation": {
+    "label": "Lévitation",
+    "runes": ["rune-mega", "rune-spacium", "rune-movis"],
+    "page": 5,
+    "slot": 2,
+    "icon": "spell-levitate.png"
+  },
+  "antidote": {
+    "label": "Antidote",
+    "runes": ["rune-nhi", "rune-cetrius"],
+    "page": 5,
+    "slot": 3,
+    "icon": "spell-antidote.png"
+  },
+  "repell_undead": {
+    "label": "Repousser les morts",
+    "runes": ["rune-morte", "rune-kaom"],
+    "page": 5,
+    "slot": 4,
+    "icon": "spell-repel-undead.png"
+  },
+  "raise_undead": {
+    "label": "Invocation de mort vivant",
+    "runes": ["rune-aam", "rune-morte", "rune-vitae"],
+    "page": 6,
+    "slot": 1,
+    "icon": "spell-raise-dead.png"
+  },
+  "paralysis": {
+    "label": "Paralysie",
+    "runes": ["rune-nhi", "rune-movis"],
+    "page": 6,
+    "slot": 2,
+    "icon": "spell-paralysis.png"
+  },
+  "force_field": {
+    "label": "Champ de force",
+    "runes": ["rune-aam", "rune-kaom", "rune-spacium"],
+    "page": 6,
+    "slot": 3,
+    "icon": "spell-force-field.png"
+  },
+  "disarm_trap": {
+    "label": "Désactivation des pièges",
+    "runes": ["rune-nhi", "rune-morte", "rune-cosum"],
+    "page": 6,
+    "slot": 4,
+    "icon": "spell-disarm-trap.png"
+  },
+  "third_eye": {
+    "label": "Troisième Oeil",
+    "runes": ["rune-vista", "rune-movis"],
+    "page": 7,
+    "slot": 1,
+    "icon": "spell-third-eye.png"
+  },
+  "fire_field": {
+    "label": "Champ de flammes",
+    "runes": ["rune-aam", "rune-yok", "rune-spacium"],
+    "page": 7,
+    "slot": 2,
+    "icon": "spell-firewall.png"
+  },
+  "lighting_strike": {
+    "label": "Foudre (Projection)",
+    "runes": ["rune-aam", "rune-folgora", "rune-taar"],
+    "page": 7,
+    "slot": 3,
+    "icon": "spell-lightning-strike.png"
+  },
+  "confusion": {
+    "label": "Confusion",
+    "runes": ["rune-rhaa", "rune-vista"],
+    "page": 7,
+    "slot": 4,
+    "icon": "spell-confusion.png"
+  },
+  "invisibility": {
+    "label": "Invisibilité",
+    "runes": ["rune-nhi", "rune-vista"],
+    "page": 8,
+    "slot": 1,
+    "icon": "spell-invisibility.png"
+  },
+  "mana_drain": {
+    "label": "Drain de mana",
+    "runes": ["rune-stregum", "rune-movis"],
+    "page": 8,
+    "slot": 2,
+    "icon": "spell-mana-drain.png"
+  },
+  "chaos": {
+    "label": "Chaos",
+    "runes": ["rune-aam", "rune-mega", "rune-morte"],
+    "page": 8,
+    "slot": 3,
+    "icon": "spell-chaos.png"
+  },
+  "enchantement": {
+    "label": "Enchantement",
+    "runes": ["rune-mega", "rune-stregum", "rune-cosum"],
+    "page": 8,
+    "slot": 4,
+    "icon": "spell-enchantment.png"
+  },
+  "invocation_demon": {
+    "label": "Invocation démoniaque (Non contrôlé)",
+    "runes": ["rune-aam", "rune-vitae", "rune-tera"],
+    "page": 9,
+    "slot": 1,
+    "icon": "spell-invocation-demon.png"
+  },
+  "negate_magic": {
+    "label": "Aura d'antimagie",
+    "runes": ["rune-nhi", "rune-stregum", "rune-spacium"],
+    "page": 9,
+    "slot": 2,
+    "icon": "spell-negate-magic.png"
+  },
+  "incineration": {
+    "label": "Incandescence",
+    "runes": ["rune-aam", "rune-mega", "rune-yok"],
+    "page": 9,
+    "slot": 3,
+    "icon": "spell-incineration.png"
+  },
+  "mass_paralysis": {
+    "label": "Paralysie massive",
+    "runes": ["rune-mega", "rune-nhi", "rune-movis"],
+    "page": 9,
+    "slot": 4,
+    "icon": "spell-mass-paralysis.png"
+  },
+
+  "mass_lightning_strike": {
+    "label": "Champ de foudre",
+    "runes": ["rune-aam", "rune-folgora", "rune-spacium"],
+    "page": 10,
+    "slot": 1,
+    "icon": "spell-mass-lightning-strike.png"
+  },
+  "mind_control": {
+    "label": "Contrôle mental",
+    "runes": ["rune-movis", "rune-comunicatum"],
+    "page": 10,
+    "slot": 2,
+    "icon": "spell-mind-control.png"
+  },
+  "the_world": {
+    "label": "Faille temporelle",
+    "runes": ["rune-rhaa", "rune-tempus"],
+    "page": 10,
+    "slot": 3,
+    "icon": "spell-the-world.png"
+  },
+  "mass_incineration": {
+    "label": "Fournaise",
+    "runes": ["rune-mega", "rune-aam", "rune-yok"],
+    "page": 10,
+    "slot": 4,
+    "icon": "spell-mass-incineration.png"
   }
 }

@@ -322,19 +322,23 @@ def test_spells_catalog_loads():
 def test_spell_page_navigation_is_wired():
     html = build.render_html()
     css = build.build_css("x")
-    pages_with_spells = {s["page"] for s in build.load_spells().values()}
+    spells = build.load_spells()
     for p in range(1, 11):
         assert f'id="sheet-spell-page-{p}"' in html, p
         assert f'for="sheet-spell-page-{p}"' in html, p
         assert f".sheet-spell-page-tab--{p} {{ background-image: url('x/magic-nav-{p}.png'); }}" in css, p
-    # page 1 is always visible; other pages only if they have a spell
+    # page 1 is always visible, even with no rune known yet
     assert ".sheet-spell-page-tab--1 { display: block; }" in css
+    # other pages only open once at least one of their spells is fully known —
+    # never a bare unconditional rule (that would leak an unearned page).
     for p in range(2, 11):
-        rule = f".sheet-spell-page-tab--{p} {{ display: block; }}"
-        if p in pages_with_spells:
-            assert rule in css, p
-        else:
-            assert rule not in css, p
+        bare_rule = f".sheet-spell-page-tab--{p} {{ display: block; }}"
+        assert bare_rule not in css, p
+        spells_here = [s for s in spells.values() if s["page"] == p]
+        assert spells_here, p
+        first = spells_here[0]
+        chain = "".join(f':has(input[name="attr_known_{r[5:]}"][value="1"])' for r in first["runes"])
+        assert f".sheet-arx{chain} .sheet-spell-page-tab--{p}" in css, p
 
 
 def test_spell_with_icon_renders_image_not_text():
