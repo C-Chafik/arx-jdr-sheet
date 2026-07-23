@@ -80,6 +80,7 @@ __CONTENT__
   <select id="arx-item"></select>
   <button id="arx-give">Donner</button>
   <button id="arx-give-runes">Toutes les runes</button>
+  <button id="arx-learn-runes">Ingérer toutes les runes</button>
   <select id="arx-preset"></select>
   <button id="arx-preset-1">Preset 1</button>
   <button id="arx-preset-2">Preset 2</button>
@@ -155,6 +156,18 @@ __CONTENT__
     document.getElementById("arx-msg").textContent = "Toutes les runes données";
   });
 
+  /* Skips the bag+grimoire dance entirely: marks every rune known and fills
+     the 20 spellbook slots in their fixed order (see inventory.js's
+     spellbookSlotFor), so pages/spells unlock instantly for testing. */
+  document.getElementById("arx-learn-runes").addEventListener("click", function () {
+    const runeIds = Object.keys(ITEMS).filter(function (id) { return ITEMS[id].effect === "rune"; });
+    runeIds.forEach(function (id, i) {
+      setAttr("known_" + id.slice(5), "1");
+      setAttr("spellbook_" + (i + 1), id);
+    });
+    document.getElementById("arx-msg").textContent = "Toutes les runes ingérées";
+  });
+
   /* Presets have no real obtention mechanic yet (scroll item / actions, TBD) —
      this dev-only control just drops a preset id straight into a slot to
      check the memorized-spell visuals. */
@@ -178,6 +191,8 @@ __CONTENT__
      "equip_jewel_1", "equip_jewel_2", "hand", "hand_from", "hand_cat", "fit"]
       .forEach(function (n) { setAttr(n, ""); });
     [1, 2, 3].forEach(function (n) { setAttr("preset_slot_" + n, ""); });
+    for (let i = 1; i <= 20; i++) { setAttr("spellbook_" + i, ""); }
+    Object.keys(ITEMS).forEach(function (id) { if (ITEMS[id].effect === "rune") { setAttr("known_" + id.slice(5), ""); } });
     setAttr("bag_count", "1");
     setAttr("bag_level", "1");
     document.getElementById("arx-msg").textContent = "Inventaire vidé";
