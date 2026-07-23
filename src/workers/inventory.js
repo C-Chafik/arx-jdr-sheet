@@ -21,6 +21,15 @@ const ALL_SLOTS = BAG_SLOTS.concat(Object.keys(EQUIP_ACCEPTS));
 const SPELLBOOK_SLOTS = [];
 for (let i = 1; i <= 20; i++) { SPELLBOOK_SLOTS.push("spellbook_" + i); }
 
+/* Fixed spellbook slot per rune, by items.json's rune order (the book's own
+   page order) — a rune always lands in the same slot no matter the order
+   it's actually learned in. */
+const RUNE_ORDER = Object.keys(ITEMS).filter(function (id) { return ITEMS[id].effect === "rune"; });
+function spellbookSlotFor(runeId) {
+  const idx = RUNE_ORDER.indexOf(runeId);
+  return idx === -1 ? null : "spellbook_" + (idx + 1);
+}
+
 function sizeOf(itemId) {
   const s = (ITEMS[itemId] && ITEMS[itemId].size) || "1x1";
   const parts = s.split("x");
@@ -208,28 +217,25 @@ on("clicked:trash", function () {
 function knownFlag(runeId) { return "known_" + runeId.slice(5); }
 
 /* The grimoire: consuming a "rune" item there learns it permanently — placed
-   in the first empty spellbook slot (never freed again, no un-learning),
-   and its known_<rune> flag is set so spells requiring it become visible
-   (see magic-slots.css.j2). Each rune can only be learned once: an
-   already-known rune is refused (stays in hand) so the spellbook never
-   shows the same one twice. */
+   in that rune's own fixed slot (see spellbookSlotFor), never freed again,
+   no un-learning — and its known_<rune> flag is set so spells requiring it
+   become visible (see magic-slots.css.j2). Each rune can only be learned
+   once: an already-known rune is refused (stays in hand). */
 on("clicked:slot_grimoire", function () {
-  getAttrs(SPELLBOOK_SLOTS.concat(["hand", "hand_from"]), function (v) {
+  getAttrs(["hand", "hand_from"], function (v) {
     const hand = v.hand || "";
     const item = ITEMS[hand];
     if (!item || item.effect !== "rune") { return; }
-    const alreadyLearned = SPELLBOOK_SLOTS.some(function (s) { return v[s] === hand; });
-    if (alreadyLearned) { return; }
-    for (let i = 0; i < SPELLBOOK_SLOTS.length; i++) {
-      if (!v[SPELLBOOK_SLOTS[i]]) {
-        const update = { hand: "", hand_from: "", hand_cat: "", hand_effect: "", fit: "" };
-        update[SPELLBOOK_SLOTS[i]] = hand;
-        update[knownFlag(hand)] = "1";
-        ownCells(v.hand_from || "", hand).forEach(function (c) { update[c] = ""; });
-        setAttrs(update);
-        return;
-      }
-    }
+    const slot = spellbookSlotFor(hand);
+    if (!slot) { return; }
+    getAttrs([knownFlag(hand)], function (v2) {
+      if (v2[knownFlag(hand)] === "1") { return; }
+      const update = { hand: "", hand_from: "", hand_cat: "", hand_effect: "", fit: "" };
+      update[slot] = hand;
+      update[knownFlag(hand)] = "1";
+      ownCells(v.hand_from || "", hand).forEach(function (c) { update[c] = ""; });
+      setAttrs(update);
+    });
   });
 });
 
