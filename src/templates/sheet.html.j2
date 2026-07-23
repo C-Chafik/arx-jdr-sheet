@@ -10,6 +10,15 @@
      bag_count BEFORE bag_level (nav visibility selectors chain them with ~). #}
   <input type="hidden" class="sheet-hand-mirror" name="attr_bag_count" value="1" />
   <input type="hidden" class="sheet-hand-mirror" name="attr_bag_level" value="1" />
+  {# Known-rune flags: one per rune (attr_known_<suffix>, suffix = id minus
+     "rune-"), set permanently once learned via the grimoire. Spell visibility
+     (magic-slots.css.j2) reaches these through :has(), so position doesn't
+     matter the way it does for the sibling-selector mirrors above. #}
+{% for item_id, item in items.items() %}
+{% if item.effect | default("") == "rune" %}
+  <input type="hidden" class="sheet-hand-mirror" name="attr_known_{{ item_id[5:] }}" value="" />
+{% endif %}
+{% endfor %}
   {# Inventory toggle: always visible, whatever the active page. State saved per character. #}
   <input type="checkbox" class="sheet-inventory-toggle" name="attr_inventory_open" value="1" />
   <div class="sheet-book">

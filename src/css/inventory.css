@@ -3,13 +3,13 @@
    Both visuals are separate assets — nothing is baked into ARX-BASE-2. */
 
 /* The button, drawn on the checkbox itself (50 × 50 source → 34 px on sheet).
-   Sits outside the book, hugging its left edge, level with the Armor Class shield. */
+   Sits outside the book, hugging its bottom-right corner. */
 .sheet-inventory-toggle {
   -webkit-appearance: none;
   appearance: none;
   position: absolute;
-  left: 12px;
-  top: 167px;
+  left: 1065px;
+  top: 670px;
   width: 34px;
   height: 34px;
   margin: 0;

@@ -24,6 +24,7 @@ ASSET_BASE = "https://raw.githubusercontent.com/C-Chafik/arx-jdr-sheet/main/asse
 PREVIEW_ASSET_BASE = "../assets"
 
 ITEMS_FILE = ROOT / "items.json"
+SPELLS_FILE = ROOT / "spells.json"
 
 # Bag grid dimensions — single source of truth, injected into templates,
 # the sheet worker, the mod script and the dev shim.
@@ -37,6 +38,10 @@ GRID_BAGS = 4
 
 def load_items() -> dict:
     return json.loads(ITEMS_FILE.read_text(encoding="utf-8"))
+
+
+def load_spells() -> dict:
+    return json.loads(SPELLS_FILE.read_text(encoding="utf-8"))
 
 
 def inject_grid(code: str) -> str:
@@ -160,7 +165,7 @@ def jinja_env() -> Environment:
 
 def render_html() -> str:
     html = jinja_env().get_template("sheet.html.j2").render(
-        items=load_items(), cols=GRID_COLS, rows=GRID_ROWS, bags=GRID_BAGS)
+        items=load_items(), spells=load_spells(), cols=GRID_COLS, rows=GRID_ROWS, bags=GRID_BAGS)
     return html + render_worker()
 
 
@@ -169,13 +174,16 @@ def build_css(asset_base: str) -> str:
     for name in CSS_FILES:
         if name.endswith(".j2"):
             parts.append(jinja_env().get_template(f"css/{name}").render(
-                items=load_items(), cols=GRID_COLS, rows=GRID_ROWS, bags=GRID_BAGS))
+                items=load_items(), spells=load_spells(),
+                cols=GRID_COLS, rows=GRID_ROWS, bags=GRID_BAGS))
         else:
             parts.append((SRC / "css" / name).read_text(encoding="utf-8"))
     return "\n".join(parts).replace("{{ASSET_BASE}}", asset_base)
 
 
 def render_worker() -> str:
+    # Spell visibility (page + rune-combination) is pure CSS (see magic-slots.css.j2);
+    # the worker only ever needs to know about runes, not spells.
     parts = [(SRC / "workers" / name).read_text(encoding="utf-8") for name in WORKER_FILES]
     code = "\n".join(parts).replace("{{ITEMS_JSON}}", json.dumps(load_items(), ensure_ascii=False))
     return f'<script type="text/worker">\n{inject_grid(code)}\n</script>\n'

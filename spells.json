@@ -1,0 +1,62 @@
+{
+  "boule-celerite": {
+    "label": "Boule de célérité",
+    "runes": ["rune-mega", "rune-movis"],
+    "page": 1,
+    "slot": 1
+  },
+  "boule-celeriddsaddsadaste": {
+    "label": "Boule de célérité",
+    "runes": ["rune-mega", "rune-movis"],
+    "page": 2,
+    "slot": 1
+  },
+  "boule-celdasdasdxczeridte": {
+    "label": "Boule de célérité",
+    "runes": ["rune-mega", "rune-movis"],
+    "page": 3,
+    "slot": 1
+  },
+  "boule-celedczxcrite": {
+    "label": "Boule de célérité",
+    "runes": ["rune-mega", "rune-movis"],
+    "page": 4,
+    "slot": 1
+  },
+  "boule-celedricvcxvte": {
+    "label": "Boule de célérité",
+    "runes": ["rune-mega", "rune-movis"],
+    "page": 5,
+    "slot": 1
+  },
+  "boule-celerivcxvxcdte": {
+    "label": "Boule de célérité",
+    "runes": ["rune-mega", "rune-movis"],
+    "page": 6,
+    "slot": 1
+  },
+  "boule-celerdsdasdite": {
+    "label": "Boule de célérité",
+    "runes": ["rune-mega", "rune-movis"],
+    "page": 7,
+    "slot": 1
+  },
+  "boule-celedsadzxvvvrite": {
+    "label": "Boule de célérité",
+    "runes": ["rune-mega", "rune-movis"],
+    "page": 8,
+    "slot": 1
+  },
+  "boule-celvvxcweferite": {
+    "label": "Boule de célérité",
+    "runes": ["rune-mega", "rune-movis"],
+    "page": 9,
+    "slot": 1
+  },
+  "boule-celerifsdfdste": {
+    "label": "Boule de célérité",
+    "runes": ["rune-mega", "rune-movis"],
+    "page": 10,
+    "slot": 1
+  }
+}

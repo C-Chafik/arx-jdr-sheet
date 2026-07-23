@@ -221,7 +221,8 @@ def test_legendary_items_get_permanent_glow_and_red_hover_text():
     assert ".sheet-statbar--item-plain-apple { color:" not in css
 
     html = build.jinja_env().get_template("sheet.html.j2").render(
-        items=fake_items, cols=build.GRID_COLS, rows=build.GRID_ROWS, bags=build.GRID_BAGS
+        items=fake_items, spells=build.load_spells(),
+        cols=build.GRID_COLS, rows=build.GRID_ROWS, bags=build.GRID_BAGS
     )
     assert '★ Épée légendaire' in html
     assert '>Pomme<' in html  # non-legendary label carries no star
@@ -305,6 +306,73 @@ def test_spellbook_and_grimoire_are_wired():
     for rid in rune_ids:
         assert f'class="sheet-statbar sheet-spell-statbar sheet-statbar--spell-{rid}"' in html, rid
         assert f".sheet-spellbook-slot:hover input[value=\"{rid}\"]" in css, rid
+
+
+def test_spells_catalog_loads():
+    spells = build.load_spells()
+    assert "boule-celerite" in spells
+    for spell in spells.values():
+        assert 1 <= spell["page"] <= 10, spell
+        assert 1 <= spell["slot"] <= 4, spell
+        assert spell["runes"]
+        for rune_id in spell["runes"]:
+            assert rune_id in build.load_items(), rune_id
+
+
+def test_spell_page_navigation_is_wired():
+    html = build.render_html()
+    css = build.build_css("x")
+    pages_with_spells = {s["page"] for s in build.load_spells().values()}
+    for p in range(1, 11):
+        assert f'id="sheet-spell-page-{p}"' in html, p
+        assert f'for="sheet-spell-page-{p}"' in html, p
+        assert f".sheet-spell-page-tab--{p} {{ background-image: url('x/magic-nav-{p}.png'); }}" in css, p
+    # page 1 is always visible; other pages only if they have a spell
+    assert ".sheet-spell-page-tab--1 { display: block; }" in css
+    for p in range(2, 11):
+        rule = f".sheet-spell-page-tab--{p} {{ display: block; }}"
+        if p in pages_with_spells:
+            assert rule in css, p
+        else:
+            assert rule not in css, p
+
+
+def test_spell_with_icon_renders_image_not_text():
+    # Synthetic: the real catalog's spell has no icon yet (art not delivered).
+    fake_spells = {
+        "test-spell": {"label": "Test Spell", "runes": ["rune-aam"],
+                       "page": 1, "slot": 2, "icon": "item-fake-spell.png"},
+    }
+    html = build.jinja_env().get_template("partials/pages/magic.html.j2").render(
+        items=build.load_items(), spells=fake_spells)
+    css = build.jinja_env().get_template("css/magic-slots.css.j2").render(
+        items=build.load_items(), spells=fake_spells,
+        cols=build.GRID_COLS, rows=build.GRID_ROWS, bags=build.GRID_BAGS)
+    assert '<span class="sheet-spell-icon"></span>' in html
+    assert "Test Spell" not in html  # icon present -> no text fallback
+    assert ".sheet-spell-slot--test-spell .sheet-spell-icon" in css
+    assert "item-fake-spell.png" in css
+
+    # The real spell (no icon) still falls back to its text label.
+    real_html = build.render_html()
+    for spell_id, spell in build.load_spells().items():
+        if not spell.get("icon"):
+            assert f">{spell['label']}<" in real_html, spell_id
+
+
+def test_spell_visibility_requires_page_and_all_runes():
+    html = build.render_html()
+    css = build.build_css("x")
+    for spell_id, spell in build.load_spells().items():
+        assert f'class="sheet-spell-slot sheet-spell-slot--slot-{spell["slot"]} sheet-spell-slot--{spell_id}"' in html, spell_id
+        expected = f'.sheet-arx:has(input[name="attr_spell_page"][value="{spell["page"]}"]:checked)'
+        for rune_id in spell["runes"]:
+            expected += f':has(input[name="attr_known_{rune_id[5:]}"][value="1"])'
+        expected += f" .sheet-spell-slot--{spell_id}"
+        assert expected in css, spell_id
+    for item_id, item in build.load_items().items():
+        if item.get("effect") == "rune":
+            assert f'name="attr_known_{item_id[5:]}"' in html, item_id
 
 
 def test_dev_shim_stays_out_of_the_roll20_deliverable():

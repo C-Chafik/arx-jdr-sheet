@@ -202,10 +202,17 @@ on("clicked:trash", function () {
   });
 });
 
+/* A rune id is always "rune-<suffix>" (see items.json); the matching known-
+   flag attribute is "known_<suffix>" — computed, never a stored mapping, so
+   adding a rune never needs a second catalog touched. */
+function knownFlag(runeId) { return "known_" + runeId.slice(5); }
+
 /* The grimoire: consuming a "rune" item there learns it permanently — placed
-   in the first empty spellbook slot (never freed again, no un-learning).
-   Each rune can only be learned once: an already-known rune is refused
-   (stays in hand) so the spellbook never shows the same one twice. */
+   in the first empty spellbook slot (never freed again, no un-learning),
+   and its known_<rune> flag is set so spells requiring it become visible
+   (see magic-slots.css.j2). Each rune can only be learned once: an
+   already-known rune is refused (stays in hand) so the spellbook never
+   shows the same one twice. */
 on("clicked:slot_grimoire", function () {
   getAttrs(SPELLBOOK_SLOTS.concat(["hand", "hand_from"]), function (v) {
     const hand = v.hand || "";
@@ -217,6 +224,7 @@ on("clicked:slot_grimoire", function () {
       if (!v[SPELLBOOK_SLOTS[i]]) {
         const update = { hand: "", hand_from: "", hand_cat: "", hand_effect: "", fit: "" };
         update[SPELLBOOK_SLOTS[i]] = hand;
+        update[knownFlag(hand)] = "1";
         ownCells(v.hand_from || "", hand).forEach(function (c) { update[c] = ""; });
         setAttrs(update);
         return;

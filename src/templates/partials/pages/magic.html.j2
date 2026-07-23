@@ -1,12 +1,29 @@
 {# Magic page. Background swaps to ARX-MAGICBOOK.png (see tabs.css).
-   Left side: the 10 numbered spell-page tabs are baked into the artwork
-   (left edge) but not wired yet — deferred, changes what the left page shows.
+   Left side: the 10 numbered spell-page tabs baked into the artwork (left
+   edge) are now wired to attr_spell_page (pure label/radio, no worker) — it
+   picks which 4 of the up-to-40 spells (spells.json, page × 4 slots) occupy
+   the 4 fixed slot positions. A spell only shows once every rune it needs
+   has been learned (see magic-slots.css.j2 for the page+rune AND-chain).
    Right side is fixed and never changes: 20 slots reveal a learned rune's
    magicbook icon, filled in order as the player consumes runes (pick one up,
    click the grimoire) — see src/workers/inventory.js and magic-slots.css.j2.
    Positions below are a first pass over the art's blank parchment areas —
    expect a visual tuning pass. #}
 <div class="sheet-page sheet-page--magic">
+  {# Spell-page navigation: one radio per numbered tab (1-10), saved via
+     attr_spell_page. Labels sit over the tabs baked into the left edge. #}
+{% for p in range(1, 11) %}
+  <input type="radio" id="sheet-spell-page-{{ p }}" class="sheet-spell-page-radio sheet-spell-page-radio--{{ p }}" name="attr_spell_page" value="{{ p }}"{% if p == 1 %} checked="checked"{% endif %} />
+  <label for="sheet-spell-page-{{ p }}" class="sheet-spell-page-tab sheet-spell-page-tab--{{ p }}"></label>
+{% endfor %}
+  {# The 4 fixed slot positions (2×2: 1=top-left, 2=top-right, 3=bottom-left,
+     4=bottom-right); which spell (if any) shows in each depends on the active
+     page and whether its runes are all known. A spell shows its own icon
+     (spells.json "icon", scaled to fit its box, aspect preserved) once art
+     exists — until then it falls back to its text label. #}
+{% for spell_id, spell in spells.items() %}
+  <div class="sheet-spell-slot sheet-spell-slot--slot-{{ spell.slot }} sheet-spell-slot--{{ spell_id }}">{% if spell.icon %}<span class="sheet-spell-icon"></span>{% else %}{{ spell.label }}{% endif %}</div>
+{% endfor %}
 {% for i in range(1, 21) %}
   <div class="sheet-spellbook-slot sheet-spellbook-slot--{{ i }}">
     <input type="hidden" name="attr_spellbook_{{ i }}" value="" />
