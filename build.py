@@ -25,6 +25,7 @@ PREVIEW_ASSET_BASE = "../assets"
 
 ITEMS_FILE = ROOT / "items.json"
 SPELLS_FILE = ROOT / "spells.json"
+PRESETS_FILE = ROOT / "presets.json"
 
 # Bag grid dimensions — single source of truth, injected into templates,
 # the sheet worker, the mod script and the dev shim.
@@ -42,6 +43,14 @@ def load_items() -> dict:
 
 def load_spells() -> dict:
     return json.loads(SPELLS_FILE.read_text(encoding="utf-8"))
+
+
+def load_presets() -> dict:
+    # Preset-eligible spells: self-contained (label + runes + icon), so it
+    # doubles as the catalog used later to detect rune combinations without
+    # needing spells.json. Book spells share their id with spells.json;
+    # "secret" spells (never in the book) only ever exist here.
+    return json.loads(PRESETS_FILE.read_text(encoding="utf-8"))
 
 
 def inject_grid(code: str) -> str:
@@ -71,6 +80,10 @@ __CONTENT__
   <select id="arx-item"></select>
   <button id="arx-give">Donner</button>
   <button id="arx-give-runes">Toutes les runes</button>
+  <select id="arx-preset"></select>
+  <button id="arx-preset-1">Preset 1</button>
+  <button id="arx-preset-2">Preset 2</button>
+  <button id="arx-preset-3">Preset 3</button>
   <button id="arx-reset">Vider</button>
   <span id="arx-msg"></span>
 </div>
@@ -79,6 +92,7 @@ __CONTENT__
    preview ONLY (this wrapper never ships to Roll20). ===== */
 (function () {
   const ITEMS = __ITEMS__;
+  const PRESETS = __PRESETS__;
   const handlers = {};
   function inputsFor(name) { return document.querySelectorAll('input[name="attr_' + name + '"]'); }
   function getAttr(name) { const el = inputsFor(name)[0]; return el ? (el.getAttribute("value") || "") : ""; }
@@ -140,11 +154,30 @@ __CONTENT__
     Object.keys(ITEMS).forEach(function (id) { if (ITEMS[id].effect === "rune") { give(id); } });
     document.getElementById("arx-msg").textContent = "Toutes les runes données";
   });
+
+  /* Presets have no real obtention mechanic yet (scroll item / actions, TBD) —
+     this dev-only control just drops a preset id straight into a slot to
+     check the memorized-spell visuals. */
+  const presetSel = document.getElementById("arx-preset");
+  Object.keys(PRESETS).forEach(function (id) {
+    const o = document.createElement("option");
+    o.value = id;
+    o.textContent = PRESETS[id].label;
+    presetSel.appendChild(o);
+  });
+  [1, 2, 3].forEach(function (n) {
+    document.getElementById("arx-preset-" + n).addEventListener("click", function () {
+      setAttr("preset_slot_" + n, presetSel.value);
+      document.getElementById("arx-msg").textContent = "Preset " + n + " = " + presetSel.value;
+    });
+  });
+
   document.getElementById("arx-reset").addEventListener("click", function () {
     for (let i = 1; i <= PER_LEVEL * BAGS; i++) { setAttr("bag_" + i, ""); }
     ["equip_head", "equip_torso", "equip_belt", "equip_main_hand", "equip_off_hand",
      "equip_jewel_1", "equip_jewel_2", "hand", "hand_from", "hand_cat", "fit"]
       .forEach(function (n) { setAttr(n, ""); });
+    [1, 2, 3].forEach(function (n) { setAttr("preset_slot_" + n, ""); });
     setAttr("bag_count", "1");
     setAttr("bag_level", "1");
     document.getElementById("arx-msg").textContent = "Inventaire vidé";
@@ -165,7 +198,8 @@ def jinja_env() -> Environment:
 
 def render_html() -> str:
     html = jinja_env().get_template("sheet.html.j2").render(
-        items=load_items(), spells=load_spells(), cols=GRID_COLS, rows=GRID_ROWS, bags=GRID_BAGS)
+        items=load_items(), spells=load_spells(), presets=load_presets(),
+        cols=GRID_COLS, rows=GRID_ROWS, bags=GRID_BAGS)
     return html + render_worker()
 
 
@@ -174,7 +208,7 @@ def build_css(asset_base: str) -> str:
     for name in CSS_FILES:
         if name.endswith(".j2"):
             parts.append(jinja_env().get_template(f"css/{name}").render(
-                items=load_items(), spells=load_spells(),
+                items=load_items(), spells=load_spells(), presets=load_presets(),
                 cols=GRID_COLS, rows=GRID_ROWS, bags=GRID_BAGS))
         else:
             parts.append((SRC / "css" / name).read_text(encoding="utf-8"))
@@ -202,7 +236,8 @@ def build() -> None:
     (BUILD / "preview.css").write_text(build_css(PREVIEW_ASSET_BASE), encoding="utf-8")
     preview = inject_grid(PREVIEW_WRAPPER
                           .replace("__CONTENT__", html)
-                          .replace("__ITEMS__", json.dumps(load_items(), ensure_ascii=False)))
+                          .replace("__ITEMS__", json.dumps(load_items(), ensure_ascii=False))
+                          .replace("__PRESETS__", json.dumps(load_presets(), ensure_ascii=False)))
     (BUILD / "preview.html").write_text(preview, encoding="utf-8")
     (BUILD / "arx-mod.js").write_text(render_mod(), encoding="utf-8")
     print("built: build/sheet.html sheet.css preview.html preview.css arx-mod.js")

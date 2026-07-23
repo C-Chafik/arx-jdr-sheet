@@ -221,7 +221,7 @@ def test_legendary_items_get_permanent_glow_and_red_hover_text():
     assert ".sheet-statbar--item-plain-apple { color:" not in css
 
     html = build.jinja_env().get_template("sheet.html.j2").render(
-        items=fake_items, spells=build.load_spells(),
+        items=fake_items, spells=build.load_spells(), presets=build.load_presets(),
         cols=build.GRID_COLS, rows=build.GRID_ROWS, bags=build.GRID_BAGS
     )
     assert '★ Épée légendaire' in html
@@ -350,7 +350,7 @@ def test_spell_with_icon_renders_image_not_text():
     html = build.jinja_env().get_template("partials/pages/magic.html.j2").render(
         items=build.load_items(), spells=fake_spells)
     css = build.jinja_env().get_template("css/magic-slots.css.j2").render(
-        items=build.load_items(), spells=fake_spells,
+        items=build.load_items(), spells=fake_spells, presets=build.load_presets(),
         cols=build.GRID_COLS, rows=build.GRID_ROWS, bags=build.GRID_BAGS)
     assert '<span class="sheet-spell-icon"></span>' in html
     assert "Test Spell" not in html  # icon present -> no text fallback

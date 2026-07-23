@@ -189,3 +189,70 @@ input[name="attr_hand_effect"][value="rune"] ~ .sheet-book .sheet-grimoire {
   display: block;
 }
 {% endfor %}
+
+/* ---- Preset (memorized) spells: 3 fixed slots in the lower-left area of the
+   left page, empty of any other content. Each can hold ANY preset-eligible
+   spell (book spell or secret one — see presets.json); which one is just
+   whatever attr_preset_slot_N currently holds. Obtaining a preset (a spell
+   scroll item, or an action sequence) isn't wired yet — first pass on
+   position/visuals only, expect a tuning pass. The source art is flat white
+   line work; recolored to solid blue (to match the reference screenshot) via
+   a filter chain — brightness(0) flattens it to black regardless of source
+   tone, the rest recolors that black into #2566e0 (mask-image left it
+   invisible, likely unsupported here, so this reuses the same
+   background-image technique as every other icon on the sheet). ---- */
+{% set preset_blue = "brightness(0) invert(47%) sepia(100%) saturate(600%) hue-rotate(183deg)" %}
+.sheet-preset-slot {
+  position: absolute;
+  width: 9%;
+  height: 9%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: url('{{ "{{ASSET_BASE}}" }}/base-hover-2.png') 6 4, pointer;
+}
+.sheet-preset-slot--1 { left: 19%; top: 76%; }
+.sheet-preset-slot--2 { left: 25%; top: 76%; }
+.sheet-preset-slot--3 { left: 31%; top: 76%; }
+
+.sheet-preset-icon {
+  display: none;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 50%;
+  height: 50%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  filter: {{ preset_blue }};
+  transition: filter 0.2s ease-out;
+}
+.sheet-preset-slot:hover .sheet-preset-icon {
+  filter: {{ preset_blue }} brightness(1.3) drop-shadow(0 0 6px rgba(80, 170, 255, 0.9));
+}
+.sheet-preset-slot:active .sheet-preset-icon {
+  filter: {{ preset_blue }} brightness(1.5) drop-shadow(0 0 12px rgba(80, 170, 255, 1));
+  transition: none;
+}
+{% for preset_id, preset in presets.items() %}
+.sheet-preset-slot input[value="{{ preset_id }}"] + .sheet-preset-icon {
+  display: block;
+  background-image: url('{{ "{{ASSET_BASE}}" }}/{{ preset.icon }}');
+}
+{% endfor %}
+
+/* Preset name on hover — same yellow as the book's spells; secret ones
+   (no book entry) read red instead, both keeping the ★ prefix. */
+.sheet-preset-statbar {
+  color: #ffd700;
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.9), 0 1px 2px rgba(0, 0, 0, 0.9);
+}
+.sheet-preset-statbar--secret {
+  color: #ff2b2b;
+}
+{% for preset_id, preset in presets.items() %}
+.sheet-arx:has(.sheet-preset-slot:hover input[value="{{ preset_id }}"]) .sheet-statbar--preset-{{ preset_id }} {
+  display: block;
+}
+{% endfor %}

@@ -32,4 +32,15 @@
 {% endfor %}
   {# The grimoire: drop any consumed rune here to learn it permanently. #}
   <button type="action" class="sheet-grimoire" name="act_slot_grimoire"></button>
+  {# 3 memorized-spell (preset) slots, lower-left of the left page. Each can
+     hold any preset-eligible spell (book spell or secret one, see
+     presets.json) — obtaining one (scroll item / action sequence) isn't
+     wired yet, this only renders whatever attr_preset_slot_N holds. #}
+{% for n in range(1, 4) %}
+  {# TEMP: defaults to "fireball" on all 3 to check the position/visuals live — remove once placement is validated. #}
+  <button type="action" class="sheet-preset-slot sheet-preset-slot--{{ n }}" name="act_preset_{{ n }}">
+    <input type="hidden" name="attr_preset_slot_{{ n }}" value="fireball" />
+    <span class="sheet-preset-icon"></span>
+  </button>
+{% endfor %}
 </div>

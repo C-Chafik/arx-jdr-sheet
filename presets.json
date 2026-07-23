@@ -1,0 +1,488 @@
+{
+  "nyctalopie": {
+    "label": "Vision nocturne",
+    "runes": [
+      "rune-mega",
+      "rune-vista"
+    ],
+    "icon": "preset-magic-sight.png",
+    "secret": false
+  },
+  "projectile_magique": {
+    "label": "Projectile magique",
+    "runes": [
+      "rune-aam",
+      "rune-taar"
+    ],
+    "icon": "preset-magic-bolt.png",
+    "secret": false
+  },
+  "ignit": {
+    "label": "Etincelle",
+    "runes": [
+      "rune-aam",
+      "rune-yok"
+    ],
+    "icon": "preset-ignit.png",
+    "secret": false
+  },
+  "extinction": {
+    "label": "Extinction",
+    "runes": [
+      "rune-nhi",
+      "rune-yok"
+    ],
+    "icon": "preset-douse.png",
+    "secret": false
+  },
+  "health": {
+    "label": "Sphère de soin",
+    "runes": [
+      "rune-mega",
+      "rune-vitae"
+    ],
+    "icon": "preset-heal.png",
+    "secret": false
+  },
+  "trap-detection": {
+    "label": "Détection des pièges",
+    "runes": [
+      "rune-morte",
+      "rune-cosum",
+      "rune-vista"
+    ],
+    "icon": "preset-trap-detection.png",
+    "secret": false
+  },
+  "protection": {
+    "label": "Aura de protection",
+    "runes": [
+      "rune-mega",
+      "rune-kaom"
+    ],
+    "icon": "preset-armor.png",
+    "secret": false
+  },
+  "vulnerability": {
+    "label": "Vulnérabilité",
+    "runes": [
+      "rune-rhaa",
+      "rune-kaom"
+    ],
+    "icon": "preset-vulnerability.png",
+    "secret": false
+  },
+  "celerity": {
+    "label": "Célérité",
+    "runes": [
+      "rune-mega",
+      "rune-movis"
+    ],
+    "icon": "preset-celerity.png",
+    "secret": false
+  },
+  "revelation": {
+    "label": "Révélation",
+    "runes": [
+      "rune-nhi",
+      "rune-stregum",
+      "rune-vista"
+    ],
+    "icon": "preset-reveal.png",
+    "secret": false
+  },
+  "fireball": {
+    "label": "Boule de feu",
+    "runes": [
+      "rune-aam",
+      "rune-yok",
+      "rune-taar"
+    ],
+    "icon": "preset-fireball.png",
+    "secret": false
+  },
+  "sustentation": {
+    "label": "Sustentation",
+    "runes": [
+      "rune-aam",
+      "rune-vitae",
+      "rune-cosum"
+    ],
+    "icon": "preset-sustentation.png",
+    "secret": false
+  },
+  "blessing": {
+    "label": "Bénédiction",
+    "runes": [
+      "rune-mega",
+      "rune-stregum",
+      "rune-vitae"
+    ],
+    "icon": "preset-blessing.png",
+    "secret": false
+  },
+  "negate_field": {
+    "label": "Negation de champ",
+    "runes": [
+      "rune-nhi",
+      "rune-spacium"
+    ],
+    "icon": "preset-dispell-field.png",
+    "secret": false
+  },
+  "fire_protection": {
+    "label": "Protection contre le feu",
+    "runes": [
+      "rune-yok",
+      "rune-kaom"
+    ],
+    "icon": "preset-fire-protection.png",
+    "secret": false
+  },
+  "telekinezie": {
+    "label": "Télékinezie",
+    "runes": [
+      "rune-spacium",
+      "rune-comunicatum"
+    ],
+    "icon": "preset-telekinezis.png",
+    "secret": false
+  },
+  "rune_guarding": {
+    "label": "Rune explosive",
+    "runes": [
+      "rune-aam",
+      "rune-morte",
+      "rune-cosum"
+    ],
+    "icon": "preset-rune-guarding.png",
+    "secret": false
+  },
+  "levitation": {
+    "label": "Lévitation",
+    "runes": [
+      "rune-mega",
+      "rune-spacium",
+      "rune-movis"
+    ],
+    "icon": "preset-levitate.png",
+    "secret": false
+  },
+  "antidote": {
+    "label": "Antidote",
+    "runes": [
+      "rune-nhi",
+      "rune-cetrius"
+    ],
+    "icon": "preset-antidote.png",
+    "secret": false
+  },
+  "repell_undead": {
+    "label": "Repousser les morts",
+    "runes": [
+      "rune-morte",
+      "rune-kaom"
+    ],
+    "icon": "preset-repel-undead.png",
+    "secret": false
+  },
+  "raise_undead": {
+    "label": "Invocation de mort vivant",
+    "runes": [
+      "rune-aam",
+      "rune-morte",
+      "rune-vitae"
+    ],
+    "icon": "preset-raise-dead.png",
+    "secret": false
+  },
+  "paralysis": {
+    "label": "Paralysie",
+    "runes": [
+      "rune-nhi",
+      "rune-movis"
+    ],
+    "icon": "preset-paralysis.png",
+    "secret": false
+  },
+  "force_field": {
+    "label": "Champ de force",
+    "runes": [
+      "rune-aam",
+      "rune-kaom",
+      "rune-spacium"
+    ],
+    "icon": "preset-force-field.png",
+    "secret": false
+  },
+  "disarm_trap": {
+    "label": "Désactivation des pièges",
+    "runes": [
+      "rune-nhi",
+      "rune-morte",
+      "rune-cosum"
+    ],
+    "icon": "preset-disarm-trap.png",
+    "secret": false
+  },
+  "third_eye": {
+    "label": "Troisième Oeil",
+    "runes": [
+      "rune-vista",
+      "rune-movis"
+    ],
+    "icon": "preset-third-eye.png",
+    "secret": false
+  },
+  "fire_field": {
+    "label": "Champ de flammes",
+    "runes": [
+      "rune-aam",
+      "rune-yok",
+      "rune-spacium"
+    ],
+    "icon": "preset-firewall.png",
+    "secret": false
+  },
+  "lighting_strike": {
+    "label": "Foudre (Projection)",
+    "runes": [
+      "rune-aam",
+      "rune-folgora",
+      "rune-taar"
+    ],
+    "icon": "preset-lightning-strike.png",
+    "secret": false
+  },
+  "confusion": {
+    "label": "Confusion",
+    "runes": [
+      "rune-rhaa",
+      "rune-vista"
+    ],
+    "icon": "preset-confusion.png",
+    "secret": false
+  },
+  "invisibility": {
+    "label": "Invisibilité",
+    "runes": [
+      "rune-nhi",
+      "rune-vista"
+    ],
+    "icon": "preset-invisibility.png",
+    "secret": false
+  },
+  "mana_drain": {
+    "label": "Drain de mana",
+    "runes": [
+      "rune-stregum",
+      "rune-movis"
+    ],
+    "icon": "preset-mana-drain.png",
+    "secret": false
+  },
+  "chaos": {
+    "label": "Chaos",
+    "runes": [
+      "rune-aam",
+      "rune-mega",
+      "rune-morte"
+    ],
+    "icon": "preset-chaos.png",
+    "secret": false
+  },
+  "enchantement": {
+    "label": "Enchantement",
+    "runes": [
+      "rune-mega",
+      "rune-stregum",
+      "rune-cosum"
+    ],
+    "icon": "preset-enchantment.png",
+    "secret": false
+  },
+  "invocation_demon": {
+    "label": "Invocation démoniaque (Non contrôlé)",
+    "runes": [
+      "rune-aam",
+      "rune-vitae",
+      "rune-tera"
+    ],
+    "icon": "preset-invocation-demon.png",
+    "secret": false
+  },
+  "negate_magic": {
+    "label": "Aura d'antimagie",
+    "runes": [
+      "rune-nhi",
+      "rune-stregum",
+      "rune-spacium"
+    ],
+    "icon": "preset-negate-magic.png",
+    "secret": false
+  },
+  "incineration": {
+    "label": "Incandescence",
+    "runes": [
+      "rune-aam",
+      "rune-mega",
+      "rune-yok"
+    ],
+    "icon": "preset-incineration.png",
+    "secret": false
+  },
+  "mass_paralysis": {
+    "label": "Paralysie massive",
+    "runes": [
+      "rune-mega",
+      "rune-nhi",
+      "rune-movis"
+    ],
+    "icon": "preset-mass-paralysis.png",
+    "secret": false
+  },
+  "mass_lightning_strike": {
+    "label": "Champ de foudre",
+    "runes": [
+      "rune-aam",
+      "rune-folgora",
+      "rune-spacium"
+    ],
+    "icon": "preset-mass-lightning-strike.png",
+    "secret": false
+  },
+  "mind_control": {
+    "label": "Contrôle mental",
+    "runes": [
+      "rune-movis",
+      "rune-comunicatum"
+    ],
+    "icon": "preset-mind-control.png",
+    "secret": false
+  },
+  "the_world": {
+    "label": "Faille temporelle",
+    "runes": [
+      "rune-rhaa",
+      "rune-tempus"
+    ],
+    "icon": "preset-the-world.png",
+    "secret": false
+  },
+  "mass_incineration": {
+    "label": "Fournaise",
+    "runes": [
+      "rune-mega",
+      "rune-aam",
+      "rune-yok"
+    ],
+    "icon": "preset-mass-incineration.png",
+    "secret": false
+  },
+  "portal_activation": {
+    "label": "Activation de portail",
+    "runes": [
+      "rune-mega",
+      "rune-spacium"
+    ],
+    "icon": "preset-portal-activation.png",
+    "secret": true
+  },
+  "ice_field": {
+    "label": "Champ de glace",
+    "runes": [
+      "rune-aam",
+      "rune-fridd",
+      "rune-spacium"
+    ],
+    "icon": "preset-ice-field.png",
+    "secret": true
+  },
+  "curse": {
+    "label": "Malédiction",
+    "runes": [
+      "rune-rhaa",
+      "rune-tempus",
+      "rune-taar"
+    ],
+    "icon": "preset-curse.png",
+    "secret": true
+  },
+  "life_drain": {
+    "label": "Drain de vie",
+    "runes": [
+      "rune-vitae",
+      "rune-movis"
+    ],
+    "icon": "preset-life-drain.png",
+    "secret": true
+  },
+  "firewall": {
+    "label": "Mur de feu",
+    "runes": [
+      "rune-aam",
+      "rune-yok",
+      "rune-spacium"
+    ],
+    "icon": "preset-firewall.png",
+    "secret": true
+  },
+  "harm": {
+    "label": "Sphère de douleur",
+    "runes": [
+      "rune-rha",
+      "rune-vitae"
+    ],
+    "icon": "preset-harm.png",
+    "secret": true
+  },
+  "ice_bolt": {
+    "label": "Boule de glace",
+    "runes": [
+      "rune-aam",
+      "rune-fridd",
+      "rune-taar"
+    ],
+    "icon": "preset-ice-bolt.png",
+    "secret": true
+  },
+  "make_friend": {
+    "label": "Devenir amis",
+    "runes": [
+      "rune-mega",
+      "rune-mega",
+      "rune-mega",
+      "rune-comunicatum"
+    ],
+    "icon": "preset-make-friend.png",
+    "secret": true
+  },
+  "poison_projection": {
+    "label": "Projection de poison",
+    "runes": [
+      "rune-aam",
+      "rune-cetrius",
+      "rune-taar"
+    ],
+    "icon": "preset-poison-projection.png",
+    "secret": true
+  },
+  "cold_protection": {
+    "label": "Protection contre le froid",
+    "runes": [
+      "rune-fridd",
+      "rune-kaom"
+    ],
+    "icon": "preset-cold-protection.png",
+    "secret": true
+  },
+  "slow_down": {
+    "label": "Ralentissement",
+    "runes": [
+      "rune-rha",
+      "rune-movis"
+    ],
+    "icon": "preset-slow-down.png",
+    "secret": true
+  }
+}

@@ -38,10 +38,20 @@
     <div class="sheet-statbar sheet-spell-statbar sheet-statbar--spell-{{ item_id }}">★ {{ item.label }}</div>
 {% endif %}
 {% endfor %}
-  {# Known-spell names on hover (2x2 cast slots) — same yellow+star billboard
-     as learned runes, revealed by :has() rules in css/magic-slots.css.j2. #}
+  {# Known-spell names on hover (2x2 cast slots) — same yellow billboard as
+     learned runes but no star (only runes and secret presets get one),
+     revealed by :has() rules in css/magic-slots.css.j2. #}
 {% for spell_id, spell in spells.items() %}
-    <div class="sheet-statbar sheet-spell-statbar sheet-statbar--cast-{{ spell_id }}">★ {{ spell.label }}</div>
+    <div class="sheet-statbar sheet-spell-statbar sheet-statbar--cast-{{ spell_id }}">{{ spell.label }}</div>
+{% endfor %}
+  {# Memorized-spell (preset) names on hover — same yellow as the book's
+     spells, no star; a secret spell (no book entry) reads red WITH a star
+     instead, revealed by :has() rules in css/magic-slots.css.j2.
+     presets.json is self-contained (label + runes + icon), even for
+     book-linked spells — so it doubles as the catalog used later to detect
+     rune combinations. #}
+{% for preset_id, preset in presets.items() %}
+    <div class="sheet-statbar sheet-preset-statbar{% if preset.secret %} sheet-preset-statbar--secret{% endif %} sheet-statbar--preset-{{ preset_id }}">{% if preset.secret %}★ {% endif %}{{ preset.label }}</div>
 {% endfor %}
   </div>
   {# The leather band slides out from under the book when the toggle is checked. #}
