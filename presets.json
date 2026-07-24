@@ -5,8 +5,7 @@
       "rune-mega",
       "rune-vista"
     ],
-    "icon": "presets/magic-sight.png",
-    "secret": false
+    "icon": "presets/magic-sight.png"
   },
   "projectile_magique": {
     "label": "Projectile magique",
@@ -14,8 +13,7 @@
       "rune-aam",
       "rune-taar"
     ],
-    "icon": "presets/magic-bolt.png",
-    "secret": false
+    "icon": "presets/magic-bolt.png"
   },
   "ignit": {
     "label": "Etincelle",
@@ -23,8 +21,7 @@
       "rune-aam",
       "rune-yok"
     ],
-    "icon": "presets/ignit.png",
-    "secret": false
+    "icon": "presets/ignit.png"
   },
   "extinction": {
     "label": "Extinction",
@@ -32,8 +29,7 @@
       "rune-nhi",
       "rune-yok"
     ],
-    "icon": "presets/douse.png",
-    "secret": false
+    "icon": "presets/douse.png"
   },
   "health": {
     "label": "Sphère de soin",
@@ -41,8 +37,7 @@
       "rune-mega",
       "rune-vitae"
     ],
-    "icon": "presets/heal.png",
-    "secret": false
+    "icon": "presets/heal.png"
   },
   "trap-detection": {
     "label": "Détection des pièges",
@@ -51,8 +46,7 @@
       "rune-cosum",
       "rune-vista"
     ],
-    "icon": "presets/trap-detection.png",
-    "secret": false
+    "icon": "presets/trap-detection.png"
   },
   "protection": {
     "label": "Aura de protection",
@@ -60,8 +54,7 @@
       "rune-mega",
       "rune-kaom"
     ],
-    "icon": "presets/armor.png",
-    "secret": false
+    "icon": "presets/armor.png"
   },
   "vulnerability": {
     "label": "Vulnérabilité",
@@ -69,8 +62,7 @@
       "rune-rhaa",
       "rune-kaom"
     ],
-    "icon": "presets/vulnerability.png",
-    "secret": false
+    "icon": "presets/vulnerability.png"
   },
   "celerity": {
     "label": "Célérité",
@@ -78,8 +70,7 @@
       "rune-mega",
       "rune-movis"
     ],
-    "icon": "presets/celerity.png",
-    "secret": false
+    "icon": "presets/celerity.png"
   },
   "revelation": {
     "label": "Révélation",
@@ -88,8 +79,7 @@
       "rune-stregum",
       "rune-vista"
     ],
-    "icon": "presets/reveal.png",
-    "secret": false
+    "icon": "presets/reveal.png"
   },
   "fireball": {
     "label": "Boule de feu",
@@ -98,8 +88,7 @@
       "rune-yok",
       "rune-taar"
     ],
-    "icon": "presets/fireball.png",
-    "secret": false
+    "icon": "presets/fireball.png"
   },
   "sustentation": {
     "label": "Sustentation",
@@ -108,8 +97,7 @@
       "rune-vitae",
       "rune-cosum"
     ],
-    "icon": "presets/sustentation.png",
-    "secret": false
+    "icon": "presets/sustentation.png"
   },
   "blessing": {
     "label": "Bénédiction",
@@ -118,8 +106,7 @@
       "rune-stregum",
       "rune-vitae"
     ],
-    "icon": "presets/blessing.png",
-    "secret": false
+    "icon": "presets/blessing.png"
   },
   "negate_field": {
     "label": "Negation de champ",
@@ -127,8 +114,7 @@
       "rune-nhi",
       "rune-spacium"
     ],
-    "icon": "presets/dispell-field.png",
-    "secret": false
+    "icon": "presets/dispell-field.png"
   },
   "fire_protection": {
     "label": "Protection contre le feu",
@@ -136,8 +122,7 @@
       "rune-yok",
       "rune-kaom"
     ],
-    "icon": "presets/fire-protection.png",
-    "secret": false
+    "icon": "presets/fire-protection.png"
   },
   "telekinezie": {
     "label": "Télékinezie",
@@ -145,8 +130,7 @@
       "rune-spacium",
       "rune-comunicatum"
     ],
-    "icon": "presets/telekinezis.png",
-    "secret": false
+    "icon": "presets/telekinezis.png"
   },
   "rune_guarding": {
     "label": "Rune explosive",
@@ -155,8 +139,7 @@
       "rune-morte",
       "rune-cosum"
     ],
-    "icon": "presets/rune-guarding.png",
-    "secret": false
+    "icon": "presets/rune-guarding.png"
   },
   "levitation": {
     "label": "Lévitation",
@@ -165,8 +148,7 @@
       "rune-spacium",
       "rune-movis"
     ],
-    "icon": "presets/levitate.png",
-    "secret": false
+    "icon": "presets/levitate.png"
   },
   "antidote": {
     "label": "Antidote",
@@ -174,8 +156,7 @@
       "rune-nhi",
       "rune-cetrius"
     ],
-    "icon": "presets/antidote.png",
-    "secret": false
+    "icon": "presets/antidote.png"
   },
   "repell_undead": {
     "label": "Repousser les morts",
@@ -183,8 +164,7 @@
       "rune-morte",
       "rune-kaom"
     ],
-    "icon": "presets/repel-undead.png",
-    "secret": false
+    "icon": "presets/repel-undead.png"
   },
   "raise_undead": {
     "label": "Invocation de mort vivant",
@@ -193,8 +173,7 @@
       "rune-morte",
       "rune-vitae"
     ],
-    "icon": "presets/raise-dead.png",
-    "secret": false
+    "icon": "presets/raise-dead.png"
   },
   "paralysis": {
     "label": "Paralysie",
@@ -202,8 +181,7 @@
       "rune-nhi",
       "rune-movis"
     ],
-    "icon": "presets/paralysis.png",
-    "secret": false
+    "icon": "presets/paralysis.png"
   },
   "force_field": {
     "label": "Champ de force",
@@ -212,8 +190,7 @@
       "rune-kaom",
       "rune-spacium"
     ],
-    "icon": "presets/force-field.png",
-    "secret": false
+    "icon": "presets/force-field.png"
   },
   "disarm_trap": {
     "label": "Désactivation des pièges",
@@ -222,8 +199,7 @@
       "rune-morte",
       "rune-cosum"
     ],
-    "icon": "presets/disarm-trap.png",
-    "secret": false
+    "icon": "presets/disarm-trap.png"
   },
   "third_eye": {
     "label": "Troisième Oeil",
@@ -231,8 +207,7 @@
       "rune-vista",
       "rune-movis"
     ],
-    "icon": "presets/third-eye.png",
-    "secret": false
+    "icon": "presets/third-eye.png"
   },
   "fire_field": {
     "label": "Champ de flammes",
@@ -241,8 +216,7 @@
       "rune-yok",
       "rune-spacium"
     ],
-    "icon": "presets/firewall.png",
-    "secret": false
+    "icon": "presets/firewall.png"
   },
   "lighting_strike": {
     "label": "Foudre (Projection)",
@@ -251,8 +225,7 @@
       "rune-folgora",
       "rune-taar"
     ],
-    "icon": "presets/lightning-strike.png",
-    "secret": false
+    "icon": "presets/lightning-strike.png"
   },
   "confusion": {
     "label": "Confusion",
@@ -260,8 +233,7 @@
       "rune-rhaa",
       "rune-vista"
     ],
-    "icon": "presets/confusion.png",
-    "secret": false
+    "icon": "presets/confusion.png"
   },
   "invisibility": {
     "label": "Invisibilité",
@@ -269,8 +241,7 @@
       "rune-nhi",
       "rune-vista"
     ],
-    "icon": "presets/invisibility.png",
-    "secret": false
+    "icon": "presets/invisibility.png"
   },
   "mana_drain": {
     "label": "Drain de mana",
@@ -278,8 +249,7 @@
       "rune-stregum",
       "rune-movis"
     ],
-    "icon": "presets/mana-drain.png",
-    "secret": false
+    "icon": "presets/mana-drain.png"
   },
   "chaos": {
     "label": "Chaos",
@@ -288,8 +258,7 @@
       "rune-mega",
       "rune-morte"
     ],
-    "icon": "presets/chaos.png",
-    "secret": false
+    "icon": "presets/chaos.png"
   },
   "enchantement": {
     "label": "Enchantement",
@@ -298,8 +267,7 @@
       "rune-stregum",
       "rune-cosum"
     ],
-    "icon": "presets/enchantment.png",
-    "secret": false
+    "icon": "presets/enchantment.png"
   },
   "invocation_demon": {
     "label": "Invocation démoniaque (Non contrôlé)",
@@ -308,8 +276,7 @@
       "rune-vitae",
       "rune-tera"
     ],
-    "icon": "presets/invocation-demon.png",
-    "secret": false
+    "icon": "presets/invocation-demon.png"
   },
   "negate_magic": {
     "label": "Aura d'antimagie",
@@ -318,8 +285,7 @@
       "rune-stregum",
       "rune-spacium"
     ],
-    "icon": "presets/negate-magic.png",
-    "secret": false
+    "icon": "presets/negate-magic.png"
   },
   "incineration": {
     "label": "Incandescence",
@@ -328,8 +294,7 @@
       "rune-mega",
       "rune-yok"
     ],
-    "icon": "presets/incineration.png",
-    "secret": false
+    "icon": "presets/incineration.png"
   },
   "mass_paralysis": {
     "label": "Paralysie massive",
@@ -338,8 +303,7 @@
       "rune-nhi",
       "rune-movis"
     ],
-    "icon": "presets/mass-paralysis.png",
-    "secret": false
+    "icon": "presets/mass-paralysis.png"
   },
   "mass_lightning_strike": {
     "label": "Champ de foudre",
@@ -348,8 +312,7 @@
       "rune-folgora",
       "rune-spacium"
     ],
-    "icon": "presets/mass-lightning-strike.png",
-    "secret": false
+    "icon": "presets/mass-lightning-strike.png"
   },
   "mind_control": {
     "label": "Contrôle mental",
@@ -357,8 +320,7 @@
       "rune-movis",
       "rune-comunicatum"
     ],
-    "icon": "presets/mind-control.png",
-    "secret": false
+    "icon": "presets/mind-control.png"
   },
   "the_world": {
     "label": "Faille temporelle",
@@ -366,8 +328,7 @@
       "rune-rhaa",
       "rune-tempus"
     ],
-    "icon": "presets/the-world.png",
-    "secret": false
+    "icon": "presets/the-world.png"
   },
   "mass_incineration": {
     "label": "Fournaise",
@@ -376,8 +337,7 @@
       "rune-aam",
       "rune-yok"
     ],
-    "icon": "presets/mass-incineration.png",
-    "secret": false
+    "icon": "presets/mass-incineration.png"
   },
   "portal_activation": {
     "label": "Activation de portail",

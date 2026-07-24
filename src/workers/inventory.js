@@ -13,7 +13,7 @@ const EQUIP_ACCEPTS = {
   equip_head: ["casque"],
   equip_torso: ["armure_haute"],
   equip_belt: ["armure_basse"],
-  equip_main_hand: ["arme_principale"],
+  equip_main_hand: ["arme_principale", "arme_secondaire"],
   equip_off_hand: ["arme_secondaire", "bouclier"],
   equip_jewel_1: ["bijoux"],
   equip_jewel_2: ["bijoux"]
@@ -392,3 +392,51 @@ on("clicked:memorize", function () {
     setAttrs(update);
   });
 });
+
+/* Equipment modifiers: any item.json entry MAY carry any of these stat keys
+   (optional, exactly like "legendary" — present means "apply this", absent
+   means no effect, never a 0/false default baked into every item).
+   Single visible/editable attr_<stat> — no separate base field — stays
+   correct across manual edits (leveling, point-buy) by applying only the
+   DELTA between the old and new equipment bonus, never a full recompute
+   from a fixed default:
+     new visible = current visible + (new equip total − previously applied)
+   attr_<stat>_applied_mod (hidden) remembers what was last baked in, so a
+   manual edit made between two equipment changes is never overwritten —
+   only the change in gear bonus is layered on top of whatever is there. */
+const MOD_STATS = [
+  "strength", "mental", "dexterity", "constitution",
+  "stealth", "technical", "intuition", "ethereal_link", "object_knowledge", "casting",
+  "close_combat", "projectile", "defense",
+  "armor_class", "magic_resistance", "poison_resistance", "damages"
+];
+const EQUIP_SLOTS_FOR_MODS = Object.keys(EQUIP_ACCEPTS);
+
+function recomputeModifiers(v) {
+  const newTotals = {};
+  MOD_STATS.forEach(function (stat) { newTotals[stat] = 0; });
+  EQUIP_SLOTS_FOR_MODS.forEach(function (slot) {
+    const item = ITEMS[v[slot]];
+    if (!item) { return; }
+    MOD_STATS.forEach(function (stat) {
+      if (item[stat] !== undefined) { newTotals[stat] += Number(item[stat]); }
+    });
+  });
+  const update = {};
+  MOD_STATS.forEach(function (stat) {
+    const prevApplied = parseInt(v[stat + "_applied_mod"], 10) || 0;
+    const current = parseInt(v[stat], 10) || 0;
+    const delta = newTotals[stat] - prevApplied;
+    if (delta !== 0) { update[stat] = current + delta; }
+    update[stat + "_applied_mod"] = newTotals[stat];
+  });
+  setAttrs(update);
+}
+
+on("change:equip_head change:equip_torso change:equip_belt change:equip_main_hand change:equip_off_hand change:equip_jewel_1 change:equip_jewel_2",
+  function () { getAttrs(EQUIP_SLOTS_FOR_MODS.concat(MOD_STATS).concat(MOD_STATS.map(function (s) { return s + "_applied_mod"; })), recomputeModifiers); });
+
+/* Also recompute on load: gear equipped before this system existed (or set
+   by the GM directly) never fires a change: event, so the bonus would never
+   get baked in until the player re-equips something. */
+on("sheet:opened", function () { getAttrs(EQUIP_SLOTS_FOR_MODS.concat(MOD_STATS).concat(MOD_STATS.map(function (s) { return s + "_applied_mod"; })), recomputeModifiers); });

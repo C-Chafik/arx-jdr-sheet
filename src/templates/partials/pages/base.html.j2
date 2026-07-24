@@ -24,8 +24,15 @@
   </div>
 {% for name in attributes + skills + singles %}
   <div class="sheet-field sheet-field--{{ name }}">
+    {# The one and only visible/editable value — manual edits (leveling,
+       point-buy) are safe: equipment changes only ever apply the DELTA in
+       gear bonus on top of whatever's here (see recomputeModifiers in
+       inventory.js), never a full recompute from scratch. #}
     <input type="number" name="attr_{{ name }}" value="{{ defaults[name] }}" />
   </div>
+  {# Remembers the equipment bonus last baked into attr_{{ name }}, so the
+     next equipment change can apply just the difference. #}
+  <input type="hidden" name="attr_{{ name }}_applied_mod" value="0" />
 {% endfor %}
 {% for name in gauges %}
   <div class="sheet-field sheet-gauge sheet-field--{{ name }}">
