@@ -1,4 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=IM+Fell+English&display=swap');
+/* IM Fell English's "1" read as a capital "I" — EB Garamond keeps the same
+   old-book feel but with unambiguous digit shapes. */
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,700;1,400&display=swap');
 
 .sheet-arx {
   position: relative;
@@ -9,7 +11,7 @@
   /* Reserve the open-inventory height up front (book 677 − 48 overlap + band 172),
      so the backdrop never rescales when the band slides out. */
   min-height: 801px;
-  font-family: 'IM Fell English', serif;
+  font-family: 'EB Garamond', serif;
   background-image: url('{{ASSET_BASE}}/book/background.png');
   background-size: cover;
   background-position: center;
