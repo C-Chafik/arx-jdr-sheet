@@ -29,6 +29,12 @@
      on the sheet. #}
   <input type="hidden" class="sheet-hand-mirror" name="attr_inventory_open" value="0" />
   <button type="action" class="sheet-inventory-toggle" name="act_inventory_toggle"></button>
+  {# The money purse: top-level control next to the inventory toggle (not
+     inside the band), same size, sitting just above it — see inventory.css.
+     Drop a currency item here to add its value to attr_gold. #}
+  <button type="action" class="sheet-purse" name="act_slot_purse"></button>
+  {# Live gold count, shown just above the purse on hover only. #}
+  <div class="sheet-gold-readout"><input type="number" class="sheet-gold-display" name="attr_gold" value="0" /></div>
   <div class="sheet-book">
 {% include "partials/tabs.html.j2" %}
 {% include "partials/pages/base.html.j2" %}

@@ -2,7 +2,10 @@
 
 .sheet-arx {
   position: relative;
-  width: 1100px;
+  /* +160px on the right of the (unchanged, flush top-left) 1100×677 book —
+     just enough room for the craft-seq strip to sit at the top-right corner
+     without floating off in blank space (see magic-slots.css.j2). */
+  width: 1260px;
   /* Reserve the open-inventory height up front (book 677 − 48 overlap + band 172),
      so the backdrop never rescales when the band slides out. */
   min-height: 801px;
@@ -16,11 +19,13 @@
 }
 
 /* The book itself: fixed size, all page positions are % of this box.
-   z-index keeps it above the inventory band sliding out from underneath. */
+   z-index keeps it above the inventory band sliding out from underneath.
+   Flush at the top-left of .sheet-arx, same as before the extra width was
+   added on the right. */
 .sheet-book {
   position: relative;
   z-index: 1;
-  width: 100%;
+  width: 1100px;
   height: 677px;
   background-image: url('{{ASSET_BASE}}/ARX-BASE.png');
   background-size: 100% 100%;

@@ -193,6 +193,10 @@ __CONTENT__
     [1, 2, 3].forEach(function (n) { setAttr("preset_slot_" + n, ""); });
     for (let i = 1; i <= 20; i++) { setAttr("spellbook_" + i, ""); }
     Object.keys(ITEMS).forEach(function (id) { if (ITEMS[id].effect === "rune") { setAttr("known_" + id.slice(5), ""); } });
+    setAttr("craft_runes", "");
+    [1, 2, 3, 4, 5].forEach(function (n) { setAttr("craft_pos_" + n, ""); });
+    setAttr("recipe_spell", "");
+    setAttr("forget_mode", "0");
     setAttr("bag_count", "1");
     setAttr("bag_level", "1");
     document.getElementById("arx-msg").textContent = "Inventaire vidé";
@@ -234,7 +238,10 @@ def render_worker() -> str:
     # Spell visibility (page + rune-combination) is pure CSS (see magic-slots.css.j2);
     # the worker only ever needs to know about runes, not spells.
     parts = [(SRC / "workers" / name).read_text(encoding="utf-8") for name in WORKER_FILES]
-    code = "\n".join(parts).replace("{{ITEMS_JSON}}", json.dumps(load_items(), ensure_ascii=False))
+    code = ("\n".join(parts)
+            .replace("{{ITEMS_JSON}}", json.dumps(load_items(), ensure_ascii=False))
+            .replace("{{PRESETS_JSON}}", json.dumps(load_presets(), ensure_ascii=False))
+            .replace("{{SPELLS_JSON}}", json.dumps(load_spells(), ensure_ascii=False)))
     return f'<script type="text/worker">\n{inject_grid(code)}\n</script>\n'
 
 

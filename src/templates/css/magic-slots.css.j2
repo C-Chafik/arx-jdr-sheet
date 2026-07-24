@@ -22,7 +22,15 @@
   position: absolute;
   width: {{ sb_w }}%;
   height: {{ sb_h }}%;
-  cursor: url('{{ "{{ASSET_BASE}}" }}/points-hover.png') 4 4, help;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: url('{{ "{{ASSET_BASE}}" }}/selected-hover.png') 8 4, pointer;
+}
+
+/* Immediate hover feedback on a learned rune — no click needed. */
+.sheet-spellbook-slot:hover .sheet-item-icon {
+  filter: brightness(1.8) drop-shadow(0 0 10px rgba(255, 220, 130, 1));
 }
 
 /* Fill the slot box exactly (no 80%/10% inset) — the box IS the target icon size. */
@@ -41,6 +49,17 @@
 .sheet-spellbook-slot input[value="{{ item_id }}"] + .sheet-item-icon {
   display: block;
   background-image: url('{{ "{{ASSET_BASE}}" }}/{{ item.icon | replace("item-rune-", "item-magicbook-") }}');
+}
+{% endif %}
+{% endfor %}
+
+/* Rune-craft: a slot's icon glows while its rune is part of the in-progress
+   combination (attr_craft_runes, delimited "|rune-x|rune-y|" — see
+   inventory.js's craftJoin). */
+{% for item_id, item in items.items() %}
+{% if item.effect | default("") == "rune" %}
+.sheet-arx:has(input[name="attr_craft_runes"][value*="|{{ item_id }}|"]) .sheet-spellbook-slot input[value="{{ item_id }}"] + .sheet-item-icon {
+  filter: brightness(1.8) drop-shadow(0 0 10px rgba(255, 220, 130, 1));
 }
 {% endif %}
 {% endfor %}
@@ -87,6 +106,121 @@ input[name="attr_hand_effect"][value="rune"] ~ .sheet-book .sheet-grimoire {
   background: radial-gradient(circle, rgba(255, 232, 160, 0.4), rgba(255, 232, 160, 0) 75%);
   box-shadow: 0 0 14px rgba(255, 220, 130, 0.8);
 }
+
+/* Rune-craft controls: icon buttons, bottom-right of the LEFT page — clear
+   of the grimoire/presets above and of the inventory band/toggle that sits
+   just below the book (see inventory.css: .sheet-inventory-toggle,
+   .sheet-inventory). */
+.sheet-craft-confirm, .sheet-craft-memorize, .sheet-craft-reset {
+  position: absolute;
+  top: 82%;
+  width: 5%;
+  height: 5%;
+  z-index: 5; /* sits over preset-slot--3, whose box overlaps this corner */
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: url('{{ "{{ASSET_BASE}}" }}/base-hover-2.png') 6 4, pointer;
+  transition: filter 0.2s ease-out;
+}
+.sheet-craft-confirm:hover, .sheet-craft-memorize:hover, .sheet-craft-reset:hover {
+  filter: brightness(1.8) drop-shadow(0 0 10px rgba(255, 220, 130, 1));
+}
+.sheet-craft-reset { left: 35%; background-image: url('{{ "{{ASSET_BASE}}" }}/delete-logo.png'); }
+.sheet-craft-confirm { left: 40%; background-image: url('{{ "{{ASSET_BASE}}" }}/cast-spell.png'); }
+.sheet-craft-memorize { left: 45%; background-image: url('{{ "{{ASSET_BASE}}" }}/Magic-Button.png'); }
+
+.sheet-arx:has(.sheet-craft-confirm:hover) .sheet-statbar--craft-confirm { display: block; }
+.sheet-arx:has(.sheet-craft-memorize:hover) .sheet-statbar--craft-memorize { display: block; }
+.sheet-arx:has(.sheet-craft-reset:hover) .sheet-statbar--craft-reset { display: block; }
+
+/* Forget-a-preset mode (Reset clicked with no rune in the combo): the
+   preset slots swap to a delete cursor until one is picked (or Reset is
+   clicked again to cancel) — see inventory.js's clicked:preset_N. */
+.sheet-arx:has(input[name="attr_forget_mode"][value="1"]) .sheet-preset-slot {
+  cursor: url('{{ "{{ASSET_BASE}}" }}/delete-logo.png') 16 16, crosshair;
+}
+
+/* Craft sequence: sits in the 160px strip reserved to the right of the book
+   (see base.css's .sheet-arx/.sheet-book), near its top edge — outside the
+   book art but still close to it, not floating off in blank space.
+   Negative right escapes .sheet-book's own box (its nearest positioned
+   ancestor) the same way .sheet-inventory already tucks under it with a
+   negative margin. attr_craft_pos_1 (slot 1, flush against the sheet's
+   right edge) always holds the MOST RECENTLY clicked rune — each new click
+   bumps every earlier one outward/left by one slot (see inventory.js's
+   craftPositions, indexed from the end of the list, not the start).
+   Packed tight ("côte à côte") — reuses .sheet-item-icon's own display:none
+   default; the reveal below scopes to THIS class only, using each rune's
+   actual inventory icon (item.icon), not the magicbook variant used in the
+   spellbook grid — plus a permanent glow, since these are always "selected". */
+.sheet-craft-seq {
+  position: absolute;
+  top: 0px;
+  width: 48px;  /* native size of a rune's inventory icon (item-rune-*.png) */
+  height: 48px;
+}
+.sheet-craft-seq--1 { right: -160px; }
+.sheet-craft-seq--2 { right: -124px; }
+.sheet-craft-seq--3 { right: -88px; }
+.sheet-craft-seq--4 { right: -52px; }
+.sheet-craft-seq--5 { right: -16px; }
+{% for item_id, item in items.items() %}
+{% if item.effect | default("") == "rune" %}
+.sheet-craft-seq input[value="{{ item_id }}"] + .sheet-item-icon {
+  display: block;
+  background-image: url('{{ "{{ASSET_BASE}}" }}/{{ item.icon }}');
+}
+{% endif %}
+{% endfor %}
+
+/* Pulsing glow — a static filter looked flat, so this animates it instead. */
+@keyframes craft-seq-glow {
+  0%, 100% { filter: brightness(1.2) drop-shadow(0 0 4px rgba(255, 220, 130, 0.8)); }
+  50% { filter: brightness(1.8) drop-shadow(0 0 14px rgba(255, 220, 130, 1)); }
+}
+.sheet-craft-seq .sheet-item-icon {
+  animation: craft-seq-glow 1.6s ease-in-out infinite;
+}
+
+/* ---- Spell recipe view: clicking a spell in the 2×2 slots highlights every
+   rune it requires in the 20-slot grid, each tagged with its position number
+   in the recipe (attr_recipe_spell holds the clicked spell's id — see
+   inventory.js; a second click of the same spell clears it). ---- */
+.sheet-recipe-order {
+  display: none;
+  position: absolute;
+  right: -10%;
+  bottom: -10%;
+  width: 55%;
+  height: 55%;
+  border-radius: 50%;
+  background: #2b1d0e;
+  border: 1px solid #ffd700;
+  color: #ffd700;
+  font-size: 28px;
+  font-weight: bold;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 2;
+}
+{% for spell_id, spell in spells.items() %}
+{% for rune in spell.runes %}
+.sheet-arx:has(input[name="attr_recipe_spell"][value="{{ spell_id }}"]) .sheet-spellbook-slot input[value="{{ rune }}"] + .sheet-item-icon {
+  filter: brightness(1.9) drop-shadow(0 0 12px rgba(255, 220, 130, 1));
+}
+.sheet-arx:has(input[name="attr_recipe_spell"][value="{{ spell_id }}"]) .sheet-spellbook-slot input[value="{{ rune }}"] ~ .sheet-recipe-order {
+  display: flex;
+}
+.sheet-arx:has(input[name="attr_recipe_spell"][value="{{ spell_id }}"]) .sheet-spellbook-slot input[value="{{ rune }}"] ~ .sheet-recipe-order::before {
+  content: "{{ loop.index }}";
+}
+{% endfor %}
+{% endfor %}
 
 /* ---- Spell-page navigation: ARX-MAGICBOOK.png no longer bakes the numbered
    tabs into the artwork, so magic-nav-N.png IS the tab now (always drawn,

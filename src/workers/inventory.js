@@ -1,4 +1,6 @@
 const ITEMS = {{ITEMS_JSON}};
+const PRESETS = {{PRESETS_JSON}};
+const SPELLS = {{SPELLS_JSON}};
 
 const COLS = {{GRID_COLS}};
 const ROWS = {{GRID_ROWS}};
@@ -275,3 +277,118 @@ on("clicked:inventory_toggle", function () {
 for (let p = 1; p <= 10; p++) {
   on("clicked:goto_spellpage_" + p, function () { setAttrs({ spell_page: p }); });
 }
+
+/* Rune-craft: click learned runes (in the 20-slot spellbook grid) in order to
+   build a combination, then Validate to match it against presets.json (which
+   already covers every book spell plus the secret-only ones) and auto-fill
+   the first empty preset slot. Stored delimited ("|rune-a|rune-b|", like
+   fitMask's own list attribute) so CSS can highlight a rune with a substring
+   selector without one rune's id colliding with another's prefix. */
+const CRAFT_MAX = 5;
+function craftList(v) { return (v.craft_runes || "").split("|").filter(Boolean); }
+function craftJoin(list) { return list.length ? "|" + list.join("|") + "|" : ""; }
+/* attr_craft_pos_1..CRAFT_MAX mirror the combo so CSS can show each rune's
+   own inventory icon in a fixed-position strip (see
+   magic.html.j2/magic-slots.css.j2) — attr_craft_runes alone can't drive an
+   ORDERED display since CSS has no way to index into a delimited string.
+   Indexed from the END of the list: pos_1 is always the MOST RECENTLY
+   clicked rune (the strip's corner slot), so each new click bumps every
+   earlier rune outward by one slot rather than staying put. */
+function craftPositions(list) {
+  const update = {};
+  for (let i = 1; i <= CRAFT_MAX; i++) { update["craft_pos_" + i] = list[list.length - i] || ""; }
+  return update;
+}
+
+for (let i = 1; i <= 20; i++) {
+  on("clicked:craft_rune_" + i, function () {
+    const slotAttr = "spellbook_" + i;
+    getAttrs([slotAttr, "craft_runes"], function (v) {
+      const rune = v[slotAttr];
+      if (!rune) { return; }
+      const list = craftList(v);
+      if (list.length >= CRAFT_MAX) { return; }
+      list.push(rune);
+      const update = craftPositions(list);
+      update.craft_runes = craftJoin(list);
+      update.forget_mode = "0"; /* crafting cancels a pending "forget a preset" */
+      setAttrs(update);
+    });
+  });
+}
+
+/* Launch: consumes the crafted rune combination — will trigger the actual
+   Roll20 dice roll once that mechanic is designed (see SPEC.md); for now it
+   just clears the combo. */
+on("clicked:craft_confirm", function () {
+  getAttrs(["craft_runes"], function (v) {
+    if (!craftList(v).length) { return; }
+    const update = craftPositions([]);
+    update.craft_runes = "";
+    update.forget_mode = "0";
+    setAttrs(update);
+  });
+});
+
+/* Reset clears an in-progress combo; with nothing crafted yet, it instead
+   toggles "forget a preset" mode (see clicked:preset_N below). */
+on("clicked:craft_reset", function () {
+  getAttrs(["craft_runes", "forget_mode"], function (v) {
+    if (craftList(v).length) {
+      const update = craftPositions([]);
+      update.craft_runes = "";
+      setAttrs(update);
+      return;
+    }
+    setAttrs({ forget_mode: v.forget_mode === "1" ? "0" : "1" });
+  });
+});
+
+/* While forget_mode is on, clicking a memorized preset forgets it (see
+   magic-slots.css.j2 for the delete cursor shown over the preset slots). */
+[1, 2, 3].forEach(function (n) {
+  on("clicked:preset_" + n, function () {
+    getAttrs(["forget_mode"], function (v) {
+      if (v.forget_mode !== "1") { return; }
+      const update = { forget_mode: "0" };
+      update["preset_slot_" + n] = "";
+      setAttrs(update);
+    });
+  });
+});
+
+/* Clicking a spell in the 2x2 slots highlights its rune recipe in the
+   20-slot grid (see magic-slots.css.j2's attr_recipe_spell rules); clicking
+   the SAME spell again clears it. */
+Object.keys(SPELLS).forEach(function (spellId) {
+  on("clicked:cast_" + spellId, function () {
+    getAttrs(["recipe_spell"], function (v) {
+      setAttrs({ recipe_spell: v.recipe_spell === spellId ? "" : spellId });
+    });
+  });
+});
+
+/* Memorize: matches the crafted rune combination against presets.json (which
+   covers both book spells and secret-only ones) and fills the first empty
+   preset slot on an exact match — consumes the combo either way. */
+on("clicked:memorize", function () {
+  getAttrs(["craft_runes", "preset_slot_1", "preset_slot_2", "preset_slot_3"], function (v) {
+    const combo = craftList(v);
+    if (!combo.length) { return; }
+    const comboKey = combo.slice().sort().join("|");
+    let matchId = null;
+    Object.keys(PRESETS).forEach(function (id) {
+      if (matchId) { return; }
+      if (PRESETS[id].runes.slice().sort().join("|") === comboKey) { matchId = id; }
+    });
+    const update = craftPositions([]);
+    update.craft_runes = "";
+    update.forget_mode = "0";
+    if (matchId) {
+      for (let n = 1; n <= 3; n++) {
+        if (!v["preset_slot_" + n]) { update["preset_slot_" + n] = matchId; break; }
+      }
+    }
+    setAttrs(update);
+  });
+});

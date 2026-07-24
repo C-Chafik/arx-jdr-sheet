@@ -2,11 +2,12 @@
    from under the book when the always-visible button is checked.
    Both visuals are separate assets — nothing is baked into ARX-BASE-2. */
 
-/* The button (50 × 50 source → 34 px on sheet). Sits outside the book,
-   hugging its bottom-right corner. */
+/* The button (50 × 50 source → 34 px on sheet). Pushed out to the right edge
+   of the widened .sheet-arx (see base.css) — same top/height as before, only
+   the horizontal position moved to use the extra room. */
 .sheet-inventory-toggle {
   position: absolute;
-  left: 1065px;
+  left: 1216px;
   top: 670px;
   width: 34px;
   height: 34px;
@@ -21,22 +22,94 @@
   transition: filter 0.2s ease-out;
 }
 
-.sheet-inventory-toggle:hover {
-  filter: brightness(1.35) drop-shadow(0 0 6px rgba(255, 220, 130, 0.8));
-}
-
 .sheet-arx:has(input[name="attr_inventory_open"][value="1"]) .sheet-inventory-toggle {
   filter: brightness(1.2);
 }
 
-/* The band: centered, tucked under the book's bottom edge (negative margin
-   + lower z-index), so it visually slides out from beneath it. */
+/* Higher specificity than the open-state rule above, so a genuine mouse
+   hover always wins instead of getting stuck showing the open-state tint. */
+.sheet-inventory-toggle:hover,
+.sheet-arx:has(input[name="attr_inventory_open"][value="1"]) .sheet-inventory-toggle:hover {
+  filter: brightness(1.35) drop-shadow(0 0 6px rgba(255, 220, 130, 0.8));
+}
+
+/* The money purse: same size as the inventory toggle, sitting directly
+   above it — both now top-level controls positioned against .sheet-arx
+   rather than living inside the (percentage-based) inventory band. */
+.sheet-purse {
+  position: absolute;
+  left: 1216px;
+  top: 628px;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: none;
+  z-index: 10;
+  background-color: transparent;
+  background-image: url('{{ASSET_BASE}}/item-gold-pouch.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: url('{{ASSET_BASE}}/base-hover-2.png') 6 4, pointer;
+  border-radius: 8px;
+  transition: filter 0.2s ease-out, background 0.35s ease-out, box-shadow 0.35s ease-out;
+}
+.sheet-purse:hover { filter: brightness(1.35) drop-shadow(0 0 5px rgba(255, 220, 130, 0.8)); }
+
+/* The purse glows when holding any currency item. */
+input[name="attr_hand_effect"][value="currency"] ~ .sheet-purse {
+  background-color: transparent;
+  box-shadow: 0 0 14px rgba(255, 220, 130, 0.8);
+}
+
+/* Gold readout: the live attr_gold input, shown only while hovering the purse,
+   positioned just above it (plain sibling selector — no :has() needed since
+   the purse button precedes this div in the DOM). */
+.sheet-gold-readout {
+  display: none;
+  position: absolute;
+  left: 1198px; /* centered on the purse (1216 + 34/2 − 70/2) */
+  top: 606px;
+  width: 70px;
+  text-align: center;
+  pointer-events: none;
+}
+.sheet-purse:hover ~ .sheet-gold-readout { display: block; }
+
+/* Specificity must beat the page-wide ".sheet-arx input[type=number]" rule
+   (base.css) — that rule otherwise wins on specificity regardless of file
+   order and stretches this input to 100% width in dark ink. */
+.sheet-gold-readout input.sheet-gold-display[type="number"] {
+  width: 100%;
+  height: 1.2em;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #fff;
+  font-family: inherit;
+  font-size: 16px;
+  text-align: center;
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.9), 0 1px 2px rgba(0, 0, 0, 0.9);
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+.sheet-gold-readout input.sheet-gold-display[type="number"]::-webkit-outer-spin-button,
+.sheet-gold-readout input.sheet-gold-display[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* The band: centered under the BOOK (not under the now-wider .sheet-arx —
+   left offset matches the book's own width so it stays aligned regardless
+   of the extra room reserved on the right), tucked under the book's bottom
+   edge (negative margin + lower z-index), so it visually slides out from
+   beneath it. */
 .sheet-inventory {
   position: relative;
   z-index: 0;
   width: 900px;  /* Inventory.png is 2042 × 390 */
   height: 172px; /* 390 × (900 / 2042) */
-  margin: -48px auto 0;
+  margin: -48px 0 0 100px; /* (1100 book width − 900 band width) / 2 */
   background-image: url('{{ASSET_BASE}}/Inventory.png');
   background-size: 100% 100%;
   /* Slide-out animation: max-height because display can't animate. */

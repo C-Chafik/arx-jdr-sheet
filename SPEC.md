@@ -45,22 +45,17 @@ Architecture : `build.py` (Python + Jinja2) assemble `src/templates/` + `src/css
 
 ### 1. Clic sur un sort → lance le jet sur Roll20
 
-Un sort actif (dans un des 2×2 slots) doit devenir un vrai bouton `type="roll"` (comme les stats de la page de base) au lieu d'un `type="action"` inerte, avec une formule de dés associée. **À définir avec l'utilisateur** : quelle formule/quel roll pour chaque sort (probablement un champ à ajouter dans `spells.json`, ex. `"roll": "1d20+@{mental}"` ou similaire — le système de règles exact du jeu n'a pas encore été spécifié).
+**Reporté** — l'utilisateur a explicitement choisi de finir le système de craft/presets d'abord ("Non le lancée de dée on verra plus tard, finissons le systeme d'abord, sur les presets et les runes"). Un sort actif (dans un des 2×2 slots) doit devenir un vrai bouton `type="roll"` (comme les stats de la page de base) au lieu d'un `type="action"` inerte, avec une formule de dés associée. **À définir avec l'utilisateur** : quelle formule/quel roll pour chaque sort — trois options envisagées (1d20+attribut, dés fixes par sort dans `spells.json`, ou pas de dé/juste un message de chat) n'ont pas encore été tranchées.
 
-### 2. Système de craft de runes (remplace la boussole abandonnée)
+### 2. Système de craft de runes (remplace la boussole abandonnée) — ✅ fait
 
-Mécanique demandée par l'utilisateur :
-1. Le joueur clique sur une **rune apprise** (dans la grille de 20 à droite du grimoire, ou un panneau dédié) → entre en **mode craft**.
-2. Il clique sur d'autres runes apprises → chacune s'ajoute **dans l'ordre** à la combinaison en cours.
-3. Il clique **Valider** → le système vérifie si l'ensemble de runes cliquées correspond exactement aux runes requises par un sort (`spells.json`/`presets.json`, ordre non important — juste l'ensemble) → si oui, ce sort est automatiquement placé dans le premier emplacement preset libre.
+Mécanique implémentée :
+1. Le joueur clique sur une **rune apprise** (bouton sur un des 20 slots de la grille, à droite du grimoire) → la rune s'ajoute **dans l'ordre** à `attr_craft_runes` (liste délimitée `|rune-a|rune-b|`, même idée que `fitMask`, pour éviter les collisions de préfixe entre id de rune).
+2. Chaque clic supplémentaire sur une autre rune apprise l'ajoute à la suite.
+3. Bouton **Valider** (`act_craft_confirm`) : compare l'**ensemble** (ordre non important) des runes accumulées à chaque entrée de `presets.json` (qui couvre déjà tous les sorts du livre + les sorts secrets) → si match exact, écrit l'id du preset dans le premier `attr_preset_slot_N` libre et vide `attr_craft_runes`. Sans match, ne fait rien (le joueur peut continuer à ajouter des runes ou réinitialiser).
+4. Bouton **Annuler/Reset** (`act_craft_reset`) : vide `attr_craft_runes` sans valider.
 
-Différence avec le système de boussole abandonné : ici on clique directement sur les **runes elles-mêmes** (déjà apprises, déjà visibles dans la grille), pas sur des directions abstraites — pas de nouvelles données à inventer (`rune-patterns.json` n'est plus nécessaire), la correspondance se fait uniquement via les runes déjà présentes dans `spells.json`/`presets.json`.
-
-Implémentation prévue (même mécanisme bouton+worker que le reste) :
-- Chaque slot de la grille de 20 runes devient cliquable (`act_craft_rune_<n>` ou similaire) en plus de son affichage existant.
-- `attr_craft_runes` (liste ordonnée, en cours de construction) — attribut caché, mis à jour à chaque clic.
-- Bouton **Valider** (`act_craft_confirm`) : compare l'ensemble de `attr_craft_runes` à chaque entrée de `presets.json`/`spells.json` (comme `findFormedSpell` déjà écrit pour la boussole, réutilisable tel quel) → si match, écrit dans le premier `attr_preset_slot_N` libre, réinitialise l'état.
-- Bouton **Annuler/Reset** pour vider la combinaison en cours sans valider.
+Implémentation : `src/workers/inventory.js` (`craftList`/`craftJoin`, boucle `clicked:craft_rune_N` pour N=1..20, `clicked:craft_confirm`, `clicked:craft_reset` — `PRESETS` injecté dans le worker via `{{PRESETS_JSON}}` dans `build.py`) ; `src/templates/partials/pages/magic.html.j2` (les 20 slots du spellbook sont maintenant des `button type="action"`, + `attr_craft_runes` caché + boutons Valider/Annuler, texte brut pour l'instant faute d'asset dédié) ; `src/templates/css/magic-slots.css.j2` (reset des styles de bouton sur les slots, glow doré sur la/les rune(s) en cours de combinaison via sélecteur `[value*="|rune-x|"]`, styles des boutons Valider/Annuler). Vérifié par simulation Node (ordre de clic inversé → même match, deux presets différents remplissent bien les slots 1 puis 2, combinaison sans correspondance ne remplit rien).
 
 ## Migration Beacon SDK (plus tard)
 

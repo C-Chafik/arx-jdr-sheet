@@ -15,6 +15,9 @@
   {# Spell-page navigation: one button per numbered tab (1-10); the worker
      sets attr_spell_page on click (see src/workers/inventory.js). #}
   <input type="hidden" name="attr_spell_page" value="1" />
+  {# Which spell's rune recipe is currently highlighted in the 20-slot grid
+     (see act_cast_* handlers in inventory.js) — empty when none. #}
+  <input type="hidden" name="attr_recipe_spell" value="" />
 {% for p in range(1, 11) %}
   <button type="action" class="sheet-spell-page-tab sheet-spell-page-tab--{{ p }}" name="act_goto_spellpage_{{ p }}"></button>
 {% endfor %}
@@ -26,14 +29,48 @@
 {% for spell_id, spell in spells.items() %}
   <button type="action" class="sheet-spell-slot sheet-spell-slot--slot-{{ spell.slot }} sheet-spell-slot--{{ spell_id }}" name="act_cast_{{ spell_id }}">{% if spell.icon %}<span class="sheet-spell-icon"></span>{% else %}{{ spell.label }}{% endif %}</button>
 {% endfor %}
+  {# Each learned-rune slot is also the rune-craft trigger: clicking it
+     appends that rune (in order) to attr_craft_runes (see inventory.js).
+     Clicking an empty slot is a no-op (worker checks the rune is set). #}
 {% for i in range(1, 21) %}
-  <div class="sheet-spellbook-slot sheet-spellbook-slot--{{ i }}">
+  <button type="action" class="sheet-spellbook-slot sheet-spellbook-slot--{{ i }}" name="act_craft_rune_{{ i }}">
     <input type="hidden" name="attr_spellbook_{{ i }}" value="" />
     <span class="sheet-item-icon"></span>
-  </div>
+    <span class="sheet-recipe-order"></span>
+  </button>
 {% endfor %}
   {# The grimoire: drop any consumed rune here to learn it permanently. #}
   <button type="action" class="sheet-grimoire" name="act_slot_grimoire"></button>
+  {# Rune-craft: Validate checks the accumulated combination against
+     presets.json and fills the first empty preset slot on an exact match;
+     Reset clears the in-progress combination without validating. If Reset
+     is clicked with no rune in the combo, it instead enters "forget a
+     preset" mode (attr_forget_mode) — see the preset slots below and
+     inventory.js's clicked:preset_N handler. #}
+  <input type="hidden" name="attr_craft_runes" value="" />
+  <input type="hidden" name="attr_forget_mode" value="0" />
+  <button type="action" class="sheet-craft-reset" name="act_craft_reset"></button>
+  {# Launch: consumes the crafted rune combination — will trigger the actual
+     Roll20 dice roll once that mechanic is designed (see SPEC.md); for now
+     it just clears the combo. #}
+  <button type="action" class="sheet-craft-confirm" name="act_craft_confirm"></button>
+  {# Memorize: matches the crafted rune combination against presets.json and
+     fills the first empty preset slot on an exact match (works for both
+     book spells and secret-only ones) — consumes the combo either way. #}
+  <button type="action" class="sheet-craft-memorize" name="act_memorize"></button>
+  <div class="sheet-statbar sheet-statbar--craft-reset">Supprimer le sort</div>
+  <div class="sheet-statbar sheet-statbar--craft-confirm">Lancer le sort</div>
+  <div class="sheet-statbar sheet-statbar--craft-memorize">Mémoriser le sort</div>
+  {# Craft sequence: shows, in click order, the rune's own inventory icon
+     (not the magicbook variant) so the player sees exactly what they've
+     incanted so far before validating. Fixed 5 positions (CRAFT_MAX in
+     inventory.js). #}
+{% for i in range(1, 6) %}
+  <div class="sheet-craft-seq sheet-craft-seq--{{ i }}">
+    <input type="hidden" name="attr_craft_pos_{{ i }}" value="" />
+    <span class="sheet-item-icon"></span>
+  </div>
+{% endfor %}
   {# 3 memorized-spell (preset) slots, lower-left of the left page. Each can
      hold any preset-eligible spell (book spell or secret one, see
      presets.json) — obtaining one (scroll item / action sequence) isn't

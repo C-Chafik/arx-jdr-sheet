@@ -245,7 +245,7 @@ def test_purse_gold_system_is_wired():
     assert 'name="attr_hand_effect"' in html
     assert "clicked:slot_purse" in html
     assert '"currency"' in html or "currency" in html
-    assert 'input[name="attr_hand_effect"][value="currency"] ~ .sheet-inventory .sheet-purse' in css
+    assert 'input[name="attr_hand_effect"][value="currency"] ~ .sheet-purse' in css
     assert ".sheet-purse:hover ~ .sheet-gold-readout" in css
     assert '"gold-one"' in html  # withdraw path spawns a gold-one coin
 
@@ -264,7 +264,7 @@ def test_custom_cursors_are_wired():
     assert "points-hover.png" in css
     assert "selected-hover.png" in css
     assert "base-hover-2.png" in css
-    assert 'input[name="attr_hand"]:not([value=""]) ~ .sheet-inventory .sheet-purse' in css
+    assert 'input[name="attr_hand"]:not([value=""]) ~ .sheet-purse' in css
 
 
 def test_armor_slots_use_the_enlarged_frame():
