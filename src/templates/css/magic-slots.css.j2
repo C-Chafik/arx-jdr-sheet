@@ -84,6 +84,23 @@
 }
 {% endfor %}
 
+/* Cast-spell tooltip color follows its page's level-of-magic color (the
+   game's own White→Black, level 1-10 chart — our 10 spell pages map onto
+   it 1:1). Levels 9 (brown) and 10 (black) get a light halo instead of the
+   usual dark one, or they'd be unreadable against the parchment. */
+{% set level_colors = {
+  1: "#ffffff", 2: "#ffd700", 3: "#ff8c00", 4: "#33cc33", 5: "#4fc3f7",
+  6: "#ff2b2b", 7: "#b366ff", 8: "#060ea8", 9: "#8b5a2b", 10: "#111111",
+} %}
+{% for spell_id, spell in spells.items() %}
+.sheet-statbar--cast-{{ spell_id }} {
+  color: {{ level_colors[spell.page] }};
+{% if spell.page == 10 %}
+  text-shadow: 0 0 4px rgba(255, 248, 220, 0.95), 0 0 2px rgba(255, 248, 220, 0.95);
+{% endif %}
+}
+{% endfor %}
+
 /* The grimoire: a modest drop-target on the LEFT page (the right page is now
    filled almost edge-to-edge by the 20-slot grid). Placed below the knotwork
    art, clear of the numbered page tabs on the left edge. */
@@ -192,6 +209,7 @@ input[name="attr_hand_effect"][value="rune"] ~ .sheet-book .sheet-grimoire {
    inventory.js; a second click of the same spell clears it). ---- */
 .sheet-recipe-order {
   display: none;
+  opacity: 0;
   position: absolute;
   right: -10%;
   bottom: -10%;
@@ -208,13 +226,28 @@ input[name="attr_hand_effect"][value="rune"] ~ .sheet-book .sheet-grimoire {
   pointer-events: none;
   z-index: 2;
 }
+/* Progressive reveal: each rune lights up in recipe order, one after the
+   other, holds briefly, then switches back off on its own — instead of the
+   whole set flashing on and staying lit forever. Each rune gets its own
+   full in→hold→out cycle (0.8s) before the next one's delay kicks in, so
+   they never overlap. No fill-mode: once the animation ends the element
+   just reverts to its unlit default. */
+@keyframes recipe-glow-in {
+  0%, 100% { filter: brightness(1) drop-shadow(0 0 0 rgba(255, 220, 130, 0)); }
+  25%, 75% { filter: brightness(1.9) drop-shadow(0 0 12px rgba(255, 220, 130, 1)); }
+}
+@keyframes recipe-badge-in {
+  0%, 100% { opacity: 0; }
+  25%, 75% { opacity: 1; }
+}
 {% for spell_id, spell in spells.items() %}
 {% for rune in spell.runes %}
 .sheet-arx:has(input[name="attr_recipe_spell"][value="{{ spell_id }}"]) .sheet-spellbook-slot input[value="{{ rune }}"] + .sheet-item-icon {
-  filter: brightness(1.9) drop-shadow(0 0 12px rgba(255, 220, 130, 1));
+  animation: recipe-glow-in 0.8s ease-out {{ "%.2f" | format(loop.index0 * 0.8) }}s;
 }
 .sheet-arx:has(input[name="attr_recipe_spell"][value="{{ spell_id }}"]) .sheet-spellbook-slot input[value="{{ rune }}"] ~ .sheet-recipe-order {
   display: flex;
+  animation: recipe-badge-in 0.8s ease-out {{ "%.2f" | format(loop.index0 * 0.8) }}s;
 }
 .sheet-arx:has(input[name="attr_recipe_spell"][value="{{ spell_id }}"]) .sheet-spellbook-slot input[value="{{ rune }}"] ~ .sheet-recipe-order::before {
   content: "{{ loop.index }}";
@@ -394,4 +427,19 @@ input[name="attr_hand_effect"][value="rune"] ~ .sheet-book .sheet-grimoire {
 .sheet-arx:has(.sheet-preset-slot:hover input[value="{{ preset_id }}"]) .sheet-statbar--preset-{{ preset_id }} {
   display: block;
 }
+{% endfor %}
+
+/* Book-linked presets (shares its id with spells.json) follow the same
+   level-of-magic color as the spell itself, instead of staying plain
+   yellow. Secret-only presets (no spells.json entry) are untouched for
+   now — color TBD. */
+{% for preset_id, preset in presets.items() %}
+{% if not preset.secret and preset_id in spells %}
+.sheet-statbar--preset-{{ preset_id }} {
+  color: {{ level_colors[spells[preset_id].page] }};
+{% if spells[preset_id].page == 10 %}
+  text-shadow: 0 0 4px rgba(255, 248, 220, 0.95), 0 0 2px rgba(255, 248, 220, 0.95);
+{% endif %}
+}
+{% endif %}
 {% endfor %}

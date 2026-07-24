@@ -79,7 +79,7 @@
 } %}
 {% for stat, selector in mod_stat_selectors.items() %}
 .sheet-arx:has(input[name="attr_{{ stat }}_applied_mod"]:not([value=""]):not([value="0"]):not([value^="-"])) {{ selector }} {
-  color: #00008b;
+  color: #2323e6;
 }
 .sheet-arx:has(input[name="attr_{{ stat }}_applied_mod"][value^="-"]) {{ selector }} {
   color: #ff2b2b;
