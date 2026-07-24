@@ -47,10 +47,18 @@
   box-shadow: none;
   color: #2b1d0e;
   font-family: inherit;
-  font-size: 20px;
   text-align: center;
   -moz-appearance: textfield;
-  appearance: textfield;
+}
+
+.sheet-arx input[type="number"] {
+  font-size: 34px;
+}
+
+/* Character name kept at its original size — the bigger number font above
+   isn't meant to apply here. */
+.sheet-arx input[type="text"] {
+  font-size: 20px;
 }
 
 .sheet-arx input[type="number"]::-webkit-outer-spin-button,
@@ -73,12 +81,16 @@
 }
 
 .sheet-gauge input[type="number"] {
-  width: 45%;
+  width: 80%;
+  /* Flex items refuse to shrink below their content's min size by default —
+    without this, a bigger font pushes these past their 45% and the whole
+  row visibly drifts right. */
+  min-width: 0;
 }
 
 .sheet-gauge-sep {
   width: 10%;
   color: #2b1d0e;
-  font-size: 20px;
+  font-size: 23px;
   text-align: center;
 }

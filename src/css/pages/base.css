@@ -24,28 +24,28 @@
 }
 
 /* Right page — attributes (values under the 4 icons) */
-.sheet-field--strength     { left: 56.9%; top: 23.6%; }
-.sheet-field--mental       { left: 65.8%; top: 23.6%; }
-.sheet-field--dexterity    { left: 74.6%; top: 23.6%; }
-.sheet-field--constitution { left: 83.5%; top: 23.6%; }
+.sheet-field--strength     { left: 54.4%; top: 23.6%; }
+.sheet-field--mental       { left: 63.3%; top: 23.6%; }
+.sheet-field--dexterity    { left: 72.1%; top: 23.6%; }
+.sheet-field--constitution { left: 81.0%; top: 23.6%; }
 
 /* Right page — skills 3×3 (values under each icon) */
-.sheet-field--stealth          { left: 58.7%; top: 48.2%; }
-.sheet-field--technical        { left: 70.3%; top: 48.2%; }
-.sheet-field--intuition        { left: 81.7%; top: 48.2%; }
-.sheet-field--ethereal_link    { left: 58.7%; top: 64.1%; }
-.sheet-field--object_knowledge { left: 70.3%; top: 64.1%; }
-.sheet-field--casting          { left: 81.7%; top: 64.1%; }
-.sheet-field--close_combat     { left: 58.7%; top: 80.6%; }
-.sheet-field--projectile       { left: 70.3%; top: 80.6%; }
-.sheet-field--defense          { left: 81.7%; top: 80.6%; }
+.sheet-field--stealth          { left: 56.2%; top: 48.2%; }
+.sheet-field--technical        { left: 67.8%; top: 48.2%; }
+.sheet-field--intuition        { left: 79.2%; top: 48.2%; }
+.sheet-field--ethereal_link    { left: 56.2%; top: 64.1%; }
+.sheet-field--object_knowledge { left: 67.8%; top: 64.1%; }
+.sheet-field--casting          { left: 79.2%; top: 64.1%; }
+.sheet-field--close_combat     { left: 56.2%; top: 80.6%; }
+.sheet-field--projectile       { left: 67.8%; top: 80.6%; }
+.sheet-field--defense          { left: 79.2%; top: 80.6%; }
 
 /* Left page — resistances (under the three shields) */
-.sheet-field--armor_class       { left: 12.0%; top: 32.6%; }
-.sheet-field--magic_resistance  { left: 11.8%; top: 50.6%; }
-.sheet-field--poison_resistance { left: 11.7%; top: 67.9%; }
+.sheet-field--armor_class       { left: 9.5%; top: 32.6%; }
+.sheet-field--magic_resistance  { left: 9.3%; top: 50.6%; }
+.sheet-field--poison_resistance { left: 9.2%; top: 67.9%; }
 
 /* Left page — vitals */
-.sheet-field--health  { left: 40.0%; top: 32.1%; }
-.sheet-field--mana    { left: 40.0%; top: 49.7%; }
-.sheet-field--damages { left: 44.5%; top: 67.4%; }
+.sheet-field--health  { left: 42.0%; top: 32.1%; }
+.sheet-field--mana    { left: 42.0%; top: 49.7%; }
+.sheet-field--damages { left: 42.0%; top: 67.4%; }

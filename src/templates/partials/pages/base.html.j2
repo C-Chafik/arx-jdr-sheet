@@ -5,24 +5,33 @@
                  "close_combat", "projectile", "defense"] %}
 {% set gauges = ["health", "mana"] %}
 {% set singles = ["armor_class", "magic_resistance", "poison_resistance", "damages"] %}
+{# Base stats before any modifier — see the user's own numbers, not a design guess. #}
+{% set defaults = {
+  "strength": 6, "mental": 6, "dexterity": 6, "constitution": 6,
+  "stealth": 12, "technical": 12, "intuition": 12, "ethereal_link": 12,
+  "object_knowledge": 15, "casting": 12,
+  "close_combat": 18, "projectile": 18, "defense": 18,
+  "armor_class": 1, "magic_resistance": 12, "poison_resistance": 16, "damages": 3,
+  "health": 12, "mana": 6,
+} %}
 <div class="sheet-page sheet-page--base">
   {# character_name is Roll20-magic: it syncs with the journal name both ways. #}
   <div class="sheet-field sheet-field--character_name">
     <input type="text" name="attr_character_name" value="" />
   </div>
   <div class="sheet-field sheet-field--level">
-    <input type="number" name="attr_level" value="1" />
+    <input type="number" name="attr_level" value="0" />
   </div>
 {% for name in attributes + skills + singles %}
   <div class="sheet-field sheet-field--{{ name }}">
-    <input type="number" name="attr_{{ name }}" value="0" />
+    <input type="number" name="attr_{{ name }}" value="{{ defaults[name] }}" />
   </div>
 {% endfor %}
 {% for name in gauges %}
   <div class="sheet-field sheet-gauge sheet-field--{{ name }}">
-    <input type="number" name="attr_{{ name }}" value="0" />
+    <input type="number" name="attr_{{ name }}" value="{{ defaults[name] }}" />
     <span class="sheet-gauge-sep">/</span>
-    <input type="number" name="attr_{{ name }}_max" value="0" />
+    <input type="number" name="attr_{{ name }}_max" value="{{ defaults[name] }}" />
   </div>
 {% endfor %}
   {# Zones = future roll buttons: fill each value with the dice formula when ready. #}
@@ -35,12 +44,26 @@
   <div class="sheet-statbar sheet-statbar--{{ name }}">{{ label }} &mdash; {{ text }}</div>
 {% endfor %}
   {# Equipment slots on the left page (categories enforced by the worker). #}
+{% set equip_labels = {
+  "equip_head": "Casque",
+  "equip_torso": "Plastron",
+  "equip_belt": "Jambières",
+  "equip_main_hand": "Arme principale",
+  "equip_off_hand": "Arme secondaire",
+  "equip_jewel_1": "Emplacement bijoux",
+  "equip_jewel_2": "Emplacement bijoux",
+} %}
 {% for slot in ["equip_head", "equip_torso", "equip_belt", "equip_main_hand",
                 "equip_off_hand", "equip_jewel_1", "equip_jewel_2"] %}
   <div class="sheet-slot sheet-slot--{{ slot }}">
     <input type="hidden" name="attr_{{ slot }}" value="" />
     <span class="sheet-item-icon"></span>
+    {# Faint background hint of what goes here — hidden once an item is
+       equipped. Placed after .sheet-item-icon so its own "+" adjacent-sibling
+       reveal rule (input[value=X] + .sheet-item-icon) still matches. #}
+    <span class="sheet-slot-hint"></span>
     <button type="action" name="act_slot_{{ slot }}"></button>
   </div>
+  <div class="sheet-statbar sheet-statbar--{{ slot }}">{{ equip_labels[slot] }}</div>
 {% endfor %}
 </div>

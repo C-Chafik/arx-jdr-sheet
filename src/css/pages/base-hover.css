@@ -69,6 +69,19 @@ button.sheet-hover-zone:active {
 .sheet-hover--projectile       { left: 70.2%; top: 69.6%; }
 .sheet-hover--defense          { left: 81.5%; top: 69.6%; }
 
+/* Left-page zones (resistances, vitals, damages) get the plain action cursor
+   instead of the "info" one above — only the right page (attributes/skills)
+   is meant to feel like a hover tooltip. Two classes to outweigh
+   button.sheet-hover-zone's specificity regardless of div vs button. */
+.sheet-hover-zone.sheet-hover--armor_class,
+.sheet-hover-zone.sheet-hover--magic_resistance,
+.sheet-hover-zone.sheet-hover--poison_resistance,
+.sheet-hover-zone.sheet-hover--health,
+.sheet-hover-zone.sheet-hover--mana,
+.sheet-hover-zone.sheet-hover--damages {
+  cursor: url('{{ASSET_BASE}}/ui/cursor-hover.png') 6 4, pointer;
+}
+
 /* Left page — resistance shields, measured on the source PNG.
    The press-flash is clipped to a shield silhouette (icons aren't square). */
 .sheet-hover--armor_class,

@@ -84,7 +84,7 @@
   padding: 0;
   border: none;
   background: transparent;
-  cursor: pointer;
+  cursor: url('{{ "{{ASSET_BASE}}" }}/ui/cursor-hover.png') 6 4, pointer;
 }
 
 /* ---- Bag levels: only the level matching attr_bag_level is shown. ---- */
@@ -172,7 +172,7 @@ input[name="attr_hand"][value="{{ item_id }}"] ~ input[name="attr_bag_count"]:no
   color: #e53030;
   font-size: 1.6em;
   line-height: 1;
-  cursor: pointer;
+  cursor: url('{{ "{{ASSET_BASE}}" }}/ui/cursor-hover.png') 6 4, pointer;
   transition: filter 0.2s ease-out;
 }
 .sheet-trash::before { content: "✕"; }
@@ -199,6 +199,57 @@ input[name="attr_hand"]:not([value=""]) ~ .sheet-inventory .sheet-trash { displa
 .sheet-slot--equip_belt  { left: 28.7%;  top: 58.15%; }
 .sheet-slot--equip_jewel_1   { left: 12.8%; top: 77.7%; width: 6.6%; height: 10.7%; }
 .sheet-slot--equip_jewel_2   { left: 40.7%; top: 76.7%; width: 6.6%; height: 10.7%; }
+
+/* Equipment slot tooltips — same top-banner billboard as everything else. */
+{% for slot in ["equip_head", "equip_torso", "equip_belt", "equip_main_hand",
+                "equip_off_hand", "equip_jewel_1", "equip_jewel_2"] %}
+.sheet-arx:has(.sheet-slot--{{ slot }}:hover) .sheet-statbar--{{ slot }} { display: block; }
+{% endfor %}
+
+/* Faint background hint of what belongs in each slot — reuses existing item
+   art at low opacity (no new assets needed); hidden once something is
+   actually equipped (the item's own icon takes over via its own reveal
+   rule). Jewel slots get a plain CSS star instead (no dedicated asset). */
+.sheet-slot-hint {
+  display: block;
+  position: absolute;
+  left: 15%;
+  top: 15%;
+  width: 70%;
+  height: 70%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.4;
+  filter: grayscale(1);
+  pointer-events: none;
+}
+.sheet-slot input:not([value=""]) ~ .sheet-slot-hint { display: none; }
+.sheet-slot--equip_head .sheet-slot-hint      { background-image: url('{{ "{{ASSET_BASE}}" }}/items/plate-helmet.png'); }
+.sheet-slot--equip_off_hand .sheet-slot-hint  { background-image: url('{{ "{{ASSET_BASE}}" }}/items/metal-shield.png'); }
+.sheet-slot--equip_main_hand .sheet-slot-hint { background-image: url('{{ "{{ASSET_BASE}}" }}/items/one-handed-sword.png'); }
+.sheet-slot--equip_torso .sheet-slot-hint     { background-image: url('{{ "{{ASSET_BASE}}" }}/items/chestplate.png'); }
+.sheet-slot--equip_belt .sheet-slot-hint      { background-image: url('{{ "{{ASSET_BASE}}" }}/items/legging-plate.png'); }
+{# Jewel slots get a plain CSS star instead of a background-image, dead
+   centered on the slot's own box (not the 15%/70% inset above, which is
+   sized for the item-icon-shaped hints, not a glyph). #}
+.sheet-slot--equip_jewel_1 .sheet-slot-hint,
+.sheet-slot--equip_jewel_2 .sheet-slot-hint {
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  line-height: 1;
+  color: #2b1d0e;
+}
+.sheet-slot--equip_jewel_1 .sheet-slot-hint::before,
+.sheet-slot--equip_jewel_2 .sheet-slot-hint::before {
+  content: "★";
+}
 
 /* ---- Hand-state visuals (all selectors start at the .sheet-arx mirrors). ---- */
 
