@@ -5,7 +5,7 @@
       "rune-mega",
       "rune-vista"
     ],
-    "icon": "preset-magic-sight.png",
+    "icon": "presets/magic-sight.png",
     "secret": false
   },
   "projectile_magique": {
@@ -14,7 +14,7 @@
       "rune-aam",
       "rune-taar"
     ],
-    "icon": "preset-magic-bolt.png",
+    "icon": "presets/magic-bolt.png",
     "secret": false
   },
   "ignit": {
@@ -23,7 +23,7 @@
       "rune-aam",
       "rune-yok"
     ],
-    "icon": "preset-ignit.png",
+    "icon": "presets/ignit.png",
     "secret": false
   },
   "extinction": {
@@ -32,7 +32,7 @@
       "rune-nhi",
       "rune-yok"
     ],
-    "icon": "preset-douse.png",
+    "icon": "presets/douse.png",
     "secret": false
   },
   "health": {
@@ -41,7 +41,7 @@
       "rune-mega",
       "rune-vitae"
     ],
-    "icon": "preset-heal.png",
+    "icon": "presets/heal.png",
     "secret": false
   },
   "trap-detection": {
@@ -51,7 +51,7 @@
       "rune-cosum",
       "rune-vista"
     ],
-    "icon": "preset-trap-detection.png",
+    "icon": "presets/trap-detection.png",
     "secret": false
   },
   "protection": {
@@ -60,7 +60,7 @@
       "rune-mega",
       "rune-kaom"
     ],
-    "icon": "preset-armor.png",
+    "icon": "presets/armor.png",
     "secret": false
   },
   "vulnerability": {
@@ -69,7 +69,7 @@
       "rune-rhaa",
       "rune-kaom"
     ],
-    "icon": "preset-vulnerability.png",
+    "icon": "presets/vulnerability.png",
     "secret": false
   },
   "celerity": {
@@ -78,7 +78,7 @@
       "rune-mega",
       "rune-movis"
     ],
-    "icon": "preset-celerity.png",
+    "icon": "presets/celerity.png",
     "secret": false
   },
   "revelation": {
@@ -88,7 +88,7 @@
       "rune-stregum",
       "rune-vista"
     ],
-    "icon": "preset-reveal.png",
+    "icon": "presets/reveal.png",
     "secret": false
   },
   "fireball": {
@@ -98,7 +98,7 @@
       "rune-yok",
       "rune-taar"
     ],
-    "icon": "preset-fireball.png",
+    "icon": "presets/fireball.png",
     "secret": false
   },
   "sustentation": {
@@ -108,7 +108,7 @@
       "rune-vitae",
       "rune-cosum"
     ],
-    "icon": "preset-sustentation.png",
+    "icon": "presets/sustentation.png",
     "secret": false
   },
   "blessing": {
@@ -118,7 +118,7 @@
       "rune-stregum",
       "rune-vitae"
     ],
-    "icon": "preset-blessing.png",
+    "icon": "presets/blessing.png",
     "secret": false
   },
   "negate_field": {
@@ -127,7 +127,7 @@
       "rune-nhi",
       "rune-spacium"
     ],
-    "icon": "preset-dispell-field.png",
+    "icon": "presets/dispell-field.png",
     "secret": false
   },
   "fire_protection": {
@@ -136,7 +136,7 @@
       "rune-yok",
       "rune-kaom"
     ],
-    "icon": "preset-fire-protection.png",
+    "icon": "presets/fire-protection.png",
     "secret": false
   },
   "telekinezie": {
@@ -145,7 +145,7 @@
       "rune-spacium",
       "rune-comunicatum"
     ],
-    "icon": "preset-telekinezis.png",
+    "icon": "presets/telekinezis.png",
     "secret": false
   },
   "rune_guarding": {
@@ -155,7 +155,7 @@
       "rune-morte",
       "rune-cosum"
     ],
-    "icon": "preset-rune-guarding.png",
+    "icon": "presets/rune-guarding.png",
     "secret": false
   },
   "levitation": {
@@ -165,7 +165,7 @@
       "rune-spacium",
       "rune-movis"
     ],
-    "icon": "preset-levitate.png",
+    "icon": "presets/levitate.png",
     "secret": false
   },
   "antidote": {
@@ -174,7 +174,7 @@
       "rune-nhi",
       "rune-cetrius"
     ],
-    "icon": "preset-antidote.png",
+    "icon": "presets/antidote.png",
     "secret": false
   },
   "repell_undead": {
@@ -183,7 +183,7 @@
       "rune-morte",
       "rune-kaom"
     ],
-    "icon": "preset-repel-undead.png",
+    "icon": "presets/repel-undead.png",
     "secret": false
   },
   "raise_undead": {
@@ -193,7 +193,7 @@
       "rune-morte",
       "rune-vitae"
     ],
-    "icon": "preset-raise-dead.png",
+    "icon": "presets/raise-dead.png",
     "secret": false
   },
   "paralysis": {
@@ -202,7 +202,7 @@
       "rune-nhi",
       "rune-movis"
     ],
-    "icon": "preset-paralysis.png",
+    "icon": "presets/paralysis.png",
     "secret": false
   },
   "force_field": {
@@ -212,7 +212,7 @@
       "rune-kaom",
       "rune-spacium"
     ],
-    "icon": "preset-force-field.png",
+    "icon": "presets/force-field.png",
     "secret": false
   },
   "disarm_trap": {
@@ -222,7 +222,7 @@
       "rune-morte",
       "rune-cosum"
     ],
-    "icon": "preset-disarm-trap.png",
+    "icon": "presets/disarm-trap.png",
     "secret": false
   },
   "third_eye": {
@@ -231,7 +231,7 @@
       "rune-vista",
       "rune-movis"
     ],
-    "icon": "preset-third-eye.png",
+    "icon": "presets/third-eye.png",
     "secret": false
   },
   "fire_field": {
@@ -241,7 +241,7 @@
       "rune-yok",
       "rune-spacium"
     ],
-    "icon": "preset-firewall.png",
+    "icon": "presets/firewall.png",
     "secret": false
   },
   "lighting_strike": {
@@ -251,7 +251,7 @@
       "rune-folgora",
       "rune-taar"
     ],
-    "icon": "preset-lightning-strike.png",
+    "icon": "presets/lightning-strike.png",
     "secret": false
   },
   "confusion": {
@@ -260,7 +260,7 @@
       "rune-rhaa",
       "rune-vista"
     ],
-    "icon": "preset-confusion.png",
+    "icon": "presets/confusion.png",
     "secret": false
   },
   "invisibility": {
@@ -269,7 +269,7 @@
       "rune-nhi",
       "rune-vista"
     ],
-    "icon": "preset-invisibility.png",
+    "icon": "presets/invisibility.png",
     "secret": false
   },
   "mana_drain": {
@@ -278,7 +278,7 @@
       "rune-stregum",
       "rune-movis"
     ],
-    "icon": "preset-mana-drain.png",
+    "icon": "presets/mana-drain.png",
     "secret": false
   },
   "chaos": {
@@ -288,7 +288,7 @@
       "rune-mega",
       "rune-morte"
     ],
-    "icon": "preset-chaos.png",
+    "icon": "presets/chaos.png",
     "secret": false
   },
   "enchantement": {
@@ -298,7 +298,7 @@
       "rune-stregum",
       "rune-cosum"
     ],
-    "icon": "preset-enchantment.png",
+    "icon": "presets/enchantment.png",
     "secret": false
   },
   "invocation_demon": {
@@ -308,7 +308,7 @@
       "rune-vitae",
       "rune-tera"
     ],
-    "icon": "preset-invocation-demon.png",
+    "icon": "presets/invocation-demon.png",
     "secret": false
   },
   "negate_magic": {
@@ -318,7 +318,7 @@
       "rune-stregum",
       "rune-spacium"
     ],
-    "icon": "preset-negate-magic.png",
+    "icon": "presets/negate-magic.png",
     "secret": false
   },
   "incineration": {
@@ -328,7 +328,7 @@
       "rune-mega",
       "rune-yok"
     ],
-    "icon": "preset-incineration.png",
+    "icon": "presets/incineration.png",
     "secret": false
   },
   "mass_paralysis": {
@@ -338,7 +338,7 @@
       "rune-nhi",
       "rune-movis"
     ],
-    "icon": "preset-mass-paralysis.png",
+    "icon": "presets/mass-paralysis.png",
     "secret": false
   },
   "mass_lightning_strike": {
@@ -348,7 +348,7 @@
       "rune-folgora",
       "rune-spacium"
     ],
-    "icon": "preset-mass-lightning-strike.png",
+    "icon": "presets/mass-lightning-strike.png",
     "secret": false
   },
   "mind_control": {
@@ -357,7 +357,7 @@
       "rune-movis",
       "rune-comunicatum"
     ],
-    "icon": "preset-mind-control.png",
+    "icon": "presets/mind-control.png",
     "secret": false
   },
   "the_world": {
@@ -366,7 +366,7 @@
       "rune-rhaa",
       "rune-tempus"
     ],
-    "icon": "preset-the-world.png",
+    "icon": "presets/the-world.png",
     "secret": false
   },
   "mass_incineration": {
@@ -376,7 +376,7 @@
       "rune-aam",
       "rune-yok"
     ],
-    "icon": "preset-mass-incineration.png",
+    "icon": "presets/mass-incineration.png",
     "secret": false
   },
   "portal_activation": {
@@ -385,7 +385,7 @@
       "rune-mega",
       "rune-spacium"
     ],
-    "icon": "preset-portal-activation.png",
+    "icon": "presets/portal-activation.png",
     "secret": true
   },
   "ice_field": {
@@ -395,7 +395,7 @@
       "rune-fridd",
       "rune-spacium"
     ],
-    "icon": "preset-ice-field.png",
+    "icon": "presets/ice-field.png",
     "secret": true
   },
   "curse": {
@@ -405,7 +405,7 @@
       "rune-tempus",
       "rune-taar"
     ],
-    "icon": "preset-curse.png",
+    "icon": "presets/curse.png",
     "secret": true
   },
   "life_drain": {
@@ -414,7 +414,7 @@
       "rune-vitae",
       "rune-movis"
     ],
-    "icon": "preset-life-drain.png",
+    "icon": "presets/life-drain.png",
     "secret": true
   },
   "firewall": {
@@ -424,7 +424,7 @@
       "rune-yok",
       "rune-spacium"
     ],
-    "icon": "preset-firewall.png",
+    "icon": "presets/firewall.png",
     "secret": true
   },
   "harm": {
@@ -433,7 +433,7 @@
       "rune-rha",
       "rune-vitae"
     ],
-    "icon": "preset-harm.png",
+    "icon": "presets/harm.png",
     "secret": true
   },
   "ice_bolt": {
@@ -443,7 +443,7 @@
       "rune-fridd",
       "rune-taar"
     ],
-    "icon": "preset-ice-bolt.png",
+    "icon": "presets/ice-bolt.png",
     "secret": true
   },
   "make_friend": {
@@ -454,7 +454,7 @@
       "rune-mega",
       "rune-comunicatum"
     ],
-    "icon": "preset-make-friend.png",
+    "icon": "presets/make-friend.png",
     "secret": true
   },
   "poison_projection": {
@@ -464,7 +464,7 @@
       "rune-cetrius",
       "rune-taar"
     ],
-    "icon": "preset-poison-projection.png",
+    "icon": "presets/poison-projection.png",
     "secret": true
   },
   "cold_protection": {
@@ -473,7 +473,7 @@
       "rune-fridd",
       "rune-kaom"
     ],
-    "icon": "preset-cold-protection.png",
+    "icon": "presets/cold-protection.png",
     "secret": true
   },
   "slow_down": {
@@ -482,7 +482,7 @@
       "rune-rha",
       "rune-movis"
     ],
-    "icon": "preset-slow-down.png",
+    "icon": "presets/slow-down.png",
     "secret": true
   }
 }

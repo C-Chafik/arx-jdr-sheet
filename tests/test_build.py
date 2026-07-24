@@ -14,7 +14,7 @@ def test_sheet_html_is_a_fragment():
 
 def test_css_asset_base_is_substituted():
     css = build.build_css("https://example.com/assets")
-    assert "https://example.com/assets/ARX-BASE.png" in css
+    assert "https://example.com/assets/book/base.png" in css
     assert "{{ASSET_BASE}}" not in css
 
 
@@ -63,8 +63,8 @@ def test_inventory_toggle_and_band_are_wired():
     assert 'name="act_inventory_toggle"' in html
     assert "clicked:inventory_toggle" in html
     assert '.sheet-arx:has(input[name="attr_inventory_open"][value="1"]) .sheet-inventory {' in css
-    assert "Inventory-Button.png" in css
-    assert "Inventory.png" in css
+    assert "ui/inventory-button.png" in css
+    assert "ui/inventory-band.png" in css
 
 
 def test_every_icon_has_hover_zone_statbar_and_css():
@@ -260,16 +260,17 @@ def test_trash_deletes_held_item():
 
 def test_custom_cursors_are_wired():
     css = build.build_css("x")
-    assert "mouse-hover.png" in css
-    assert "points-hover.png" in css
-    assert "selected-hover.png" in css
-    assert "base-hover-2.png" in css
+    assert "cursor-default.png" in css
+    assert "cursor-points.png" in css
+    # selected-hover.png and base-hover-2.png were merged into one asset
+    # (cursor-hover.png) during the assets refactor.
+    assert "cursor-hover.png" in css
     assert 'input[name="attr_hand"]:not([value=""]) ~ .sheet-purse' in css
 
 
 def test_armor_slots_use_the_enlarged_frame():
     css = build.build_css("x")
-    assert "Armory-slot.png" in css
+    assert "ui/armory-slot.png" in css
     for slot in ("equip_head", "equip_torso", "equip_belt"):
         assert f".sheet-slot--{slot}" in css, slot
 
@@ -283,7 +284,7 @@ def test_magic_page_navigation_is_wired():
     assert "clicked:goto_base" in html
     assert 'class="sheet-page sheet-page--magic"' in html
     assert '.sheet-arx:has(input[name="attr_sheet_tab"][value="magic"]) .sheet-page--magic' in css
-    assert "ARX-MAGICBOOK.png" in css
+    assert "book/magicbook.png" in css
     assert '.sheet-arx:has(input[name="attr_sheet_tab"][value="magic"]) .sheet-nav--base' in css
     assert '.sheet-arx:has(input[name="attr_sheet_tab"][value="magic"]) .sheet-nav--magic' in css
 
@@ -302,7 +303,7 @@ def test_spellbook_and_grimoire_are_wired():
         assert f".sheet-spellbook-slot--{i}" in css, i
     assert 'name="act_slot_grimoire"' in html
     assert "clicked:slot_grimoire" in html
-    assert "item-magicbook-" in css  # derived from item-rune-* via the replace filter
+    assert "runes/magicbook-" in css  # derived from runes/* via the replace filter
     assert 'input[name="attr_hand_effect"][value="rune"] ~ .sheet-book .sheet-grimoire' in css
     rune_ids = [k for k, v in build.load_items().items() if v.get("effect") == "rune"]
     assert rune_ids
@@ -329,7 +330,7 @@ def test_spell_page_navigation_is_wired():
     assert '"clicked:goto_spellpage_" + p' in html
     for p in range(1, 11):
         assert f'name="act_goto_spellpage_{p}"' in html, p
-        assert f".sheet-spell-page-tab--{p} {{ background-image: url('x/magic-nav-{p}.png'); }}" in css, p
+        assert f".sheet-spell-page-tab--{p} {{ background-image: url('x/book/magicbook-nav-{p}.png'); }}" in css, p
     # page 1 is always visible, even with no rune known yet
     assert ".sheet-spell-page-tab--1 { display: block; }" in css
     # other pages only open once at least one of their spells is fully known —

@@ -3,7 +3,7 @@
    filled reading-order (top-left, across, then down a row) as the player
    consumes runes. Icons render at their native magicbook-artwork size minus
    a quarter (~120×178px average source → 5.76% × 13.27% of the 1563×1006
-   ARX-MAGICBOOK.png container, ×0.75). 5 columns × 4 rows, pitch spread to
+   book/magicbook.png container, ×0.75). 5 columns × 4 rows, pitch spread to
    fill the right page's width/height. Origin/pitch are a first pass over
    the right page's blank parchment — expect a visual tuning pass. */
 
@@ -25,7 +25,7 @@
   padding: 0;
   border: none;
   background: transparent;
-  cursor: url('{{ "{{ASSET_BASE}}" }}/selected-hover.png') 8 4, pointer;
+  cursor: url('{{ "{{ASSET_BASE}}" }}/ui/cursor-hover.png') 8 4, pointer;
 }
 
 /* Immediate hover feedback on a learned rune — no click needed. */
@@ -48,7 +48,7 @@
 {% if item.effect | default("") == "rune" %}
 .sheet-spellbook-slot input[value="{{ item_id }}"] + .sheet-item-icon {
   display: block;
-  background-image: url('{{ "{{ASSET_BASE}}" }}/{{ item.icon | replace("item-rune-", "item-magicbook-") }}');
+  background-image: url('{{ "{{ASSET_BASE}}" }}/{{ item.icon | replace("runes/", "runes/magicbook-") }}');
 }
 {% endif %}
 {% endfor %}
@@ -96,7 +96,7 @@
   padding: 0;
   border: none;
   background: transparent;
-  cursor: url('{{ "{{ASSET_BASE}}" }}/base-hover-2.png') 6 4, pointer;
+  cursor: url('{{ "{{ASSET_BASE}}" }}/ui/cursor-hover.png') 6 4, pointer;
   border-radius: 8px;
   transition: background 0.35s ease-out, box-shadow 0.35s ease-out;
 }
@@ -123,15 +123,15 @@ input[name="attr_hand_effect"][value="rune"] ~ .sheet-book .sheet-grimoire {
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  cursor: url('{{ "{{ASSET_BASE}}" }}/base-hover-2.png') 6 4, pointer;
+  cursor: url('{{ "{{ASSET_BASE}}" }}/ui/cursor-hover.png') 6 4, pointer;
   transition: filter 0.2s ease-out;
 }
 .sheet-craft-confirm:hover, .sheet-craft-memorize:hover, .sheet-craft-reset:hover {
   filter: brightness(1.8) drop-shadow(0 0 10px rgba(255, 220, 130, 1));
 }
-.sheet-craft-reset { left: 35%; background-image: url('{{ "{{ASSET_BASE}}" }}/delete-logo.png'); }
-.sheet-craft-confirm { left: 40%; background-image: url('{{ "{{ASSET_BASE}}" }}/cast-spell.png'); }
-.sheet-craft-memorize { left: 45%; background-image: url('{{ "{{ASSET_BASE}}" }}/Magic-Button.png'); }
+.sheet-craft-reset { left: 35%; background-image: url('{{ "{{ASSET_BASE}}" }}/ui/delete-logo.png'); }
+.sheet-craft-confirm { left: 40%; background-image: url('{{ "{{ASSET_BASE}}" }}/ui/cast-spell.png'); }
+.sheet-craft-memorize { left: 45%; background-image: url('{{ "{{ASSET_BASE}}" }}/ui/save-preset-button.png'); }
 
 .sheet-arx:has(.sheet-craft-confirm:hover) .sheet-statbar--craft-confirm { display: block; }
 .sheet-arx:has(.sheet-craft-memorize:hover) .sheet-statbar--craft-memorize { display: block; }
@@ -141,7 +141,7 @@ input[name="attr_hand_effect"][value="rune"] ~ .sheet-book .sheet-grimoire {
    preset slots swap to a delete cursor until one is picked (or Reset is
    clicked again to cancel) — see inventory.js's clicked:preset_N. */
 .sheet-arx:has(input[name="attr_forget_mode"][value="1"]) .sheet-preset-slot {
-  cursor: url('{{ "{{ASSET_BASE}}" }}/delete-logo.png') 16 16, crosshair;
+  cursor: url('{{ "{{ASSET_BASE}}" }}/ui/delete-logo.png') 16 16, crosshair;
 }
 
 /* Craft sequence: sits in the 160px strip reserved to the right of the book
@@ -222,7 +222,7 @@ input[name="attr_hand_effect"][value="rune"] ~ .sheet-book .sheet-grimoire {
 {% endfor %}
 {% endfor %}
 
-/* ---- Spell-page navigation: ARX-MAGICBOOK.png no longer bakes the numbered
+/* ---- Spell-page navigation: book/magicbook.png no longer bakes the numbered
    tabs into the artwork, so magic-nav-N.png IS the tab now (always drawn,
    not just on hover). A tab opens as soon as the character has consumed
    every rune of AT LEAST ONE spell assigned to that page — not merely
@@ -240,7 +240,7 @@ input[name="attr_hand_effect"][value="rune"] ~ .sheet-book .sheet-grimoire {
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  cursor: url('{{ "{{ASSET_BASE}}" }}/base-hover-2.png') 6 4, pointer;
+  cursor: url('{{ "{{ASSET_BASE}}" }}/ui/cursor-hover.png') 6 4, pointer;
   transition: filter 0.2s ease-out, box-shadow 0.2s ease-out;
 }
 .sheet-spell-page-tab:hover {
@@ -249,7 +249,7 @@ input[name="attr_hand_effect"][value="rune"] ~ .sheet-book .sheet-grimoire {
 }
 .sheet-spell-page-tab--1 { display: block; } /* always visible, even with no rune known yet */
 {% for p in range(1, 11) %}
-.sheet-spell-page-tab--{{ p }} { background-image: url('{{ "{{ASSET_BASE}}" }}/magic-nav-{{ p }}.png'); }
+.sheet-spell-page-tab--{{ p }} { background-image: url('{{ "{{ASSET_BASE}}" }}/book/magicbook-nav-{{ p }}.png'); }
 {% set spells_here = spells.values() | selectattr("page", "equalto", p) | list %}
 {% if spells_here %}
 {% for spell in spells_here %}.sheet-arx{% for rune in spell.runes %}:has(input[name="attr_known_{{ rune[5:] }}"][value="1"]){% endfor %} .sheet-spell-page-tab--{{ p }}{% if not loop.last %},
@@ -284,7 +284,7 @@ input[name="attr_hand_effect"][value="rune"] ~ .sheet-book .sheet-grimoire {
   color: #2b1d0e;
   font-size: 12px;
   text-align: center;
-  cursor: url('{{ "{{ASSET_BASE}}" }}/base-hover-2.png') 6 4, pointer;
+  cursor: url('{{ "{{ASSET_BASE}}" }}/ui/cursor-hover.png') 6 4, pointer;
 }
 .sheet-spell-slot:hover .sheet-spell-icon {
   filter: brightness(1.35) drop-shadow(0 0 6px rgba(255, 220, 130, 0.9));
@@ -348,7 +348,7 @@ input[name="attr_hand_effect"][value="rune"] ~ .sheet-book .sheet-grimoire {
   padding: 0;
   border: none;
   background: transparent;
-  cursor: url('{{ "{{ASSET_BASE}}" }}/base-hover-2.png') 6 4, pointer;
+  cursor: url('{{ "{{ASSET_BASE}}" }}/ui/cursor-hover.png') 6 4, pointer;
 }
 .sheet-preset-slot--1 { left: 19%; top: 76%; }
 .sheet-preset-slot--2 { left: 25%; top: 76%; }
