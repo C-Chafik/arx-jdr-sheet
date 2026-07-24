@@ -40,6 +40,9 @@
     <span class="sheet-gauge-sep">/</span>
     <input type="number" name="attr_{{ name }}_max" value="{{ defaults[name] }}" />
   </div>
+  {# Only the MAX side takes equipment modifiers (same delta technique as
+     the other stats — see recomputeModifiers in inventory.js). #}
+  <input type="hidden" name="attr_{{ name }}_max_applied_mod" value="0" />
 {% endfor %}
   {# Zones = future roll buttons: fill each value with the dice formula when ready. #}
 {% for name, label, text in stats.stat_infos %}

@@ -408,7 +408,8 @@ const MOD_STATS = [
   "strength", "mental", "dexterity", "constitution",
   "stealth", "technical", "intuition", "ethereal_link", "object_knowledge", "casting",
   "close_combat", "projectile", "defense",
-  "armor_class", "magic_resistance", "poison_resistance", "damages"
+  "armor_class", "magic_resistance", "poison_resistance", "damages",
+  "health_max", "mana_max"
 ];
 const EQUIP_SLOTS_FOR_MODS = Object.keys(EQUIP_ACCEPTS);
 
@@ -440,3 +441,20 @@ on("change:equip_head change:equip_torso change:equip_belt change:equip_main_han
    by the GM directly) never fires a change: event, so the bonus would never
    get baked in until the player re-equips something. */
 on("sheet:opened", function () { getAttrs(EQUIP_SLOTS_FOR_MODS.concat(MOD_STATS).concat(MOD_STATS.map(function (s) { return s + "_applied_mod"; })), recomputeModifiers); });
+
+/* If a gauge's max drops below its current value (e.g. unequipping
+   something that was boosting health_max/mana_max), clamp current down to
+   the new max instead of leaving it stranded above the ceiling. */
+["health", "mana"].forEach(function (name) {
+  on("change:" + name + "_max", function () {
+    getAttrs([name, name + "_max"], function (v) {
+      const current = parseInt(v[name], 10) || 0;
+      const max = parseInt(v[name + "_max"], 10) || 0;
+      if (current > max) {
+        const update = {};
+        update[name] = max;
+        setAttrs(update);
+      }
+    });
+  });
+});

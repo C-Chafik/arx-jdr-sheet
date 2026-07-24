@@ -21,7 +21,9 @@
     "armor_class": 1,
     "magic_resistance": 1,
     "poison_resistance": 1,
-    "damages": 1
+    "damages": 1,
+    "health_max": 1,
+    "mana_max": 1
   },
   "zohark": {
     "label": "Zohark",
@@ -45,7 +47,9 @@
     "armor_class": -1,
     "magic_resistance": -1,
     "poison_resistance": -1,
-    "damages": -1
+    "damages": -1,
+    "health_max": -1,
+    "mana_max": -1
   },
   "one-handed-sword": {
     "label": "Épée à une main",
@@ -68,7 +72,9 @@
     "armor_class": 2,
     "magic_resistance": 2,
     "poison_resistance": 2,
-    "damages": 2
+    "damages": 2,
+    "health_max": 2,
+    "mana_max": 2
   },
   "one-handed-sword-light": {
     "label": "Épée légère",

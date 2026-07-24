@@ -49,3 +49,39 @@
 .sheet-field--health  { left: 42.0%; top: 32.1%; }
 .sheet-field--mana    { left: 42.0%; top: 49.7%; }
 .sheet-field--damages { left: 43.0%; top: 67.4%; }
+
+/* ---- Equipment-modifier tint: dark blue when the current gear bonus on a
+   stat is positive, bright red when negative, base ink color when zero/no
+   modifier. Reads attr_<stat>_applied_mod (worker-maintained, see
+   recomputeModifiers in inventory.js) — items only, never a stat-on-stat
+   effect (not built yet). One pair of rules per stat; the _max fields
+   (health_max/mana_max) target their specific input inside the gauge. ---- */
+{% set mod_stat_selectors = {
+  "strength": ".sheet-field--strength input[type=\"number\"]",
+  "mental": ".sheet-field--mental input[type=\"number\"]",
+  "dexterity": ".sheet-field--dexterity input[type=\"number\"]",
+  "constitution": ".sheet-field--constitution input[type=\"number\"]",
+  "stealth": ".sheet-field--stealth input[type=\"number\"]",
+  "technical": ".sheet-field--technical input[type=\"number\"]",
+  "intuition": ".sheet-field--intuition input[type=\"number\"]",
+  "ethereal_link": ".sheet-field--ethereal_link input[type=\"number\"]",
+  "object_knowledge": ".sheet-field--object_knowledge input[type=\"number\"]",
+  "casting": ".sheet-field--casting input[type=\"number\"]",
+  "close_combat": ".sheet-field--close_combat input[type=\"number\"]",
+  "projectile": ".sheet-field--projectile input[type=\"number\"]",
+  "defense": ".sheet-field--defense input[type=\"number\"]",
+  "armor_class": ".sheet-field--armor_class input[type=\"number\"]",
+  "magic_resistance": ".sheet-field--magic_resistance input[type=\"number\"]",
+  "poison_resistance": ".sheet-field--poison_resistance input[type=\"number\"]",
+  "damages": ".sheet-field--damages input[type=\"number\"]",
+  "health_max": ".sheet-field--health input[name=\"attr_health_max\"]",
+  "mana_max": ".sheet-field--mana input[name=\"attr_mana_max\"]",
+} %}
+{% for stat, selector in mod_stat_selectors.items() %}
+.sheet-arx:has(input[name="attr_{{ stat }}_applied_mod"]:not([value=""]):not([value="0"]):not([value^="-"])) {{ selector }} {
+  color: #00008b;
+}
+.sheet-arx:has(input[name="attr_{{ stat }}_applied_mod"][value^="-"]) {{ selector }} {
+  color: #ff2b2b;
+}
+{% endfor %}
