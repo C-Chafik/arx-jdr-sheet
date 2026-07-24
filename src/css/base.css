@@ -54,13 +54,13 @@
 }
 
 .sheet-arx input[type="number"] {
-  font-size: 34px;
+  font-size: 28px;
 }
 
 /* Character name kept at its original size — the bigger number font above
    isn't meant to apply here. */
 .sheet-arx input[type="text"] {
-  font-size: 20px;
+  font-size: 30px;
 }
 
 .sheet-arx input[type="number"]::-webkit-outer-spin-button,

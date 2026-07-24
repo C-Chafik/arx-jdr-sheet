@@ -15,7 +15,7 @@
 }
 
 /* Right page — header */
-.sheet-field--level { left: 63.0%; top: 7.3%; width: 4.5%; }
+.sheet-field--level { left: 64.0%; top: 7.3%; width: 4.5%; }
 
 /* The level value sits on the ornamental chain band: lift it with a parchment halo. */
 .sheet-field--level input[type="number"] {
@@ -24,28 +24,28 @@
 }
 
 /* Right page — attributes (values under the 4 icons) */
-.sheet-field--strength     { left: 54.4%; top: 23.6%; }
-.sheet-field--mental       { left: 63.3%; top: 23.6%; }
-.sheet-field--dexterity    { left: 72.1%; top: 23.6%; }
-.sheet-field--constitution { left: 81.0%; top: 23.6%; }
+.sheet-field--strength     { left: 55.4%; top: 23.6%; }
+.sheet-field--mental       { left: 64.3%; top: 23.6%; }
+.sheet-field--dexterity    { left: 73.1%; top: 23.6%; }
+.sheet-field--constitution { left: 82.0%; top: 23.6%; }
 
 /* Right page — skills 3×3 (values under each icon) */
-.sheet-field--stealth          { left: 56.2%; top: 48.2%; }
-.sheet-field--technical        { left: 67.8%; top: 48.2%; }
-.sheet-field--intuition        { left: 79.2%; top: 48.2%; }
-.sheet-field--ethereal_link    { left: 56.2%; top: 64.1%; }
-.sheet-field--object_knowledge { left: 67.8%; top: 64.1%; }
-.sheet-field--casting          { left: 79.2%; top: 64.1%; }
-.sheet-field--close_combat     { left: 56.2%; top: 80.6%; }
-.sheet-field--projectile       { left: 67.8%; top: 80.6%; }
-.sheet-field--defense          { left: 79.2%; top: 80.6%; }
+.sheet-field--stealth          { left: 57.2%; top: 48.2%; }
+.sheet-field--technical        { left: 68.8%; top: 48.2%; }
+.sheet-field--intuition        { left: 80.2%; top: 48.2%; }
+.sheet-field--ethereal_link    { left: 57.2%; top: 64.1%; }
+.sheet-field--object_knowledge { left: 68.8%; top: 64.1%; }
+.sheet-field--casting          { left: 80.2%; top: 64.1%; }
+.sheet-field--close_combat     { left: 57.2%; top: 80.6%; }
+.sheet-field--projectile       { left: 68.8%; top: 80.6%; }
+.sheet-field--defense          { left: 80.2%; top: 80.6%; }
 
 /* Left page — resistances (under the three shields) */
-.sheet-field--armor_class       { left: 9.5%; top: 32.6%; }
-.sheet-field--magic_resistance  { left: 9.3%; top: 50.6%; }
-.sheet-field--poison_resistance { left: 9.2%; top: 67.9%; }
+.sheet-field--armor_class       { left: 10.5%; top: 32.6%; }
+.sheet-field--magic_resistance  { left: 10.3%; top: 50.6%; }
+.sheet-field--poison_resistance { left: 10.2%; top: 67.9%; }
 
 /* Left page — vitals */
 .sheet-field--health  { left: 42.0%; top: 32.1%; }
 .sheet-field--mana    { left: 42.0%; top: 49.7%; }
-.sheet-field--damages { left: 42.0%; top: 67.4%; }
+.sheet-field--damages { left: 43.0%; top: 67.4%; }
