@@ -458,3 +458,100 @@ on("sheet:opened", function () { getAttrs(EQUIP_SLOTS_FOR_MODS.concat(MOD_STATS)
     });
   });
 });
+
+/* Arx Fatalis skill formulas (wiki.arx-libertatis.org/Skills): each skill's
+   value is boosted by the character's attributes. Same delta technique as
+   equipment mods, tracked separately (attr_<skill>_applied_stat_mod) so
+   items and attributes never clobber each other's contribution — and so
+   this NEVER touches attr_<skill>_applied_mod, keeping the equipment-only
+   color tint (see base.css.j2) blind to attribute-driven changes, as
+   requested. Coefficients are the game's own, unscaled. */
+const SKILL_FORMULAS = {
+  stealth: function (a) { return a.dexterity * 2; },
+  technical: function (a) { return a.dexterity + a.mental; },
+  intuition: function (a) { return a.mental * 2; },
+  ethereal_link: function (a) { return a.mental * 2; },
+  object_knowledge: function (a) { return Math.round(a.strength * 0.5 + a.dexterity * 0.5 + a.mental * 1.5); },
+  casting: function (a) { return a.mental * 2; },
+  close_combat: function (a) { return a.strength * 2 + a.dexterity; },
+  projectile: function (a) { return a.dexterity * 2 + a.strength; },
+  defense: function (a) { return a.constitution * 3; }
+};
+const SKILL_NAMES = Object.keys(SKILL_FORMULAS);
+const ATTR_NAMES = ["strength", "mental", "dexterity", "constitution"];
+
+function recomputeStatMods(v) {
+  const a = {};
+  ATTR_NAMES.forEach(function (attr) { a[attr] = parseInt(v[attr], 10) || 0; });
+  const update = {};
+  SKILL_NAMES.forEach(function (skill) {
+    const newTotal = SKILL_FORMULAS[skill](a);
+    const prevApplied = parseInt(v[skill + "_applied_stat_mod"], 10) || 0;
+    const current = parseInt(v[skill], 10) || 0;
+    const delta = newTotal - prevApplied;
+    if (delta !== 0) { update[skill] = current + delta; }
+    update[skill + "_applied_stat_mod"] = newTotal;
+  });
+  setAttrs(update);
+}
+
+const STAT_MOD_GETATTRS = ATTR_NAMES.concat(SKILL_NAMES).concat(SKILL_NAMES.map(function (s) { return s + "_applied_stat_mod"; }));
+
+on("change:strength change:mental change:dexterity change:constitution",
+  function () { getAttrs(STAT_MOD_GETATTRS, recomputeStatMods); });
+
+/* Also on load: attributes leveled up in an earlier session (before this
+   system existed) never fired a change: event for the affected skills. */
+on("sheet:opened", function () { getAttrs(STAT_MOD_GETATTRS, recomputeStatMods); });
+
+/* ============================================================================
+   SEPARATE, REMOVABLE BLOCK — attribute-derived bonuses to things that are
+   NOT skills (damages, poison/magic resistance, HP/mana max), straight from
+   the Arx Fatalis attribute tables (strength/constitution/dexterity/
+   intelligence bonus columns). Kept fully isolated from SKILL_FORMULAS/
+   recomputeStatMods above on purpose — different constants, different
+   applied_stat_mod trackers, different listener — so this whole mechanic can
+   be deleted later without touching the skill math at all.
+
+   damages: nonlinear (a flat step, not per-point) — floor((str−9)/2),
+   clamped at 0, matching the game's own table (0 until str 11, then +1
+   every 2 points). poison_resistance/magic_resistance are plain ×2. health/
+   mana max also fold in the character's level (attr_level). ============ */
+const SINGLE_STAT_FORMULAS = {
+  damages: function (a) { return Math.max(Math.floor((a.strength - 9) / 2), 0); },
+  poison_resistance: function (a) { return a.constitution * 2; },
+  magic_resistance: function (a) { return a.mental * 2; }
+};
+const GAUGE_MAX_FORMULAS = {
+  health_max: function (a) { return a.constitution * 2 * (a.level + 1); },
+  mana_max: function (a) { return a.mental * (a.level + 1); }
+};
+const SINGLE_STAT_NAMES = Object.keys(SINGLE_STAT_FORMULAS);
+const GAUGE_MAX_NAMES = Object.keys(GAUGE_MAX_FORMULAS);
+
+function recomputeSingleStatMods(v) {
+  const a = {};
+  ATTR_NAMES.forEach(function (attr) { a[attr] = parseInt(v[attr], 10) || 0; });
+  a.level = parseInt(v.level, 10) || 0;
+  const update = {};
+  SINGLE_STAT_NAMES.concat(GAUGE_MAX_NAMES).forEach(function (name) {
+    const formulas = SINGLE_STAT_FORMULAS[name] ? SINGLE_STAT_FORMULAS : GAUGE_MAX_FORMULAS;
+    const newTotal = formulas[name](a);
+    const prevApplied = parseInt(v[name + "_applied_stat_mod"], 10) || 0;
+    const current = parseInt(v[name], 10) || 0;
+    const delta = newTotal - prevApplied;
+    if (delta !== 0) { update[name] = current + delta; }
+    update[name + "_applied_stat_mod"] = newTotal;
+  });
+  setAttrs(update);
+}
+
+const SINGLE_STAT_MOD_GETATTRS = ATTR_NAMES.concat(["level"]).concat(SINGLE_STAT_NAMES).concat(GAUGE_MAX_NAMES)
+  .concat(SINGLE_STAT_NAMES.map(function (s) { return s + "_applied_stat_mod"; }))
+  .concat(GAUGE_MAX_NAMES.map(function (s) { return s + "_applied_stat_mod"; }));
+
+on("change:strength change:mental change:dexterity change:constitution change:level",
+  function () { getAttrs(SINGLE_STAT_MOD_GETATTRS, recomputeSingleStatMods); });
+
+on("sheet:opened", function () { getAttrs(SINGLE_STAT_MOD_GETATTRS, recomputeSingleStatMods); });
+/* ========================================================================= */

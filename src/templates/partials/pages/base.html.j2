@@ -14,6 +14,16 @@
   "armor_class": 1, "magic_resistance": 12, "poison_resistance": 16, "damages": 3,
   "health": 12, "mana": 6,
 } %}
+{# Seeds for attribute-derived "singles"/gauge-max stats (Arx Fatalis attribute
+   tables — strength/constitution/dexterity/intelligence bonus columns), kept
+   in a SEPARATE dict from skills' own seeds on purpose: this mechanic can be
+   pulled out later without touching the skill formulas at all. Computed at
+   strength/mental/dexterity/constitution=6, level=0 (this sheet's own
+   defaults) — see recomputeSingleStatMods in inventory.js. #}
+{% set single_stat_mod_seeds = {
+  "damages": 0, "poison_resistance": 12, "magic_resistance": 12,
+  "health_max": 12, "mana_max": 6,
+} %}
 <div class="sheet-page sheet-page--base">
   {# character_name is Roll20-magic: it syncs with the journal name both ways. #}
   <div class="sheet-field sheet-field--character_name">
@@ -33,6 +43,21 @@
   {# Remembers the equipment bonus last baked into attr_{{ name }}, so the
      next equipment change can apply just the difference. #}
   <input type="hidden" name="attr_{{ name }}_applied_mod" value="0" />
+{% if name in skills %}
+  {# Same delta technique, but for the attribute-derived portion (Arx
+   Fatalis skill formulas — see recomputeStatMods in inventory.js). Starts
+   at this skill's own default, since that default already IS the formula's
+   result at strength/mental/dexterity/constitution = 6 with 0 raw points
+   (wiki.arx-libertatis.org/Skills: "effective minimum of 12 to 18 due to
+   skill bonuses received from starting 6 points in each attribute"). #}
+  <input type="hidden" name="attr_{{ name }}_applied_stat_mod" value="{{ defaults[name] }}" />
+{% endif %}
+{% if name in single_stat_mod_seeds %}
+  {# Attribute-derived portion of this single, tracked separately from
+     skills (see recomputeSingleStatMods in inventory.js) — deliberately
+     isolated so this whole mechanic can be removed on its own later. #}
+  <input type="hidden" name="attr_{{ name }}_applied_stat_mod" value="{{ single_stat_mod_seeds[name] }}" />
+{% endif %}
 {% endfor %}
 {% for name in gauges %}
   <div class="sheet-field sheet-gauge sheet-field--{{ name }}">
@@ -43,6 +68,10 @@
   {# Only the MAX side takes equipment modifiers (same delta technique as
      the other stats — see recomputeModifiers in inventory.js). #}
   <input type="hidden" name="attr_{{ name }}_max_applied_mod" value="0" />
+  {# ...and the attribute-derived portion too (constitution/intelligence ×
+     level — see recomputeSingleStatMods in inventory.js), tracked
+     separately from both equipment and skills. #}
+  <input type="hidden" name="attr_{{ name }}_max_applied_stat_mod" value="{{ single_stat_mod_seeds[name + '_max'] }}" />
 {% endfor %}
   {# Zones = future roll buttons: fill each value with the dice formula when ready. #}
 {% for name, label, text in stats.stat_infos %}
