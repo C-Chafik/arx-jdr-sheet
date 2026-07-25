@@ -264,7 +264,12 @@ on("clicked:bag_down", function () {
    bag nav). CSS reads the resulting attribute value directly (see tabs.css,
    inventory.css). */
 on("clicked:goto_magic", function () { setAttrs({ sheet_tab: "magic" }); });
-on("clicked:goto_base", function () { setAttrs({ sheet_tab: "base" }); });
+/* Leaving the magic page hides it via display:none, which fully resets any
+   CSS animation running on it — attr_recipe_spell staying set is what made
+   the recipe-reveal replay from scratch every time you come back (same
+   root cause as sheet:opened, different trigger: a tab switch, not a full
+   sheet reopen). Clear it here too so coming back never auto-replays it. */
+on("clicked:goto_base", function () { setAttrs({ sheet_tab: "base", recipe_spell: "" }); });
 
 on("clicked:inventory_toggle", function () {
   getAttrs(["inventory_open"], function (v) {
