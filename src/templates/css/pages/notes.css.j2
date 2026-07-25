@@ -1,0 +1,55 @@
+/* Handwritten look, deliberately distinct from the rest of the sheet's
+   EB Garamond (see base.css) — this is the player's own free-form scrawl,
+   not a printed stat block. */
+@import url('https://fonts.googleapis.com/css2?family=Homemade+Apple&display=swap');
+
+/* Free text, 5 independent pages (left+right per page) — all in the DOM,
+   only the pair matching attr_notes_page shown (see clicked:notes_prev/next
+   in inventory.js). First-pass rectangle over notes.png's writable area. */
+.sheet-notes-field {
+  position: absolute;
+  top: 14%;
+  width: 38%;
+  height: 72%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  resize: none;
+  outline: none;
+  font-family: 'Homemade Apple', cursive;
+  font-size: 20px;
+  line-height: 1.4;
+  color: #2b1d0e;
+  display: none;
+}
+.sheet-notes-field--left  { left: 8%; }
+.sheet-notes-field--right { left: 54%; }
+
+{% for n in range(1, 6) %}
+.sheet-arx:has(input[name="attr_notes_page"][value="{{ n }}"]) .sheet-notes-field--page-{{ n }} {
+  display: block;
+}
+{% endfor %}
+
+/* Page-turn nav, vertically centered on the spread's outer edges. */
+.sheet-notes-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 64px;
+  height: 64px;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  background-size: 100% 100%;
+  cursor: url('{{ "{{ASSET_BASE}}" }}/ui/cursor-hover.png') 6 4, pointer;
+}
+.sheet-notes-nav--left  { left: 0%;  background-image: url('{{ "{{ASSET_BASE}}" }}/book/notes-nav-left.png'); }
+.sheet-notes-nav--right { right: 0%; background-image: url('{{ "{{ASSET_BASE}}" }}/book/notes-nav-right.png'); }
+.sheet-notes-nav--left:hover  { background-image: url('{{ "{{ASSET_BASE}}" }}/book/notes-nav-left-selected.png'); }
+.sheet-notes-nav--right:hover { background-image: url('{{ "{{ASSET_BASE}}" }}/book/notes-nav-right-selected.png'); }
+
+/* No further page before 1 / after 5 — nav simply hides at each end, same
+   clamp convention as the bag's up/down nav (see inventory-slots.css.j2). */
+.sheet-arx:has(input[name="attr_notes_page"][value="1"]) .sheet-notes-nav--left { display: none; }
+.sheet-arx:has(input[name="attr_notes_page"][value="5"]) .sheet-notes-nav--right { display: none; }

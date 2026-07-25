@@ -290,8 +290,7 @@ def test_magic_page_navigation_is_wired():
     assert 'class="sheet-page sheet-page--magic"' in html
     assert '.sheet-arx:has(input[name="attr_sheet_tab"][value="magic"]) .sheet-page--magic' in css
     assert "book/magicbook.png" in css
-    assert '.sheet-arx:has(input[name="attr_sheet_tab"][value="magic"]) .sheet-nav--base' in css
-    assert '.sheet-arx:has(input[name="attr_sheet_tab"][value="magic"]) .sheet-nav--magic' in css
+    assert '.sheet-arx:has(input[name="attr_sheet_tab"][value="magic"]) .sheet-nav--magic { display: none; }' in css
 
 
 def test_rune_items_have_rune_effect():

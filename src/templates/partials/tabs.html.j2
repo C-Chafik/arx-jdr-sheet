@@ -10,7 +10,15 @@
    there too. To add a page: add a button here, a partial in partials/pages/,
    its CSS in src/css/pages/, and the matching rules in tabs.css. #}
 <input type="hidden" class="sheet-hand-mirror" name="attr_sheet_tab" value="base" />
+{# 4 buttons sharing 3 FIXED physical slots — see tabs.css for the full
+   slot-assignment table. Map has no page yet — clicking it just sets
+   sheet_tab, the book shows no page content until pages/map.html.j2
+   exists. #}
 <button type="action" class="sheet-nav-btn sheet-nav--magic" name="act_goto_magic"></button>
 <button type="action" class="sheet-nav-btn sheet-nav--base" name="act_goto_base"></button>
+<button type="action" class="sheet-nav-btn sheet-nav--notes" name="act_goto_notes"></button>
+<button type="action" class="sheet-nav-btn sheet-nav--map" name="act_goto_map"></button>
 <div class="sheet-statbar sheet-statbar--nav-magic">Livre de magie</div>
 <div class="sheet-statbar sheet-statbar--nav-base">Feuille de personnage</div>
+<div class="sheet-statbar sheet-statbar--nav-notes">Note d'aventure</div>
+<div class="sheet-statbar sheet-statbar--nav-map">Carte</div>

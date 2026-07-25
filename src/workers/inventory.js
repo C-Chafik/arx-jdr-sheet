@@ -270,6 +270,30 @@ on("clicked:goto_magic", function () { setAttrs({ sheet_tab: "magic" }); });
    root cause as sheet:opened, different trigger: a tab switch, not a full
    sheet reopen). Clear it here too so coming back never auto-replays it. */
 on("clicked:goto_base", function () { setAttrs({ sheet_tab: "base", recipe_spell: "" }); });
+/* Notes: reachable from both base and magic (map-menu-button shows on
+   both), leaving always goes back to base (single "back" ribbon, same one
+   magic already uses). */
+on("clicked:goto_notes", function () { setAttrs({ sheet_tab: "notes" }); });
+
+/* Map: no page yet — the ribbon is rendered anyway (see tabs.css's 3-slot
+   assignment table) so it just sets sheet_tab; the book shows no page
+   content until pages/map.html.j2 exists. */
+on("clicked:goto_map", function () { setAttrs({ sheet_tab: "map" }); });
+
+/* Notes page nav: 5 independent pages, clamped 1-5 (same pattern as
+   bag_level's up/down clamp). */
+on("clicked:notes_prev", function () {
+  getAttrs(["notes_page"], function (v) {
+    const page = parseInt(v.notes_page, 10) || 1;
+    if (page > 1) { setAttrs({ notes_page: page - 1 }); }
+  });
+});
+on("clicked:notes_next", function () {
+  getAttrs(["notes_page"], function (v) {
+    const page = parseInt(v.notes_page, 10) || 1;
+    if (page < 5) { setAttrs({ notes_page: page + 1 }); }
+  });
+});
 
 on("clicked:inventory_toggle", function () {
   getAttrs(["inventory_open"], function (v) {
