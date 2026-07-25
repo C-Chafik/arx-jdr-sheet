@@ -322,12 +322,25 @@ for (let i = 1; i <= 20; i++) {
   });
 }
 
-/* Launch: consumes the crafted rune combination — will trigger the actual
-   Roll20 dice roll once that mechanic is designed (see SPEC.md); for now it
-   just clears the combo. */
+/* Launch: matches the crafted rune combination (order matters — see
+   clicked:memorize) against spells.json and, on a match, rolls 1d100
+   roll-under against Magie/casting labeled with the spell's own translated
+   name. Consumes the combo either way, matched or not. */
 on("clicked:craft_confirm", function () {
   getAttrs(["craft_runes"], function (v) {
-    if (!craftList(v).length) { return; }
+    const combo = craftList(v);
+    if (!combo.length) { return; }
+    const comboKey = combo.join("|");
+    let matchId = null;
+    Object.keys(SPELLS).forEach(function (id) {
+      if (matchId) { return; }
+      if (SPELLS[id].runes.join("|") === comboKey) { matchId = id; }
+    });
+    if (matchId) {
+      const label = SPELLS[matchId].label;
+      startRoll("&{template:default} {{name=" + label + "}} {{Valeur=@{casting}}} {{Jet=[[1d100]]}}",
+        function (results) { finishRoll(results.rollId, {}); });
+    }
     const update = craftPositions([]);
     update.craft_runes = "";
     update.forget_mode = "0";
@@ -349,30 +362,57 @@ on("clicked:craft_reset", function () {
   });
 });
 
-/* While forget_mode is on, clicking a memorized preset forgets it (see
-   magic-slots.css.j2 for the delete cursor shown over the preset slots).
-   Forgetting is NEVER gated by the current unlock state — a slot that lost
-   its unlock (mental/casting dropped after the spell was memorized) must
-   still be forgettable, only ADDING to a slot requires it to be unlocked. */
+/* Clicking a memorized preset: while forget_mode is on it forgets it (see
+   magic-slots.css.j2 for the delete cursor shown over the preset slots) —
+   forgetting is NEVER gated by anything else. Otherwise, a filled slot
+   CASTS that spell (1d100 roll-under against Magie/casting, explicitly
+   labeled "sort mémorisé" to distinguish it from casting straight from the
+   book) and is consumed — a memorized spell is one-shot, the slot empties
+   right after. */
 [1, 2, 3].forEach(function (n) {
   on("clicked:preset_" + n, function () {
-    getAttrs(["forget_mode"], function (v) {
-      if (v.forget_mode !== "1") { return; }
-      const update = { forget_mode: "0" };
+    getAttrs(["forget_mode", "preset_slot_" + n], function (v) {
+      if (v.forget_mode === "1") {
+        const update = { forget_mode: "0" };
+        update["preset_slot_" + n] = "";
+        setAttrs(update);
+        return;
+      }
+      const presetId = v["preset_slot_" + n];
+      if (!presetId || !PRESETS[presetId]) { return; }
+      const label = PRESETS[presetId].label;
+      startRoll("&{template:default} {{name=Sort mémorisé : " + label + "}} {{Valeur=@{casting}}} {{Jet=[[1d100]]}}",
+        function (results) { finishRoll(results.rollId, {}); });
+      const update = {};
       update["preset_slot_" + n] = "";
       setAttrs(update);
     });
   });
 });
 
-/* Clicking a spell in the 2x2 slots highlights its rune recipe in the
+/* Clicking a spell in the 2x2 slots only highlights its rune recipe in the
    20-slot grid (see magic-slots.css.j2's attr_recipe_spell rules); clicking
-   the SAME spell again clears it. */
+   the SAME spell again clears it. Casting itself only happens by incanting
+   those runes and clicking "Lancer un sort" (see clicked:craft_confirm). */
 Object.keys(SPELLS).forEach(function (spellId) {
   on("clicked:cast_" + spellId, function () {
     getAttrs(["recipe_spell"], function (v) {
       setAttrs({ recipe_spell: v.recipe_spell === spellId ? "" : spellId });
     });
+  });
+});
+
+/* Damages: needs the equipped weapon's own label (an item lookup, which a
+   static roll button's value="" can't do) — main hand, plus " + <secondary>"
+   if the off hand holds an actual secondary weapon (not a shield/other). */
+on("clicked:roll_damages", function () {
+  getAttrs(["equip_main_hand", "equip_off_hand"], function (v) {
+    const mainItem = ITEMS[v.equip_main_hand];
+    const offItem = ITEMS[v.equip_off_hand];
+    let weaponLabel = mainItem ? mainItem.label : "Mains nues";
+    if (offItem && offItem.cat === "arme_secondaire") { weaponLabel += " + " + offItem.label; }
+    startRoll("&{template:default} {{name=Dégâts — " + weaponLabel + "}} {{Valeur=@{damages}}}",
+      function (results) { finishRoll(results.rollId, {}); });
   });
 });
 
@@ -390,11 +430,13 @@ on("clicked:memorize", function () {
   getAttrs(["craft_runes", "preset_slot_1", "preset_slot_2", "preset_slot_3"], function (v) {
     const combo = craftList(v);
     if (!combo.length) { return; }
-    const comboKey = combo.slice().sort().join("|");
+    /* Order matters: some recipes would otherwise be indistinguishable from
+       another using the exact same runes in a different sequence. */
+    const comboKey = combo.join("|");
     let matchId = null;
     Object.keys(PRESETS).forEach(function (id) {
       if (matchId) { return; }
-      if (PRESETS[id].runes.slice().sort().join("|") === comboKey) { matchId = id; }
+      if (PRESETS[id].runes.join("|") === comboKey) { matchId = id; }
     });
     const update = craftPositions([]);
     update.craft_runes = "";

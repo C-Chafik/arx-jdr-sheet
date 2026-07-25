@@ -71,10 +71,20 @@
      removed, see git history. #}
   <input type="hidden" name="attr_{{ name }}_max_applied_mod" value="0" />
 {% endfor %}
-  {# Zones = future roll buttons: fill each value with the dice formula when ready. #}
+  {# Roll buttons: skills roll 1d100 (roll-under against their own live
+     value, shown alongside for comparison — see "On tente l'incantation"
+     decisions). Attributes/armor_class/magic_resistance/poison_resistance
+     stay inert for now ("on touche pas" — not yet designed). Damages is a
+     type="action" button instead (see below): it needs to look up the
+     equipped weapon's own label, which a static roll value can't do. #}
 {% for name, label, text in stats.stat_infos %}
 {% if name in stats.no_roll %}
   <div class="sheet-hover-zone sheet-hover--{{ name }}"></div>
+{% elif name == "damages" %}
+  <button type="action" class="sheet-hover-zone sheet-hover--{{ name }}" name="act_roll_damages"></button>
+{% elif name in skills %}
+{% set roll_value = "&{template:default} {{" ~ "name=" ~ label ~ "}} {{" ~ "Valeur=@{" ~ name ~ "}}} {{" ~ "Jet=[[1d100]]}}" %}
+  <button type="roll" class="sheet-hover-zone sheet-hover--{{ name }}" name="roll_{{ name }}" value="{{ roll_value }}"></button>
 {% else %}
   <button type="roll" class="sheet-hover-zone sheet-hover--{{ name }}" name="roll_{{ name }}" value=""></button>
 {% endif %}

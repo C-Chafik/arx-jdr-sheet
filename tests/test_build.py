@@ -74,6 +74,11 @@ def test_every_icon_has_hover_zone_statbar_and_css():
         assert f'class="sheet-hover-zone sheet-hover--{name}"' in html, name
         if name in NO_ROLL:
             assert f'name="roll_{name}"' not in html, name
+        elif name == "damages":
+            # Needs an item lookup (equipped weapon's label) a static roll
+            # value can't do — type="action" + startRoll instead, see
+            # clicked:roll_damages in inventory.js.
+            assert 'name="act_roll_damages"' in html, name
         else:
             assert f'name="roll_{name}"' in html, name
         assert f'class="sheet-statbar sheet-statbar--{name}"' in html, name
