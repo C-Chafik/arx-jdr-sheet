@@ -14,15 +14,15 @@
   "armor_class": 1, "magic_resistance": 12, "poison_resistance": 16, "damages": 3,
   "health": 12, "mana": 6,
 } %}
-{# Seeds for attribute-derived "singles"/gauge-max stats (Arx Fatalis attribute
-   tables — strength/constitution/dexterity/intelligence bonus columns), kept
-   in a SEPARATE dict from skills' own seeds on purpose: this mechanic can be
-   pulled out later without touching the skill formulas at all. Computed at
-   strength/mental/dexterity/constitution=6, level=0 (this sheet's own
-   defaults) — see recomputeSingleStatMods in inventory.js. #}
+{# Seeds for attribute-derived "singles" (Arx Fatalis attribute tables —
+   constitution/intelligence bonus columns), kept in a SEPARATE dict from
+   skills' own seeds on purpose: this mechanic can be pulled out later
+   without touching the skill formulas at all. Computed at strength/mental/
+   dexterity/constitution=6 (this sheet's own defaults) — see
+   recomputeSingleStatMods in inventory.js. (damages and the HP/mana max ×
+   level mechanics were tried and removed — see git history.) #}
 {% set single_stat_mod_seeds = {
   "damages": 0, "poison_resistance": 12, "magic_resistance": 12,
-  "health_max": 12, "mana_max": 6,
 } %}
 <div class="sheet-page sheet-page--base">
   {# character_name is Roll20-magic: it syncs with the journal name both ways. #}
@@ -66,12 +66,10 @@
     <input type="number" name="attr_{{ name }}_max" value="{{ defaults[name] }}" />
   </div>
   {# Only the MAX side takes equipment modifiers (same delta technique as
-     the other stats — see recomputeModifiers in inventory.js). #}
+     the other stats — see recomputeModifiers in inventory.js). No
+     attribute/level-derived mechanic on health_max/mana_max — tried and
+     removed, see git history. #}
   <input type="hidden" name="attr_{{ name }}_max_applied_mod" value="0" />
-  {# ...and the attribute-derived portion too (constitution/intelligence ×
-     level — see recomputeSingleStatMods in inventory.js), tracked
-     separately from both equipment and skills. #}
-  <input type="hidden" name="attr_{{ name }}_max_applied_stat_mod" value="{{ single_stat_mod_seeds[name + '_max'] }}" />
 {% endfor %}
   {# Zones = future roll buttons: fill each value with the dice formula when ready. #}
 {% for name, label, text in stats.stat_infos %}

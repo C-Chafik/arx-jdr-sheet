@@ -49,7 +49,7 @@
      revealed by :has() rules in css/magic-slots.css.j2. #}
 {% for item_id, item in items.items() %}
 {% if item.effect | default("") == "rune" %}
-    <div class="sheet-statbar sheet-spell-statbar sheet-statbar--spell-{{ item_id }}">★ {{ item.label }}</div>
+    <div class="sheet-statbar sheet-spell-statbar sheet-statbar--spell-{{ item_id }}">{{ item.label }}</div>
 {% endif %}
 {% endfor %}
   {# Known-spell names on hover (2x2 cast slots) — same yellow billboard as
@@ -65,7 +65,7 @@
      book-linked spells — so it doubles as the catalog used later to detect
      rune combinations. #}
 {% for preset_id, preset in presets.items() %}
-    <div class="sheet-statbar sheet-preset-statbar{% if preset.secret %} sheet-preset-statbar--secret{% endif %} sheet-statbar--preset-{{ preset_id }}">{% if preset.secret %}★ {% endif %}{{ preset.label }}</div>
+    <div class="sheet-statbar sheet-preset-statbar{% if preset.secret %} sheet-preset-statbar--secret{% endif %} sheet-statbar--preset-{{ preset_id }}">{% if preset.secret %}{% for char in preset.label %}<span class="sheet-rainbow-{{ loop.index0 % 6 }}">{{ char }}</span>{% endfor %}{% else %}{{ preset.label }}{% endif %}</div>
 {% endfor %}
   </div>
   {# The leather band slides out from under the book when the toggle is checked. #}

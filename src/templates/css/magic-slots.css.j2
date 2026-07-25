@@ -231,23 +231,29 @@ input[name="attr_hand_effect"][value="rune"] ~ .sheet-book .sheet-grimoire {
    whole set flashing on and staying lit forever. Each rune gets its own
    full in→hold→out cycle (0.8s) before the next one's delay kicks in, so
    they never overlap. No fill-mode: once the animation ends the element
-   just reverts to its unlit default. */
-@keyframes recipe-glow-in {
+   just reverts to its unlit default.
+   Keyframes are named PER SPELL (identical content, just a different name)
+   so that clicking straight from one spell to another always restarts the
+   animation — sheet workers can't use setTimeout to force an off→on blip
+   (it drops the character context, see inventory.js history), so a real
+   animation-name change is what makes the browser replay it reliably even
+   for a rune shared by both spells. */
+{% for spell_id, spell in spells.items() %}
+@keyframes recipe-glow-in-{{ spell_id }} {
   0%, 100% { filter: brightness(1) drop-shadow(0 0 0 rgba(255, 220, 130, 0)); }
   25%, 75% { filter: brightness(1.9) drop-shadow(0 0 12px rgba(255, 220, 130, 1)); }
 }
-@keyframes recipe-badge-in {
+@keyframes recipe-badge-in-{{ spell_id }} {
   0%, 100% { opacity: 0; }
   25%, 75% { opacity: 1; }
 }
-{% for spell_id, spell in spells.items() %}
 {% for rune in spell.runes %}
 .sheet-arx:has(input[name="attr_recipe_spell"][value="{{ spell_id }}"]) .sheet-spellbook-slot input[value="{{ rune }}"] + .sheet-item-icon {
-  animation: recipe-glow-in 0.8s ease-out {{ "%.2f" | format(loop.index0 * 0.8) }}s;
+  animation: recipe-glow-in-{{ spell_id }} 0.8s ease-out {{ "%.2f" | format(loop.index0 * 0.8) }}s;
 }
 .sheet-arx:has(input[name="attr_recipe_spell"][value="{{ spell_id }}"]) .sheet-spellbook-slot input[value="{{ rune }}"] ~ .sheet-recipe-order {
   display: flex;
-  animation: recipe-badge-in 0.8s ease-out {{ "%.2f" | format(loop.index0 * 0.8) }}s;
+  animation: recipe-badge-in-{{ spell_id }} 0.8s ease-out {{ "%.2f" | format(loop.index0 * 0.8) }}s;
 }
 .sheet-arx:has(input[name="attr_recipe_spell"][value="{{ spell_id }}"]) .sheet-spellbook-slot input[value="{{ rune }}"] ~ .sheet-recipe-order::before {
   content: "{{ loop.index }}";
@@ -420,9 +426,15 @@ input[name="attr_hand_effect"][value="rune"] ~ .sheet-book .sheet-grimoire {
   color: #ffd700;
   text-shadow: 0 0 3px rgba(0, 0, 0, 0.9), 0 1px 2px rgba(0, 0, 0, 0.9);
 }
-.sheet-preset-statbar--secret {
-  color: #ff2b2b;
-}
+/* Secret spells: each character gets its own color from a fixed rainbow
+   cycle (see the per-character <span> loop in sheet.html.j2) instead of a
+   flat color or a smooth gradient — a blocky multicolor look, not a font. */
+.sheet-rainbow-0 { color: #ff2b2b; }
+.sheet-rainbow-1 { color: #ff8c00; }
+.sheet-rainbow-2 { color: #ffd700; }
+.sheet-rainbow-3 { color: #33cc33; }
+.sheet-rainbow-4 { color: #4fc3f7; }
+.sheet-rainbow-5 { color: #b366ff; }
 {% for preset_id, preset in presets.items() %}
 .sheet-arx:has(.sheet-preset-slot:hover input[value="{{ preset_id }}"]) .sheet-statbar--preset-{{ preset_id }} {
   display: block;

@@ -345,7 +345,10 @@ on("clicked:craft_reset", function () {
 });
 
 /* While forget_mode is on, clicking a memorized preset forgets it (see
-   magic-slots.css.j2 for the delete cursor shown over the preset slots). */
+   magic-slots.css.j2 for the delete cursor shown over the preset slots).
+   Forgetting is NEVER gated by the current unlock state — a slot that lost
+   its unlock (mental/casting dropped after the spell was memorized) must
+   still be forgettable, only ADDING to a slot requires it to be unlocked. */
 [1, 2, 3].forEach(function (n) {
   on("clicked:preset_" + n, function () {
     getAttrs(["forget_mode"], function (v) {
@@ -367,6 +370,13 @@ Object.keys(SPELLS).forEach(function (spellId) {
     });
   });
 });
+
+/* attr_recipe_spell is a normal (persisted) attribute — left set from a
+   previous session, the reveal animation plays again the moment the sheet
+   re-renders on open, since CSS animations trigger whenever the matching
+   condition becomes true, not just on an actual change. It's a purely
+   transient "what am I looking at" indicator, so just clear it on open. */
+on("sheet:opened", function () { setAttrs({ recipe_spell: "" }); });
 
 /* Memorize: matches the crafted rune combination against presets.json (which
    covers both book spells and secret-only ones) and fills the first empty
@@ -515,28 +525,23 @@ on("sheet:opened", function () { getAttrs(STAT_MOD_GETATTRS, recomputeStatMods);
 
    damages: nonlinear (a flat step, not per-point) — floor((str−9)/2),
    clamped at 0, matching the game's own table (0 until str 11, then +1
-   every 2 points). poison_resistance/magic_resistance are plain ×2. health/
-   mana max also fold in the character's level (attr_level). ============ */
+   every 2 points). poison_resistance/magic_resistance are plain ×2. (The
+   HP/mana max × level mechanic was tried and pulled back out — see git
+   history — the level-based multiplier produced an unwanted jump at the
+   very first level-up given this sheet's level starts at 0.) ============ */
 const SINGLE_STAT_FORMULAS = {
   damages: function (a) { return Math.max(Math.floor((a.strength - 9) / 2), 0); },
   poison_resistance: function (a) { return a.constitution * 2; },
   magic_resistance: function (a) { return a.mental * 2; }
 };
-const GAUGE_MAX_FORMULAS = {
-  health_max: function (a) { return a.constitution * 2 * (a.level + 1); },
-  mana_max: function (a) { return a.mental * (a.level + 1); }
-};
 const SINGLE_STAT_NAMES = Object.keys(SINGLE_STAT_FORMULAS);
-const GAUGE_MAX_NAMES = Object.keys(GAUGE_MAX_FORMULAS);
 
 function recomputeSingleStatMods(v) {
   const a = {};
   ATTR_NAMES.forEach(function (attr) { a[attr] = parseInt(v[attr], 10) || 0; });
-  a.level = parseInt(v.level, 10) || 0;
   const update = {};
-  SINGLE_STAT_NAMES.concat(GAUGE_MAX_NAMES).forEach(function (name) {
-    const formulas = SINGLE_STAT_FORMULAS[name] ? SINGLE_STAT_FORMULAS : GAUGE_MAX_FORMULAS;
-    const newTotal = formulas[name](a);
+  SINGLE_STAT_NAMES.forEach(function (name) {
+    const newTotal = SINGLE_STAT_FORMULAS[name](a);
     const prevApplied = parseInt(v[name + "_applied_stat_mod"], 10) || 0;
     const current = parseInt(v[name], 10) || 0;
     const delta = newTotal - prevApplied;
@@ -546,11 +551,10 @@ function recomputeSingleStatMods(v) {
   setAttrs(update);
 }
 
-const SINGLE_STAT_MOD_GETATTRS = ATTR_NAMES.concat(["level"]).concat(SINGLE_STAT_NAMES).concat(GAUGE_MAX_NAMES)
-  .concat(SINGLE_STAT_NAMES.map(function (s) { return s + "_applied_stat_mod"; }))
-  .concat(GAUGE_MAX_NAMES.map(function (s) { return s + "_applied_stat_mod"; }));
+const SINGLE_STAT_MOD_GETATTRS = ATTR_NAMES.concat(SINGLE_STAT_NAMES)
+  .concat(SINGLE_STAT_NAMES.map(function (s) { return s + "_applied_stat_mod"; }));
 
-on("change:strength change:mental change:dexterity change:constitution change:level",
+on("change:strength change:mental change:dexterity change:constitution",
   function () { getAttrs(SINGLE_STAT_MOD_GETATTRS, recomputeSingleStatMods); });
 
 on("sheet:opened", function () { getAttrs(SINGLE_STAT_MOD_GETATTRS, recomputeSingleStatMods); });
