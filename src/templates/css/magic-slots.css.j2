@@ -280,15 +280,11 @@ input[name="attr_hand_effect"][value="rune"] ~ .sheet-book .sheet-grimoire {
   background-repeat: no-repeat;
   background-position: center;
   cursor: url('{{ "{{ASSET_BASE}}" }}/ui/cursor-hover.png') 6 4, pointer;
-  transition: filter 0.2s ease-out, box-shadow 0.2s ease-out;
-}
-.sheet-spell-page-tab:hover {
-  filter: brightness(1.3);
-  box-shadow: 0 0 10px rgba(255, 220, 130, 0.85);
 }
 .sheet-spell-page-tab--1 { display: block; } /* always visible, even with no rune known yet */
 {% for p in range(1, 11) %}
 .sheet-spell-page-tab--{{ p }} { background-image: url('{{ "{{ASSET_BASE}}" }}/book/magicbook-nav-{{ p }}.png'); }
+.sheet-spell-page-tab--{{ p }}:hover { background-image: url('{{ "{{ASSET_BASE}}" }}/book/magicbook-nav-{{ p }}-selected.png'); }
 {% set spells_here = spells.values() | selectattr("page", "equalto", p) | list %}
 {% if spells_here %}
 {% for spell in spells_here %}.sheet-arx{% for rune in spell.runes %}:has(input[name="attr_known_{{ rune[5:] }}"][value="1"]){% endfor %} .sheet-spell-page-tab--{{ p }}{% if not loop.last %},

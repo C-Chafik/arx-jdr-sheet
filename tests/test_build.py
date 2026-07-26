@@ -334,7 +334,7 @@ def test_spell_page_navigation_is_wired():
     assert '"clicked:goto_spellpage_" + p' in html
     for p in range(1, 11):
         assert f'name="act_goto_spellpage_{p}"' in html, p
-        assert f".sheet-spell-page-tab--{p} {{ background-image: url('x/book/magicbook-nav-{p}.png'); }}" in css, p
+        assert f".sheet-spell-page-tab--{p} {{ background-image: url('x/book/magicbook-nav-{p}.png?v={build.ASSET_VERSION}'); }}" in css, p
     # page 1 is always visible, even with no rune known yet
     assert ".sheet-spell-page-tab--1 { display: block; }" in css
     # other pages only open once at least one of their spells is fully known —

@@ -3,11 +3,12 @@
      next, see inventory.js), same button+worker mechanism as everywhere else
      on this sheet. Left/right textareas for every page are all in the DOM at
      once; CSS shows only the pair matching attr_notes_page (see notes.css.j2). #}
+  {# Navigation is disabled for now (see tabs.css/inventory.js history) —
+     only page 1 is reachable. The 5 pages' fields stay in the DOM/CSS so
+     the data model is ready once navigation comes back. #}
   <input type="hidden" class="sheet-hand-mirror" name="attr_notes_page" value="1" />
 {% for n in range(1, 6) %}
   <textarea class="sheet-notes-field sheet-notes-field--left sheet-notes-field--page-{{ n }}" name="attr_notes_left_{{ n }}"></textarea>
   <textarea class="sheet-notes-field sheet-notes-field--right sheet-notes-field--page-{{ n }}" name="attr_notes_right_{{ n }}"></textarea>
 {% endfor %}
-  <button type="action" class="sheet-notes-nav sheet-notes-nav--left" name="act_notes_prev"></button>
-  <button type="action" class="sheet-notes-nav sheet-notes-nav--right" name="act_notes_next"></button>
 </div>

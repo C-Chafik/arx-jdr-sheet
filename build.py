@@ -2,6 +2,7 @@
 """Assemble the Roll20 sheet: render Jinja2 templates, concatenate CSS."""
 import argparse
 import json
+import re
 import time
 from pathlib import Path
 
@@ -22,6 +23,9 @@ WORKER_FILES = ["inventory.js"]
 # Roll20 only loads HTTPS assets; preview uses the local files instead.
 ASSET_BASE = "https://raw.githubusercontent.com/C-Chafik/arx-jdr-sheet/main/assets"
 PREVIEW_ASSET_BASE = "../assets"
+
+# ? Increase this value everytime you need to clear the cache of github assets
+ASSET_VERSION = "5"
 
 ITEMS_FILE = ROOT / "items.json"
 SPELLS_FILE = ROOT / "spells.json"
@@ -231,7 +235,11 @@ def build_css(asset_base: str) -> str:
                 cols=GRID_COLS, rows=GRID_ROWS, bags=GRID_BAGS))
         else:
             parts.append((SRC / "css" / name).read_text(encoding="utf-8"))
-    return "\n".join(parts).replace("{{ASSET_BASE}}", asset_base)
+    css = "\n".join(parts).replace("{{ASSET_BASE}}", asset_base)
+    # Anchored to url('...') itself (not a bare asset_base.replace, which can
+    # also match asset_base as a stray substring elsewhere in the CSS).
+    pattern = r"url\((['\"])" + re.escape(asset_base) + r"([^'\"]*)\1\)"
+    return re.sub(pattern, r"url(\1" + asset_base + r"\2?v=" + ASSET_VERSION + r"\1)", css)
 
 
 def render_worker() -> str:

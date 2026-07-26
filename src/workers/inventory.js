@@ -280,21 +280,6 @@ on("clicked:goto_notes", function () { setAttrs({ sheet_tab: "notes" }); });
    content until pages/map.html.j2 exists. */
 on("clicked:goto_map", function () { setAttrs({ sheet_tab: "map" }); });
 
-/* Notes page nav: 5 independent pages, clamped 1-5 (same pattern as
-   bag_level's up/down clamp). */
-on("clicked:notes_prev", function () {
-  getAttrs(["notes_page"], function (v) {
-    const page = parseInt(v.notes_page, 10) || 1;
-    if (page > 1) { setAttrs({ notes_page: page - 1 }); }
-  });
-});
-on("clicked:notes_next", function () {
-  getAttrs(["notes_page"], function (v) {
-    const page = parseInt(v.notes_page, 10) || 1;
-    if (page < 5) { setAttrs({ notes_page: page + 1 }); }
-  });
-});
-
 on("clicked:inventory_toggle", function () {
   getAttrs(["inventory_open"], function (v) {
     setAttrs({ inventory_open: v.inventory_open === "1" ? "0" : "1" });
