@@ -433,6 +433,350 @@
     "effect": "currency",
     "value": 50
   },
+  "gold-5": {
+    "label": "5 pièces d'or",
+    "icon": "items/gold-four.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 5
+  },
+  "gold-6": {
+    "label": "6 pièces d'or",
+    "icon": "items/gold-four.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 6
+  },
+  "gold-7": {
+    "label": "7 pièces d'or",
+    "icon": "items/gold-four.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 7
+  },
+  "gold-8": {
+    "label": "8 pièces d'or",
+    "icon": "items/gold-four.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 8
+  },
+  "gold-10": {
+    "label": "10 pièces d'or",
+    "icon": "items/gold-nine.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 10
+  },
+  "gold-11": {
+    "label": "11 pièces d'or",
+    "icon": "items/gold-nine.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 11
+  },
+  "gold-12": {
+    "label": "12 pièces d'or",
+    "icon": "items/gold-nine.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 12
+  },
+  "gold-13": {
+    "label": "13 pièces d'or",
+    "icon": "items/gold-nine.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 13
+  },
+  "gold-14": {
+    "label": "14 pièces d'or",
+    "icon": "items/gold-nine.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 14
+  },
+  "gold-15": {
+    "label": "15 pièces d'or",
+    "icon": "items/gold-nine.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 15
+  },
+  "gold-16": {
+    "label": "16 pièces d'or",
+    "icon": "items/gold-nine.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 16
+  },
+  "gold-17": {
+    "label": "17 pièces d'or",
+    "icon": "items/gold-nine.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 17
+  },
+  "gold-18": {
+    "label": "18 pièces d'or",
+    "icon": "items/gold-nine.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 18
+  },
+  "gold-19": {
+    "label": "19 pièces d'or",
+    "icon": "items/gold-nine.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 19
+  },
+  "gold-21": {
+    "label": "21 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 21
+  },
+  "gold-22": {
+    "label": "22 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 22
+  },
+  "gold-23": {
+    "label": "23 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 23
+  },
+  "gold-24": {
+    "label": "24 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 24
+  },
+  "gold-25": {
+    "label": "25 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 25
+  },
+  "gold-26": {
+    "label": "26 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 26
+  },
+  "gold-27": {
+    "label": "27 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 27
+  },
+  "gold-28": {
+    "label": "28 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 28
+  },
+  "gold-29": {
+    "label": "29 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 29
+  },
+  "gold-30": {
+    "label": "30 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 30
+  },
+  "gold-31": {
+    "label": "31 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 31
+  },
+  "gold-32": {
+    "label": "32 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 32
+  },
+  "gold-33": {
+    "label": "33 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 33
+  },
+  "gold-34": {
+    "label": "34 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 34
+  },
+  "gold-35": {
+    "label": "35 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 35
+  },
+  "gold-36": {
+    "label": "36 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 36
+  },
+  "gold-37": {
+    "label": "37 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 37
+  },
+  "gold-38": {
+    "label": "38 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 38
+  },
+  "gold-39": {
+    "label": "39 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 39
+  },
+  "gold-40": {
+    "label": "40 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 40
+  },
+  "gold-41": {
+    "label": "41 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 41
+  },
+  "gold-42": {
+    "label": "42 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 42
+  },
+  "gold-43": {
+    "label": "43 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 43
+  },
+  "gold-44": {
+    "label": "44 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 44
+  },
+  "gold-45": {
+    "label": "45 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 45
+  },
+  "gold-46": {
+    "label": "46 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 46
+  },
+  "gold-47": {
+    "label": "47 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 47
+  },
+  "gold-48": {
+    "label": "48 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 48
+  },
+  "gold-49": {
+    "label": "49 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 49
+  },
   "golden-bar": {
     "label": "Lingot d'or",
     "icon": "items/golden-bar.png",

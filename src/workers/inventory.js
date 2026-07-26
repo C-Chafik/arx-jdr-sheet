@@ -38,6 +38,29 @@ function sizeOf(itemId) {
   return { w: parseInt(parts[0], 10) || 1, h: parseInt(parts[1], 10) || 1 };
 }
 
+/* Gold stacking: dropping a coin onto another coin merges their combined
+   value like real change — greedily broken back down into the fewest coins
+   among the denominations that actually exist in items.json (1 always
+   exists, so every total is representable; nothing is ever invented) — see
+   the bag-drop branch of clicked:slot_<slot>. */
+function currencyValue(itemId) {
+  const item = ITEMS[itemId];
+  return item && item.effect === "currency" ? parseInt(item.value, 10) || 0 : null;
+}
+const CURRENCY_BY_VALUE = {};
+Object.keys(ITEMS).forEach(function (id) {
+  if (ITEMS[id].effect === "currency") { CURRENCY_BY_VALUE[ITEMS[id].value] = id; }
+});
+const CURRENCY_VALUES_DESC = Object.keys(CURRENCY_BY_VALUE).map(Number).sort(function (a, b) { return b - a; });
+function decomposeCoins(total) {
+  const result = [];
+  let remaining = total;
+  CURRENCY_VALUES_DESC.forEach(function (val) {
+    while (remaining >= val) { result.push(CURRENCY_BY_VALUE[val]); remaining -= val; }
+  });
+  return result;
+}
+
 /* Cells covered by a footprint anchored at bag index (1-based); null if the
    rectangle leaves the anchor's level grid. Footprints never span levels. */
 function cellsFor(anchorIndex, w, h) {
@@ -125,6 +148,32 @@ ALL_SLOTS.forEach(function (slot) {
 
       if (slot.indexOf("bag_") === 0) {
         if (bagIndex(slot) > PER_LEVEL * bagCount(v)) { return; } /* locked level */
+
+        /* Gold stacking: coin dropped onto coin, combined value broken back
+           down into the fewest coins (see decomposeCoins). The target slot
+           and the coin's own freed cell absorb the first two results;
+           anything beyond that needs extra free bag cells — reject the
+           whole merge (nothing consumed) if there isn't enough room. */
+        const handValue = currencyValue(hand);
+        const targetValue = currencyValue(here);
+        if (handValue !== null && targetValue !== null) {
+          const coins = decomposeCoins(handValue + targetValue);
+          const placements = [slot].concat(own);
+          if (coins.length > placements.length) {
+            const limit = PER_LEVEL * bagCount(v);
+            for (let a = 1; a <= limit && placements.length < coins.length; a++) {
+              const s = "bag_" + a;
+              if (!v[s] && placements.indexOf(s) === -1) { placements.push(s); }
+            }
+            if (placements.length < coins.length) { return; } /* not enough room */
+          }
+          own.forEach(function (c) { clear[c] = ""; });
+          if (own.length === 0) { clear[from] = ""; } /* origin was an equip slot */
+          coins.forEach(function (id, i) { clear[placements[i]] = id; });
+          setAttrs(clear);
+          return;
+        }
+
         const size = sizeOf(hand);
         const cells = cellsFor(bagIndex(slot), size.w, size.h);
         if (!cells) { return; }
