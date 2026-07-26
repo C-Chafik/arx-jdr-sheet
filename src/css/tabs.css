@@ -22,6 +22,11 @@
 .sheet-arx:has(input[name="attr_sheet_tab"][value="notes"]) .sheet-book {
   background-image: url('{{ASSET_BASE}}/book/notes.png');
 }
+/* Map page isn't built yet — placeholder reuses notes.png, empty (no
+   pages/map.html.j2 content), until the real map art/layout exists. */
+.sheet-arx:has(input[name="attr_sheet_tab"][value="map"]) .sheet-book {
+  background-image: url('{{ASSET_BASE}}/book/notes.png');
+}
 
 /* Navigation ribbons (star / ? / feather), pinned on the left page's top edge. */
 .sheet-nav-btn {
