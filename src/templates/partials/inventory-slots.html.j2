@@ -19,3 +19,11 @@
   <button type="action" class="sheet-bag-nav sheet-bag-nav--down" name="act_bag_down"></button>
   {# Trash: visible only while an item is in hand — deletes it outright. #}
   <button type="action" class="sheet-trash" name="act_trash"></button>
+  {# Read a scroll: holding a "scroll" item (see items.json's scroll-*
+     entries) and clicking this reads it — 1d100 vs its own fixed
+     spell_casting (NOT the player's live casting stat), labeled with its
+     spell_label, then the scroll is consumed. Visible only while holding a
+     scroll (see inventory-slots.css.j2), same as the trash's hand-gated
+     visibility. #}
+  <button type="action" class="sheet-read-scroll" name="act_read_scroll"></button>
+  <div class="sheet-statbar sheet-statbar--read-scroll">Lire le parchemin</div>

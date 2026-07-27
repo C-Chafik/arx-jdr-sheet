@@ -128,7 +128,7 @@ input[name="attr_hand_effect"][value="rune"] ~ .sheet-book .sheet-grimoire {
    of the grimoire/presets above and of the inventory band/toggle that sits
    just below the book (see inventory.css: .sheet-inventory-toggle,
    .sheet-inventory). */
-.sheet-craft-confirm, .sheet-craft-memorize, .sheet-craft-reset, .sheet-read-scroll {
+.sheet-craft-confirm, .sheet-craft-memorize, .sheet-craft-reset {
   position: absolute;
   top: 82%;
   width: 5%;
@@ -143,21 +143,16 @@ input[name="attr_hand_effect"][value="rune"] ~ .sheet-book .sheet-grimoire {
   cursor: url('{{ "{{ASSET_BASE}}" }}/ui/cursor-hover.png') 6 4, pointer;
   transition: filter 0.2s ease-out;
 }
-.sheet-craft-confirm:hover, .sheet-craft-memorize:hover, .sheet-craft-reset:hover, .sheet-read-scroll:hover {
+.sheet-craft-confirm:hover, .sheet-craft-memorize:hover, .sheet-craft-reset:hover {
   filter: brightness(1.8) drop-shadow(0 0 10px rgba(255, 220, 130, 1));
 }
 .sheet-craft-reset { left: 35%; background-image: url('{{ "{{ASSET_BASE}}" }}/ui/delete-logo.png'); }
 .sheet-craft-confirm { left: 40%; background-image: url('{{ "{{ASSET_BASE}}" }}/ui/cast-spell.png'); }
 .sheet-craft-memorize { left: 45%; background-image: url('{{ "{{ASSET_BASE}}" }}/ui/save-preset-button.png'); }
-{# First pass position — reuses cast-spell.png per explicit instruction,
-   own slot to the right of the existing 3-button row (see the Notes-page
-   nudging pattern for how these positions tend to get tuned afterward). #}
-.sheet-read-scroll { left: 50%; background-image: url('{{ "{{ASSET_BASE}}" }}/ui/cast-spell.png'); }
 
 .sheet-arx:has(.sheet-craft-confirm:hover) .sheet-statbar--craft-confirm { display: block; }
 .sheet-arx:has(.sheet-craft-memorize:hover) .sheet-statbar--craft-memorize { display: block; }
 .sheet-arx:has(.sheet-craft-reset:hover) .sheet-statbar--craft-reset { display: block; }
-.sheet-arx:has(.sheet-read-scroll:hover) .sheet-statbar--read-scroll { display: block; }
 
 /* Forget-a-preset mode (Reset clicked with no rune in the combo): the
    preset slots swap to a delete cursor until one is picked (or Reset is
@@ -455,4 +450,19 @@ input[name="attr_hand_effect"][value="rune"] ~ .sheet-book .sheet-grimoire {
 {% endif %}
 }
 {% endif %}
+{% endfor %}
+
+/* Scroll items (items.json's scroll-<spellId> entries) follow the same
+   level-of-magic color as their spell — their inventory hover tooltip is
+   .sheet-statbar--item-scroll-<spellId> (see inventory-slots.css.j2's
+   generic item-tooltip loop). Secret scrolls (scroll-<presetId> for
+   secret-only presets) are left untouched for now, same as secret presets
+   above — no class/level to derive a color from. */
+{% for spell_id, spell in spells.items() %}
+.sheet-statbar--item-scroll-{{ spell_id }} {
+  color: {{ level_colors[spell.page] }};
+{% if spell.page == 10 %}
+  text-shadow: 0 0 4px rgba(255, 248, 220, 0.95), 0 0 2px rgba(255, 248, 220, 0.95);
+{% endif %}
+}
 {% endfor %}

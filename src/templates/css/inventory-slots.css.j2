@@ -179,6 +179,32 @@ input[name="attr_hand"][value="{{ item_id }}"] ~ input[name="attr_bag_count"]:no
 .sheet-trash:hover { filter: brightness(1.4) drop-shadow(0 0 4px rgba(229, 48, 48, 0.9)); }
 input[name="attr_hand"]:not([value=""]) ~ .sheet-inventory .sheet-trash { display: block; }
 
+/* ---- Read scroll: reads + consumes the held scroll. Hidden unless a
+   "scroll" item is in hand (see items.json's scroll-* entries and
+   clicked:read_scroll in inventory.js). First-pass position, next to the
+   trash. ---- */
+.sheet-read-scroll {
+  display: none;
+  position: absolute;
+  left: 88.5%;
+  top: 8%;
+  width: 5.4%;
+  height: 13%;
+  padding: 0;
+  border: none;
+  z-index: 4;
+  background-color: transparent;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-image: url('{{ "{{ASSET_BASE}}" }}/ui/cast-spell.png');
+  cursor: url('{{ "{{ASSET_BASE}}" }}/ui/cursor-hover.png') 6 4, pointer;
+  transition: filter 0.2s ease-out;
+}
+.sheet-read-scroll:hover { filter: brightness(1.4) drop-shadow(0 0 4px rgba(255, 220, 130, 0.9)); }
+input[name="attr_hand_effect"][value="scroll"] ~ .sheet-inventory .sheet-read-scroll { display: block; }
+.sheet-arx:has(.sheet-read-scroll:hover) .sheet-statbar--read-scroll { display: block; }
+
 /* ---- Equipment slots on book/base.png (1598 × 984), % of .sheet-book. ---- */
 .sheet-slot--equip_off_hand  { left: 17.2%; top: 11.0%; width: 6.9%; height: 9.9%; }
 .sheet-slot--equip_main_hand { left: 38.8%; top: 11.0%; width: 6.6%; height: 9.3%; }

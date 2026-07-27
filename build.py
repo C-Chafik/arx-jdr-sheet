@@ -25,7 +25,7 @@ ASSET_BASE = "https://raw.githubusercontent.com/C-Chafik/arx-jdr-sheet/main/asse
 PREVIEW_ASSET_BASE = "../assets"
 
 # ? Increase this value everytime you need to clear the cache of github assets
-ASSET_VERSION = "5"
+ASSET_VERSION = "6"
 
 ITEMS_FILE = ROOT / "items.json"
 SPELLS_FILE = ROOT / "spells.json"

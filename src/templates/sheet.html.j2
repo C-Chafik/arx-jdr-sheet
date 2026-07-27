@@ -44,7 +44,15 @@
      Revealed by generated :has() rules in css/inventory-slots.css.j2.
      Legendary items get a star marker ahead of their name. #}
 {% for item_id, item in items.items() %}
+{% set preset_id = item_id[7:] if item_id.startswith("scroll-") else "" %}
+{% if item.effect | default("") == "scroll" and preset_id in presets and presets[preset_id].secret %}
+    {# Secret-spell scrolls have no class/level color (see magic-slots.css.j2)
+       — same per-character rainbow identity as their secret preset instead
+       of a flat color, not a font. #}
+    <div class="sheet-statbar sheet-statbar--item-{{ item_id }}">{% for char in item.label %}<span class="sheet-rainbow-{{ loop.index0 % 6 }}">{{ char }}</span>{% endfor %}</div>
+{% else %}
     <div class="sheet-statbar sheet-statbar--item-{{ item_id }}">{% if item.legendary | default(false) %}★ {% endif %}{{ item.label }}</div>
+{% endif %}
 {% endfor %}
   {# Learned-rune names on hover (magic page only) — yellow with a star,
      revealed by :has() rules in css/magic-slots.css.j2. #}
