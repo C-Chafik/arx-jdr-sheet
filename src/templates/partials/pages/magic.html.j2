@@ -58,9 +58,15 @@
      fills the first empty preset slot on an exact match (works for both
      book spells and secret-only ones) — consumes the combo either way. #}
   <button type="action" class="sheet-craft-memorize" name="act_memorize"></button>
+  {# Read a scroll: holding a "scroll" item (see items.json's scroll-* entries)
+     and clicking this reads it — 1d100 vs its own fixed spell_casting (NOT
+     the player's live casting stat), labeled with its spell_label, then
+     consumes the scroll. Same cast-spell icon as Lancer le sort, own slot. #}
+  <button type="action" class="sheet-read-scroll" name="act_read_scroll"></button>
   <div class="sheet-statbar sheet-statbar--craft-reset">Supprimer le sort</div>
   <div class="sheet-statbar sheet-statbar--craft-confirm">Lancer le sort</div>
   <div class="sheet-statbar sheet-statbar--craft-memorize">Mémoriser le sort</div>
+  <div class="sheet-statbar sheet-statbar--read-scroll">Lire le parchemin</div>
   {# Craft sequence: shows, in click order, the rune's own inventory icon
      (not the magicbook variant) so the player sees exactly what they've
      incanted so far before validating. Fixed 5 positions (CRAFT_MAX in

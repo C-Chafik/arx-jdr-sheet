@@ -290,6 +290,23 @@ on("clicked:slot_grimoire", function () {
   });
 });
 
+/* Reading a scroll (items.json's scroll-* entries, effect "scroll"): 1d100
+   roll-under against the scroll's OWN fixed spell_casting — never the
+   player's live @{casting} — labeled with its spell_label, then the scroll
+   is consumed (it's one-shot, same as a memorized preset). */
+on("clicked:read_scroll", function () {
+  getAttrs(["hand", "hand_from"], function (v) {
+    const hand = v.hand || "";
+    const item = ITEMS[hand];
+    if (!item || item.effect !== "scroll") { return; }
+    startRoll("&{template:default} {{name=" + item.spell_label + "}} {{Valeur=" + item.spell_casting + "}} {{Jet=[[1d100]]}}",
+      function (results) { finishRoll(results.rollId, {}); });
+    const update = { hand: "", hand_from: "", hand_cat: "", hand_effect: "", fit: "" };
+    ownCells(v.hand_from || "", hand).forEach(function (c) { update[c] = ""; });
+    setAttrs(update);
+  });
+});
+
 /* Level navigation: up = toward bag 1, down = deeper (within unlocked levels). */
 on("clicked:bag_up", function () {
   getAttrs(["bag_level"], function (v) {
