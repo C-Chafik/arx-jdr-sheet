@@ -821,140 +821,140 @@
     "legendary": true
   },
   "rune-aam": {
-    "label": "Rune : Aam",
+    "label": "Rune : Aam (Créer)",
     "icon": "runes/aam.png",
     "cat": "objet",
     "size": "1x1",
     "effect": "rune"
   },
   "rune-nhi": {
-    "label": "Rune : Nhi",
+    "label": "Rune : Nhi (Retirer)",
     "icon": "runes/nhi.png",
     "cat": "objet",
     "size": "1x1",
     "effect": "rune"
   },
   "rune-mega": {
-    "label": "Rune : Mega",
+    "label": "Rune : Mega (Augmenter)",
     "icon": "runes/mega.png",
     "cat": "objet",
     "size": "1x1",
     "effect": "rune"
   },
   "rune-yok": {
-    "label": "Rune : Yok",
+    "label": "Rune : Yok (Feu)",
     "icon": "runes/yok.png",
     "cat": "objet",
     "size": "1x1",
     "effect": "rune"
   },
   "rune-taar": {
-    "label": "Rune : Taar",
+    "label": "Rune : Taar (Projectile)",
     "icon": "runes/taar.png",
     "cat": "objet",
     "size": "1x1",
     "effect": "rune"
   },
   "rune-kaom": {
-    "label": "Rune : Kaom",
+    "label": "Rune : Kaom (Protection)",
     "icon": "runes/kaom.png",
     "cat": "objet",
     "size": "1x1",
     "effect": "rune"
   },
   "rune-vitae": {
-    "label": "Rune : Vitae",
+    "label": "Rune : Vitae (Vie)",
     "icon": "runes/vitae.png",
     "cat": "objet",
     "size": "1x1",
     "effect": "rune"
   },
   "rune-vista": {
-    "label": "Rune : Vista",
+    "label": "Rune : Vista (Vision)",
     "icon": "runes/vista.png",
     "cat": "objet",
     "size": "1x1",
     "effect": "rune"
   },
   "rune-stregum": {
-    "label": "Rune : Stregum",
+    "label": "Rune : Stregum (Magie)",
     "icon": "runes/stregum.png",
     "cat": "objet",
     "size": "1x1",
     "effect": "rune"
   },
   "rune-morte": {
-    "label": "Rune : Morte",
+    "label": "Rune : Morte (Mort)",
     "icon": "runes/morte.png",
     "cat": "objet",
     "size": "1x1",
     "effect": "rune"
   },
   "rune-cosum": {
-    "label": "Rune : Cosum",
+    "label": "Rune : Cosum (Objet)",
     "icon": "runes/cosum.png",
     "cat": "objet",
     "size": "1x1",
     "effect": "rune"
   },
   "rune-comunicatum": {
-    "label": "Rune : Comunicatum",
+    "label": "Rune : Comunicatum (Contrôle)",
     "icon": "runes/comunicatum.png",
     "cat": "objet",
     "size": "1x1",
     "effect": "rune"
   },
   "rune-movis": {
-    "label": "Rune : Movis",
+    "label": "Rune : Movis (Mouvement)",
     "icon": "runes/movis.png",
     "cat": "objet",
     "size": "1x1",
     "effect": "rune"
   },
   "rune-tempus": {
-    "label": "Rune : Tempus",
+    "label": "Rune : Tempus (Temps)",
     "icon": "runes/tempus.png",
     "cat": "objet",
     "size": "1x1",
     "effect": "rune"
   },
   "rune-folgora": {
-    "label": "Rune : Folgora",
+    "label": "Rune : Folgora (Foudre)",
     "icon": "runes/folgora.png",
     "cat": "objet",
     "size": "1x1",
     "effect": "rune"
   },
   "rune-spacium": {
-    "label": "Rune : Spacium",
+    "label": "Rune : Spacium (Zone)",
     "icon": "runes/spacium.png",
     "cat": "objet",
     "size": "1x1",
     "effect": "rune"
   },
   "rune-tera": {
-    "label": "Rune : Tera",
+    "label": "Rune : Tera (Terre)",
     "icon": "runes/tera.png",
     "cat": "objet",
     "size": "1x1",
     "effect": "rune"
   },
   "rune-cetrius": {
-    "label": "Rune : Cetrius",
+    "label": "Rune : Cetrius (Poison)",
     "icon": "runes/cetrius.png",
     "cat": "objet",
     "size": "1x1",
     "effect": "rune"
   },
   "rune-rhaa": {
-    "label": "Rune : Rhaa",
+    "label": "Rune : Rhaa (Diminuer)",
     "icon": "runes/rhaa.png",
     "cat": "objet",
     "size": "1x1",
     "effect": "rune"
   },
   "rune-fridd": {
-    "label": "Rune : Fridd",
+    "label": "Rune : Fridd (Glace)",
     "icon": "runes/fridd.png",
     "cat": "objet",
     "size": "1x1",
