@@ -66,48 +66,33 @@
 .sheet-map-image--{{ n }} { background-image: url('{{ "{{ASSET_BASE}}" }}/book/map-level-{{ n }}.png'); }
 {% endfor %}
 
-/* 4×4 grid of invisible hover zones over the map — no DOM access means no
-   real cursor-following magnifier, so discrete zones stand in: hovering
-   one shows that quarter-of-a-quarter of the map, zoomed, in
-   .sheet-map-zoom-panel on the right. */
-.sheet-map-zone {
-  position: absolute;
-  width: 25%;
-  height: 25%;
-  cursor: url('{{ "{{ASSET_BASE}}" }}/ui/cursor-hover.png') 6 4, pointer;
-}
-{% for r in range(4) %}
-{% for c in range(4) %}
-.sheet-map-zone--r{{ r }}-c{{ c }} { left: {{ c * 25 }}%; top: {{ r * 25 }}%; }
-{% endfor %}
-{% endfor %}
-
-/* Fixed square panel, right page — hidden until a zone is hovered, then
-   shows that zone's quarter-of-a-quarter at 4x zoom (background-size 400%,
-   background-position stepped in thirds to cover all 4 columns/rows). */
-.sheet-map-zoom-panel {
+/* Right page: one free-form note per dungeon level — same writable
+   rectangle (594/68/433x530 on the fixed 1100x677 .sheet-book) as the
+   Notes page's own right-hand field (see notes.css.j2), since both pages
+   share the same notes.png backdrop (see tabs.css). Only the note matching
+   attr_map_level shows, same gating pattern as .sheet-map-frame above. */
+.sheet-map-note {
+  position: absolute !important;
+  left: 594px !important;
+  top: 68px !important;
+  width: 433px !important;
+  height: 530px !important;
+  padding: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  resize: none !important;
+  outline: none !important;
+  overflow: hidden !important;
+  font-family: 'Homemade Apple', cursive;
+  font-size: 20px;
+  line-height: 1.4;
+  color: #2b1d0e;
   display: none;
-  position: absolute;
-  left: 600px;
-  top: 150px;
-  width: 350px;
-  height: 350px;
-  background-repeat: no-repeat;
-  background-size: 400% 400%;
-  border: 3px solid #3a2a18;
-  z-index: 6;
-  pointer-events: none;
 }
 {% for n in range(1, 9) %}
-{% for r in range(4) %}
-{% for c in range(4) %}
-.sheet-arx:has(.sheet-map-zone--{{ n }}-{{ r }}-{{ c }}:hover) .sheet-map-zoom-panel {
+.sheet-arx:has(input[name="attr_map_level"][value="{{ n }}"]) .sheet-map-note--{{ n }} {
   display: block;
-  background-image: url('{{ "{{ASSET_BASE}}" }}/book/map-level-{{ n }}.png');
-  background-position: {{ "%.2f" | format(c * 100.0 / 3) }}% {{ "%.2f" | format(r * 100.0 / 3) }}%;
 }
-{% endfor %}
-{% endfor %}
 {% endfor %}
 
 /* Card slot: drop a "carte-niveau-N" item here to permanently unlock that
