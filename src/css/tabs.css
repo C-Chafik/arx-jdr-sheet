@@ -14,16 +14,17 @@
 .sheet-arx:has(input[name="attr_sheet_tab"][value="notes"]) .sheet-page--notes {
   display: block;
 }
+.sheet-arx:has(input[name="attr_sheet_tab"][value="map"]) .sheet-page--map {
+  display: block;
+}
 
-/* The book's own background swaps with the active page. */
+/* The book's own background swaps with the active page. Map reuses
+   notes.png as its backdrop parchment (see pages/map.css.j2 for the actual
+   dungeon-level art, laid over the left page). */
 .sheet-arx:has(input[name="attr_sheet_tab"][value="magic"]) .sheet-book {
   background-image: url('{{ASSET_BASE}}/book/magicbook.png');
 }
-.sheet-arx:has(input[name="attr_sheet_tab"][value="notes"]) .sheet-book {
-  background-image: url('{{ASSET_BASE}}/book/notes.png');
-}
-/* Map page isn't built yet — placeholder reuses notes.png, empty (no
-   pages/map.html.j2 content), until the real map art/layout exists. */
+.sheet-arx:has(input[name="attr_sheet_tab"][value="notes"]) .sheet-book,
 .sheet-arx:has(input[name="attr_sheet_tab"][value="map"]) .sheet-book {
   background-image: url('{{ASSET_BASE}}/book/notes.png');
 }

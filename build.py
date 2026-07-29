@@ -16,6 +16,7 @@ BUILD = ROOT / "build"
 # Entries ending in .j2 are rendered via Jinja (from src/templates/css/).
 CSS_FILES = ["base.css", "tabs.css", "inventory.css",
              "pages/base.css.j2", "pages/base-hover.css", "pages/notes.css.j2",
+             "pages/map.css.j2",
              "inventory-slots.css.j2", "magic-slots.css.j2"]
 
 WORKER_FILES = ["inventory.js"]

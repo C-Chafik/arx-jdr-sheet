@@ -1506,5 +1506,88 @@
     "effect": "scroll",
     "spell_label": "Parchemin : Puissant Contrôle mental d'Iserbius",
     "spell_casting": 85
+  },
+  "carte-niveau-1": {
+    "label": "Carte du niveau 1",
+    "icon": "items/sheet.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "map_card",
+    "level": 1
+  },
+  "carte-niveau-2": {
+    "label": "Carte du niveau 2",
+    "icon": "items/sheet.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "map_card",
+    "level": 2
+  },
+  "carte-niveau-3": {
+    "label": "Carte du niveau 3",
+    "icon": "items/sheet.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "map_card",
+    "level": 3
+  },
+  "carte-niveau-4": {
+    "label": "Carte du niveau 4",
+    "icon": "items/sheet.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "map_card",
+    "level": 4
+  },
+  "carte-niveau-5": {
+    "label": "Carte du niveau 5",
+    "icon": "items/sheet.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "map_card",
+    "level": 5
+  },
+  "carte-niveau-6": {
+    "label": "Carte du niveau 6",
+    "icon": "items/sheet.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "map_card",
+    "level": 6
+  },
+  "carte-niveau-7": {
+    "label": "Carte du niveau 7",
+    "icon": "items/sheet.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "map_card",
+    "level": 7
+  },
+  "carte-niveau-8": {
+    "label": "Carte du niveau 8",
+    "icon": "items/sheet.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "map_card",
+    "level": 8
+  },
+  "bow": {
+    "label": "Arc",
+    "icon": "items/bow.png",
+    "cat": "arme_principale",
+    "size": "1x3"
+  },
+  "sam-sword": {
+    "label": "Sam Sword",
+    "icon": "items/sam-sword.png",
+    "cat": "arme_secondaire",
+    "size": "1x3",
+    "legendary": true
+  },
+  "bedroll": {
+    "label": "Sac de couchage",
+    "icon": "items/bedroll.png",
+    "cat": "objet",
+    "size": "2x1"
   }
 }

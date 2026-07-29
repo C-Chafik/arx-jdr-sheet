@@ -1,0 +1,36 @@
+<div class="sheet-page sheet-page--map">
+  {# Which of the 8 dungeon levels is showing — worker-driven (clicked:
+     goto_maplevel_N, see inventory.js), same button+worker mechanism as
+     every other page nav on this sheet. Reuses the magicbook's own
+     nav-1..8 tab art/positions (see map.css.j2) — only 8 levels exist,
+     unlike the grimoire's 10 spell pages. #}
+  <input type="hidden" class="sheet-hand-mirror" name="attr_map_level" value="1" />
+  {# Level 1 is free; levels 2-8 stay hidden (see map.css.j2) until their
+     own "carte-niveau-N" item (items.json, effect "map_card") is consumed
+     in the slot below the map — same permanent-unlock pattern as runes and
+     the grimoire. #}
+{% for n in range(1, 9) %}
+  <input type="hidden" name="attr_known_map_{{ n }}" value="{{ '1' if n == 1 else '' }}" />
+  <button type="action" class="sheet-map-level-tab sheet-map-level-tab--{{ n }}" name="act_goto_maplevel_{{ n }}"></button>
+{% endfor %}
+  {# The current level's own map art (already framed/bordered in the asset
+     itself), overlaid with a 4×4 grid of invisible hover zones — no DOM
+     access means no real cursor-following magnifier, so hovering a zone
+     instead shows that quarter-of-a-quarter of the map, zoomed, in the
+     fixed panel on the right (see map.css.j2). #}
+{% for n in range(1, 9) %}
+  <div class="sheet-map-frame sheet-map-frame--{{ n }}">
+    <div class="sheet-map-image sheet-map-image--{{ n }}"></div>
+{% for r in range(4) %}
+{% for c in range(4) %}
+    <div class="sheet-map-zone sheet-map-zone--r{{ r }}-c{{ c }} sheet-map-zone--{{ n }}-{{ r }}-{{ c }}"></div>
+{% endfor %}
+{% endfor %}
+  </div>
+{% endfor %}
+  <div class="sheet-map-zoom-panel"></div>
+  {# Consume a "carte-niveau-N" item here to permanently unlock that map
+     level's tab (see clicked:map_card_slot in inventory.js). Same spot the
+     old marker button used to sit, below the map on the left page. #}
+  <button type="action" class="sheet-map-card-slot" name="act_map_card_slot"></button>
+</div>

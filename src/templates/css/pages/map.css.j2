@@ -1,0 +1,132 @@
+/* Dungeon-map levels (1-8) — same nav-tab art/positions as the magicbook's
+   own spell-page tabs (magicbook-nav-1..8.png), just fewer of them (no
+   9/10, only 8 levels exist). Level 1 is always visible; levels 2-8 stay
+   hidden until their own "carte-niveau-N" item is consumed (see
+   map.html.j2's attr_known_map_N and clicked:map_card_slot below) — same
+   gating pattern as the grimoire's runes. */
+.sheet-map-level-tab {
+  display: none;
+  position: absolute;
+  left: 1.6%;
+  width: 7.2%;
+  height: 5.5%;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: url('{{ "{{ASSET_BASE}}" }}/ui/cursor-hover.png') 6 4, pointer;
+}
+.sheet-map-level-tab--1 { display: block; } /* always visible, even with no card consumed yet */
+{% for n in range(1, 9) %}
+.sheet-map-level-tab--{{ n }} { background-image: url('{{ "{{ASSET_BASE}}" }}/book/magicbook-nav-{{ n }}.png'); }
+.sheet-map-level-tab--{{ n }}:hover { background-image: url('{{ "{{ASSET_BASE}}" }}/book/magicbook-nav-{{ n }}-selected.png'); }
+.sheet-arx:has(input[name="attr_known_map_{{ n }}"][value="1"]) .sheet-map-level-tab--{{ n }} {
+  display: block;
+}
+{% endfor %}
+.sheet-map-level-tab--1 { top: 12.5%; }
+.sheet-map-level-tab--2 { top: 19.0%; }
+.sheet-map-level-tab--3 { top: 27.5%; }
+.sheet-map-level-tab--4 { top: 34.0%; }
+.sheet-map-level-tab--5 { top: 45.0%; }
+.sheet-map-level-tab--6 { top: 53.0%; }
+.sheet-map-level-tab--7 { top: 59.5%; }
+.sheet-map-level-tab--8 { top: 65.0%; }
+
+/* Left page: the current level's own map art (already framed/bordered in
+   the source image) — only the level matching attr_map_level shows. Box
+   sized to the art's own ~640x540 aspect ratio so "contain" fills it with
+   minimal letterboxing, centered on the left page. */
+.sheet-map-frame {
+  display: none;
+  position: absolute;
+  left: 13%;
+  top: 27%;
+  width: 34%;
+  height: 46.5%;
+}
+{% for n in range(1, 9) %}
+.sheet-arx:has(input[name="attr_map_level"][value="{{ n }}"]) .sheet-map-frame--{{ n }} {
+  display: block;
+}
+{% endfor %}
+.sheet-map-image {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+{% for n in range(1, 9) %}
+.sheet-map-image--{{ n }} { background-image: url('{{ "{{ASSET_BASE}}" }}/book/map-level-{{ n }}.png'); }
+{% endfor %}
+
+/* 4×4 grid of invisible hover zones over the map — no DOM access means no
+   real cursor-following magnifier, so discrete zones stand in: hovering
+   one shows that quarter-of-a-quarter of the map, zoomed, in
+   .sheet-map-zoom-panel on the right. */
+.sheet-map-zone {
+  position: absolute;
+  width: 25%;
+  height: 25%;
+  cursor: url('{{ "{{ASSET_BASE}}" }}/ui/cursor-hover.png') 6 4, pointer;
+}
+{% for r in range(4) %}
+{% for c in range(4) %}
+.sheet-map-zone--r{{ r }}-c{{ c }} { left: {{ c * 25 }}%; top: {{ r * 25 }}%; }
+{% endfor %}
+{% endfor %}
+
+/* Fixed square panel, right page — hidden until a zone is hovered, then
+   shows that zone's quarter-of-a-quarter at 4x zoom (background-size 400%,
+   background-position stepped in thirds to cover all 4 columns/rows). */
+.sheet-map-zoom-panel {
+  display: none;
+  position: absolute;
+  left: 600px;
+  top: 150px;
+  width: 350px;
+  height: 350px;
+  background-repeat: no-repeat;
+  background-size: 400% 400%;
+  border: 3px solid #3a2a18;
+  z-index: 6;
+  pointer-events: none;
+}
+{% for n in range(1, 9) %}
+{% for r in range(4) %}
+{% for c in range(4) %}
+.sheet-arx:has(.sheet-map-zone--{{ n }}-{{ r }}-{{ c }}:hover) .sheet-map-zoom-panel {
+  display: block;
+  background-image: url('{{ "{{ASSET_BASE}}" }}/book/map-level-{{ n }}.png');
+  background-position: {{ "%.2f" | format(c * 100.0 / 3) }}% {{ "%.2f" | format(r * 100.0 / 3) }}%;
+}
+{% endfor %}
+{% endfor %}
+{% endfor %}
+
+/* Card slot: drop a "carte-niveau-N" item here to permanently unlock that
+   level's tab (see clicked:map_card_slot in inventory.js). Same spot the
+   old marker button used to sit, below the map on the left page. */
+.sheet-map-card-slot {
+  position: absolute;
+  left: 13%;
+  top: 76%;
+  width: 34%;
+  height: 8%;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-image: url('{{ "{{ASSET_BASE}}" }}/ui/map-menu-button.png');
+  cursor: url('{{ "{{ASSET_BASE}}" }}/ui/cursor-hover.png') 6 4, pointer;
+  transition: filter 0.2s ease-out;
+}
+.sheet-map-card-slot:hover { filter: brightness(1.4) drop-shadow(0 0 4px rgba(255, 220, 130, 0.9)); }

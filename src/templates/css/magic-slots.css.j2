@@ -456,8 +456,8 @@ input[name="attr_hand_effect"][value="rune"] ~ .sheet-book .sheet-grimoire {
    level-of-magic color as their spell — their inventory hover tooltip is
    .sheet-statbar--item-scroll-<spellId> (see inventory-slots.css.j2's
    generic item-tooltip loop). Secret scrolls (scroll-<presetId> for
-   secret-only presets) are left untouched for now, same as secret presets
-   above — no class/level to derive a color from. */
+   secret-only presets) get the rainbow treatment in sheet.html.j2 instead
+   (no page/level to derive a flat color from). */
 {% for spell_id, spell in spells.items() %}
 .sheet-statbar--item-scroll-{{ spell_id }} {
   color: {{ level_colors[spell.page] }};
@@ -465,4 +465,28 @@ input[name="attr_hand_effect"][value="rune"] ~ .sheet-book .sheet-grimoire {
   text-shadow: 0 0 4px rgba(255, 248, 220, 0.95), 0 0 2px rgba(255, 248, 220, 0.95);
 {% endif %}
 }
+{% endfor %}
+
+/* Fully custom scrolls — their spell_id is in neither spells.json nor
+   presets.json (e.g. scroll-mind_control-iserbius, a one-off variant) —
+   have no page to derive a color from, so they derive one from their own
+   spell_casting instead: below 50 is level 7, then +1 level per +10
+   casting (50->8, 60->9, 70->10). 85 and above switches to the secret
+   rainbow treatment in sheet.html.j2 instead of a flat color. */
+{% for item_id, item in items.items() %}
+{% if item.effect | default("") == "scroll" %}
+{% set spell_id = item_id[7:] %}
+{% if spell_id not in spells and spell_id not in presets %}
+{% set casting = item.spell_casting | default(0) %}
+{% if casting < 85 %}
+{% set level = 7 if casting < 50 else (8 if casting < 60 else (9 if casting < 70 else 10)) %}
+.sheet-statbar--item-{{ item_id }} {
+  color: {{ level_colors[level] }};
+{% if level == 10 %}
+  text-shadow: 0 0 4px rgba(255, 248, 220, 0.95), 0 0 2px rgba(255, 248, 220, 0.95);
+{% endif %}
+}
+{% endif %}
+{% endif %}
+{% endif %}
 {% endfor %}

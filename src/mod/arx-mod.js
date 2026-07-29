@@ -2,6 +2,10 @@
    Usage (GM only, select the character's token first):
      !arxgive <item_id>          give an item (drops in the first free bag slot)
      !arxlearnall                mark every rune known + fill the grimoire
+     !arxforgetrune <rune_id>    un-learn a single rune (e.g. rune-aam)
+     !arxforgetallrunes          un-learn every rune (reverse of !arxlearnall)
+     !arxlockmap <1-8>           re-lock a single map level (level 1 can't be locked)
+     !arxlockallmaps             re-lock every map level except level 1
      !arxpreset <1-3> <spell_id> set a memorized-spell slot
      !arxpage <1-10>             switch the magic book to that spell page
      !arxtab base|magic          switch the active sheet page               */
@@ -96,6 +100,59 @@ on("chat:message", function (msg) {
     arxSetAttr(charId, "spellbook_" + (i + 1), id);
   });
   whisper("Toutes les runes apprises (" + ARX_RUNE_ORDER.length + ").");
+});
+
+on("chat:message", function (msg) {
+  if (msg.type !== "api" || msg.content.indexOf("!arxforgetallrunes") !== 0) { return; }
+  if (!playerIsGM(msg.playerid)) { return; }
+  const whisper = function (text) { sendChat("ARX", "/w gm " + text); };
+  const charId = arxCharIdFromMsg(msg);
+  if (!charId) { whisper("Sélectionne d'abord un token."); return; }
+  ARX_RUNE_ORDER.forEach(function (id, i) {
+    arxSetAttr(charId, "known_" + id.slice(5), "");
+    arxSetAttr(charId, "spellbook_" + (i + 1), "");
+  });
+  whisper("Toutes les runes oubliées (" + ARX_RUNE_ORDER.length + ").");
+});
+
+/* Checked before !arxforgetrune below: "!arxforgetallrunes" doesn't share a
+   prefix with "!arxforgetrune" past "!arxforget" (rune vs allrunes), so the
+   two never collide — no ordering dependency between these two handlers. */
+on("chat:message", function (msg) {
+  if (msg.type !== "api" || msg.content.indexOf("!arxforgetrune") !== 0) { return; }
+  if (!playerIsGM(msg.playerid)) { return; }
+  const whisper = function (text) { sendChat("ARX", "/w gm " + text); };
+  const runeId = msg.content.trim().split(/\s+/)[1];
+  const idx = ARX_RUNE_ORDER.indexOf(runeId);
+  if (idx === -1) { whisper("Rune inconnue : " + (runeId || "(vide)")); return; }
+  const charId = arxCharIdFromMsg(msg);
+  if (!charId) { whisper("Sélectionne d'abord un token."); return; }
+  arxSetAttr(charId, "known_" + runeId.slice(5), "");
+  arxSetAttr(charId, "spellbook_" + (idx + 1), "");
+  whisper("Rune oubliée : " + ARX_ITEMS[runeId].label);
+});
+
+on("chat:message", function (msg) {
+  if (msg.type !== "api" || msg.content.indexOf("!arxlockallmaps") !== 0) { return; }
+  if (!playerIsGM(msg.playerid)) { return; }
+  const whisper = function (text) { sendChat("ARX", "/w gm " + text); };
+  const charId = arxCharIdFromMsg(msg);
+  if (!charId) { whisper("Sélectionne d'abord un token."); return; }
+  for (let n = 2; n <= 8; n++) { arxSetAttr(charId, "known_map_" + n, ""); }
+  whisper("Niveaux 2-8 re-verrouillés (niveau 1 reste libre).");
+});
+
+on("chat:message", function (msg) {
+  if (msg.type !== "api" || msg.content.indexOf("!arxlockmap") !== 0) { return; }
+  if (!playerIsGM(msg.playerid)) { return; }
+  const whisper = function (text) { sendChat("ARX", "/w gm " + text); };
+  const level = parseInt(msg.content.trim().split(/\s+/)[1], 10);
+  if (!(level >= 1 && level <= 8)) { whisper("Usage : !arxlockmap <1-8>"); return; }
+  if (level === 1) { whisper("Le niveau 1 ne peut pas être verrouillé."); return; }
+  const charId = arxCharIdFromMsg(msg);
+  if (!charId) { whisper("Sélectionne d'abord un token."); return; }
+  arxSetAttr(charId, "known_map_" + level, "");
+  whisper("Niveau " + level + " re-verrouillé.");
 });
 
 on("chat:message", function (msg) {

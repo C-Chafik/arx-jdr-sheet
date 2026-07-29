@@ -307,6 +307,26 @@ on("clicked:read_scroll", function () {
   });
 });
 
+/* Map card slot: consuming a "carte-niveau-N" item (items.json, effect
+   "map_card") permanently unlocks that level's tab (attr_known_map_N) —
+   same one-time-consume pattern as the grimoire's runes, just without a
+   per-level fixed slot (the card is simply gone once used). */
+on("clicked:map_card_slot", function () {
+  getAttrs(["hand", "hand_from"], function (v) {
+    const hand = v.hand || "";
+    const item = ITEMS[hand];
+    if (!item || item.effect !== "map_card") { return; }
+    const flag = "known_map_" + item.level;
+    getAttrs([flag], function (v2) {
+      if (v2[flag] === "1") { return; }
+      const update = { hand: "", hand_from: "", hand_cat: "", hand_effect: "", fit: "" };
+      update[flag] = "1";
+      ownCells(v.hand_from || "", hand).forEach(function (c) { update[c] = ""; });
+      setAttrs(update);
+    });
+  });
+});
+
 /* Level navigation: up = toward bag 1, down = deeper (within unlocked levels). */
 on("clicked:bag_up", function () {
   getAttrs(["bag_level"], function (v) {
@@ -345,6 +365,12 @@ on("clicked:goto_notes", function () { setAttrs({ sheet_tab: "notes" }); });
    assignment table) so it just sets sheet_tab; the book shows no page
    content until pages/map.html.j2 exists. */
 on("clicked:goto_map", function () { setAttrs({ sheet_tab: "map" }); });
+
+/* Map levels: 8 always-reachable tabs (no rune-known gating, unlike the
+   grimoire's spell pages) — see clicked:goto_maplevel_N and map.css.j2. */
+for (let i = 1; i <= 8; i++) {
+  on("clicked:goto_maplevel_" + i, function () { setAttrs({ map_level: i }); });
+}
 
 on("clicked:inventory_toggle", function () {
   getAttrs(["inventory_open"], function (v) {
