@@ -1581,7 +1581,7 @@
     "label": "Sam Sword",
     "icon": "items/sam-sword.png",
     "cat": "arme_secondaire",
-    "size": "1x3",
+    "size": "2x3",
     "legendary": true
   },
   "bedroll": {
