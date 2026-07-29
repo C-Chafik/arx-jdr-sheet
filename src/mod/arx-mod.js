@@ -50,6 +50,21 @@ function arxSetAttr(charId, name, value) {
   attr.set("current", value);
 }
 
+/* health_max/mana_max on the sheet (attr_health_max, attr_mana_max) are
+   Roll20's own reserved "_max" suffix — they read/write the MAX field of
+   the "health"/"mana" attribute itself, not a separate attribute. That
+   convention only exists at the sheet/worker layer; the API sandbox's
+   findObjs/attr.set know nothing about it, so a plain arxSetAttr(charId,
+   "mana_max", …) creates a bogus standalone "mana_max" attribute instead —
+   harmless but confusing clutter, and it leaves the real max untouched. */
+function arxSetAttrMax(charId, baseName, value) {
+  let attr = findObjs({ type: "attribute", characterid: charId, name: baseName })[0];
+  if (!attr) { attr = createObj("attribute", { characterid: charId, name: baseName, current: "" }); }
+  attr.set("max", value);
+  const stray = findObjs({ type: "attribute", characterid: charId, name: baseName + "_max" })[0];
+  if (stray) { stray.remove(); }
+}
+
 function arxSizeOf(itemId) {
   const s = (ARX_ITEMS[itemId] && ARX_ITEMS[itemId].size) || "1x1";
   const parts = s.split("x");
@@ -264,7 +279,7 @@ on("chat:message", function (msg) {
   });
   ["health", "mana"].forEach(function (name) {
     arxSetAttr(charId, name, ARX_DEFAULTS[name]);
-    arxSetAttr(charId, name + "_max", ARX_DEFAULTS[name]);
+    arxSetAttrMax(charId, name, ARX_DEFAULTS[name]);
     arxSetAttr(charId, name + "_max_applied_mod", "0");
   });
 
