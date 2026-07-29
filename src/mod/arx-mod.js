@@ -12,7 +12,8 @@
      !arxresetall                factory-reset the whole character (stats, inventory, magic, map, postures, gold)
      !arxpreset <1-3> <spell_id> set a memorized-spell slot
      !arxpage <1-10>             switch the magic book to that spell page
-     !arxtab base|magic          switch the active sheet page               */
+     !arxtab base|magic          switch the active sheet page
+     !arxhelp                    list every command in a GM whisper          */
 const ARX_ITEMS = {{ITEMS_JSON}};
 const ARX_COLS = {{GRID_COLS}};
 const ARX_ROWS = {{GRID_ROWS}};
@@ -307,4 +308,25 @@ on("chat:message", function (msg) {
   if (!charId) { whisper("Sélectionne d'abord un token."); return; }
   arxSetAttr(charId, "sheet_tab", tab);
   whisper("Page active = " + tab);
+});
+
+on("chat:message", function (msg) {
+  if (msg.type !== "api" || msg.content.indexOf("!arxhelp") !== 0) { return; }
+  if (!playerIsGM(msg.playerid)) { return; }
+  sendChat("ARX", "/w gm " + [
+    "Commandes disponibles (sélectionne d'abord le token du perso) :",
+    "!arxgive <item_id> — donne un objet (première case libre)",
+    "!arxlearnall — apprend toutes les runes + remplit le grimoire",
+    "!arxforgetrune <rune_id> — désapprend une rune (ex: rune-aam)",
+    "!arxforgetallrunes — désapprend toutes les runes",
+    "!arxlockmap <1-8> — reverrouille un niveau de carte (le 1 reste libre)",
+    "!arxlockallmaps — reverrouille tous les niveaux sauf le 1",
+    "!arxunlockguardian — débloque la posture du Gardien",
+    "!arxlockguardian — reverrouille la posture du Gardien",
+    "!arxresetinventory — vide toutes les cases de sac + relâche la main",
+    "!arxresetall — réinitialise tout le personnage (stats, inventaire, magie, carte, postures, or)",
+    "!arxpreset <1-3> <spell_id> — définit un emplacement de sort mémorisé",
+    "!arxpage <1-10> — change la page de sorts affichée",
+    "!arxtab base|magic — change la page active de la fiche"
+  ].join("\n"));
 });
