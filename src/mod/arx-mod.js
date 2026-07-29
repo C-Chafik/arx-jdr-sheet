@@ -8,6 +8,8 @@
      !arxlockallmaps             re-lock every map level except level 1
      !arxunlockguardian          unlock the Guardian posture
      !arxlockguardian            re-lock the Guardian posture
+     !arxresetinventory          empty every bag slot + clear the hand (fixes stuck/ghost cells)
+     !arxresetall                factory-reset the whole character (stats, inventory, magic, map, postures, gold)
      !arxpreset <1-3> <spell_id> set a memorized-spell slot
      !arxpage <1-10>             switch the magic book to that spell page
      !arxtab base|magic          switch the active sheet page               */
@@ -17,6 +19,23 @@ const ARX_ROWS = {{GRID_ROWS}};
 const ARX_BAGS = {{GRID_BAGS}};
 const ARX_PER_LEVEL = ARX_COLS * ARX_ROWS;
 const ARX_RUNE_ORDER = Object.keys(ARX_ITEMS).filter(function (id) { return ARX_ITEMS[id].effect === "rune"; });
+
+/* Mirrors base.html.j2's own `defaults`/`single_stat_mod_seeds` dicts — kept
+   in sync by hand (see !arxresetall below), since that template has no JSON
+   file of its own to share with this mod script. */
+const ARX_SKILLS = ["stealth", "technical", "intuition", "ethereal_link", "object_knowledge",
+                     "casting", "close_combat", "projectile", "defense"];
+const ARX_STATS = ["strength", "mental", "dexterity", "constitution"].concat(ARX_SKILLS)
+                   .concat(["armor_class", "magic_resistance", "poison_resistance", "damages"]);
+const ARX_DEFAULTS = {
+  strength: 6, mental: 6, dexterity: 6, constitution: 6,
+  stealth: 12, technical: 12, intuition: 12, ethereal_link: 12,
+  object_knowledge: 15, casting: 12,
+  close_combat: 18, projectile: 18, defense: 18,
+  armor_class: 1, magic_resistance: 12, poison_resistance: 16, damages: 3,
+  health: 12, mana: 6
+};
+const ARX_SINGLE_STAT_MOD_SEEDS = { damages: 0, poison_resistance: 12, magic_resistance: 12 };
 
 function arxCharIdFromMsg(msg) {
   if (!msg.selected || !msg.selected.length) { return null; }
@@ -175,6 +194,81 @@ on("chat:message", function (msg) {
   if (!charId) { whisper("Sélectionne d'abord un token."); return; }
   arxSetAttr(charId, "posture_guardian_unlocked", "");
   whisper("Posture du Gardien re-verrouillée.");
+});
+
+/* Nuclear option for a stuck/ghost bag cell (e.g. a leftover "#bag_N" covered-
+   cell pointer that never got cleared): empties every bag slot on every
+   level and drops whatever's in hand, rather than hunting down one attribute
+   in Roll20's editor. */
+on("chat:message", function (msg) {
+  if (msg.type !== "api" || msg.content.indexOf("!arxresetinventory") !== 0) { return; }
+  if (!playerIsGM(msg.playerid)) { return; }
+  const whisper = function (text) { sendChat("ARX", "/w gm " + text); };
+  const charId = arxCharIdFromMsg(msg);
+  if (!charId) { whisper("Sélectionne d'abord un token."); return; }
+  const total = ARX_PER_LEVEL * ARX_BAGS;
+  for (let i = 1; i <= total; i++) { arxSetAttr(charId, "bag_" + i, ""); }
+  ["hand", "hand_from", "hand_cat", "hand_effect", "fit"].forEach(function (name) {
+    arxSetAttr(charId, name, "");
+  });
+  whisper("Inventaire vidé (" + total + " cases) et main relâchée.");
+});
+
+/* Factory reset for a fresh test run: everything but the character's own
+   name goes back to a brand-new-character state. */
+on("chat:message", function (msg) {
+  if (msg.type !== "api" || msg.content.indexOf("!arxresetall") !== 0) { return; }
+  if (!playerIsGM(msg.playerid)) { return; }
+  const whisper = function (text) { sendChat("ARX", "/w gm " + text); };
+  const charId = arxCharIdFromMsg(msg);
+  if (!charId) { whisper("Sélectionne d'abord un token."); return; }
+
+  const total = ARX_PER_LEVEL * ARX_BAGS;
+  for (let i = 1; i <= total; i++) { arxSetAttr(charId, "bag_" + i, ""); }
+  ["hand", "hand_from", "hand_cat", "hand_effect", "fit"].forEach(function (n) { arxSetAttr(charId, n, ""); });
+  arxSetAttr(charId, "bag_count", "1");
+  arxSetAttr(charId, "bag_level", "1");
+  arxSetAttr(charId, "gold", "0");
+
+  ["equip_head", "equip_torso", "equip_belt", "equip_main_hand", "equip_off_hand",
+   "equip_jewel_1", "equip_jewel_2"].forEach(function (n) { arxSetAttr(charId, n, ""); });
+
+  ARX_RUNE_ORDER.forEach(function (id, i) {
+    arxSetAttr(charId, "known_" + id.slice(5), "");
+    arxSetAttr(charId, "spellbook_" + (i + 1), "");
+  });
+  [1, 2, 3].forEach(function (n) { arxSetAttr(charId, "preset_slot_" + n, ""); });
+  arxSetAttr(charId, "craft_runes", "");
+  for (let i = 1; i <= 5; i++) { arxSetAttr(charId, "craft_pos_" + i, ""); }
+  arxSetAttr(charId, "recipe_spell", "");
+  arxSetAttr(charId, "forget_mode", "0");
+  arxSetAttr(charId, "spell_page", "1");
+
+  for (let n = 2; n <= 8; n++) { arxSetAttr(charId, "known_map_" + n, ""); }
+
+  arxSetAttr(charId, "posture", "");
+  arxSetAttr(charId, "posture_guardian_unlocked", "");
+  arxSetAttr(charId, "focus_active", "0");
+
+  arxSetAttr(charId, "level", "0");
+  ARX_STATS.forEach(function (name) {
+    arxSetAttr(charId, name, ARX_DEFAULTS[name]);
+    arxSetAttr(charId, name + "_applied_mod", "0");
+  });
+  ARX_SKILLS.forEach(function (name) {
+    arxSetAttr(charId, name + "_applied_stat_mod", ARX_DEFAULTS[name]);
+  });
+  Object.keys(ARX_SINGLE_STAT_MOD_SEEDS).forEach(function (name) {
+    arxSetAttr(charId, name + "_applied_stat_mod", ARX_SINGLE_STAT_MOD_SEEDS[name]);
+  });
+  ["health", "mana"].forEach(function (name) {
+    arxSetAttr(charId, name, ARX_DEFAULTS[name]);
+    arxSetAttr(charId, name + "_max", ARX_DEFAULTS[name]);
+    arxSetAttr(charId, name + "_max_applied_mod", "0");
+  });
+
+  arxSetAttr(charId, "sheet_tab", "base");
+  whisper("Personnage entièrement réinitialisé.");
 });
 
 on("chat:message", function (msg) {
