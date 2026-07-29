@@ -23,15 +23,15 @@
   "armor_class": 1, "magic_resistance": 12, "poison_resistance": 16, "damages": 3,
   "health": 12, "mana": 6,
 } %}
-{# Seeds for attribute-derived "singles" (Arx Fatalis attribute tables —
-   constitution/intelligence bonus columns), kept in a SEPARATE dict from
-   skills' own seeds on purpose: this mechanic can be pulled out later
-   without touching the skill formulas at all. Computed at strength/mental/
-   dexterity/constitution=6 (this sheet's own defaults) — see
-   recomputeSingleStatMods in inventory.js. (damages and the HP/mana max ×
-   level mechanics were tried and removed — see git history.) #}
+{# Seeds for attribute/skill-derived "singles" (wiki.arx-libertatis.org/Stats'
+   "Other stats" formulas), kept in a SEPARATE dict from skills' own seeds on
+   purpose: this mechanic can be pulled out later without touching the skill
+   formulas at all. Computed at this sheet's own defaults (attributes=6,
+   defense=18, casting=12, close_combat=18) — see recomputeSingleStatMods in
+   inventory.js. (The HP/mana max × level mechanic was tried and removed
+   once, then reintroduced properly — see git history.) #}
 {% set single_stat_mod_seeds = {
-  "damages": 0, "poison_resistance": 12, "magic_resistance": 12,
+  "damages": 3, "armor_class": 1, "magic_resistance": 12, "poison_resistance": 16,
 } %}
 <div class="sheet-page sheet-page--base">
   {# character_name is Roll20-magic: it syncs with the journal name both ways. #}
@@ -41,6 +41,11 @@
   <div class="sheet-field sheet-field--level">
     <input type="number" name="attr_level" value="0" />
   </div>
+  {# Caster level: hidden, never shown to the player (wiki.arx-libertatis.org/
+     Caster_level — "(full_casting + full_mind) / 10", clamped 1-10). Not
+     player-facing yet, but needed for spell power/duration/mana cost and
+     scroll potency later — see recomputeCasterLevel in inventory.js. #}
+  <input type="hidden" name="attr_caster_level" value="1" />
   {# Postures: one active at a time (attr_posture), clicking the active one
      again clears it — same toggle pattern as clicked:cast_<spellId> (see
      inventory.js). Guardian stays hidden until the GM unlocks it via the
@@ -109,10 +114,16 @@
     <span class="sheet-gauge-max" name="attr_{{ name }}_max">{{ defaults[name] }}</span>
   </div>
   {# Only the MAX side takes equipment modifiers (same delta technique as
-     the other stats — see recomputeModifiers in inventory.js). No
-     attribute/level-derived mechanic on health_max/mana_max — tried and
-     removed, see git history. #}
+     the other stats — see recomputeModifiers in inventory.js). #}
   <input type="hidden" name="attr_{{ name }}_max_applied_mod" value="0" />
+  {# Attribute+level-derived portion (wiki.arx-libertatis.org/Stats:
+     constitution×(level+2) for health, mental×(level+1) for mana — see
+     recomputeGaugeMax in inventory.js), tracked separately from the
+     equipment mod above so the two never clobber each other. Starts at
+     this gauge's own default, since that default already IS the formula's
+     result at level 0 / constitution or mental = 6 (this sheet's starting
+     values). #}
+  <input type="hidden" name="attr_{{ name }}_max_applied_stat_mod" value="{{ defaults[name] }}" />
 {% endfor %}
   {# Roll buttons: skills roll 1d100 (roll-under against their own live
      value, shown alongside for comparison — see "On tente l'incantation"

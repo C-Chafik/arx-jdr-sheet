@@ -36,7 +36,7 @@ const ARX_DEFAULTS = {
   armor_class: 1, magic_resistance: 12, poison_resistance: 16, damages: 3,
   health: 12, mana: 6
 };
-const ARX_SINGLE_STAT_MOD_SEEDS = { damages: 0, poison_resistance: 12, magic_resistance: 12 };
+const ARX_SINGLE_STAT_MOD_SEEDS = { damages: 3, armor_class: 1, magic_resistance: 12, poison_resistance: 16 };
 
 function arxCharIdFromMsg(msg) {
   if (!msg.selected || !msg.selected.length) { return null; }
@@ -281,6 +281,7 @@ on("chat:message", function (msg) {
     arxSetAttr(charId, name, ARX_DEFAULTS[name]);
     arxSetAttrMax(charId, name, ARX_DEFAULTS[name]);
     arxSetAttr(charId, name + "_max_applied_mod", "0");
+    arxSetAttr(charId, name + "_max_applied_stat_mod", ARX_DEFAULTS[name]);
   });
 
   arxSetAttr(charId, "sheet_tab", "base");

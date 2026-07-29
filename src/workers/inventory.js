@@ -671,30 +671,38 @@ on("change:strength change:mental change:dexterity change:constitution",
 on("sheet:opened", function () { getAttrs(STAT_MOD_GETATTRS, recomputeStatMods); });
 
 /* ============================================================================
-   SEPARATE, REMOVABLE BLOCK — attribute-derived bonuses to things that are
-   NOT skills (damages, poison/magic resistance, HP/mana max), straight from
-   the Arx Fatalis attribute tables (strength/constitution/dexterity/
-   intelligence bonus columns). Kept fully isolated from SKILL_FORMULAS/
-   recomputeStatMods above on purpose — different constants, different
-   applied_stat_mod trackers, different listener — so this whole mechanic can
-   be deleted later without touching the skill math at all.
+   SEPARATE, REMOVABLE BLOCK — attribute/skill-derived bonuses to things that
+   are NOT skills themselves (damages, armor class, poison/magic resistance),
+   straight from wiki.arx-libertatis.org/Stats's "Other stats" formulas
+   (dropping the modrel/modspell/cheats terms: no percentage-based item
+   bonuses or spell buffs exist in this sheet, only the flat modabs ones
+   already handled by recomputeModifiers/MOD_STATS above). Kept fully
+   isolated from SKILL_FORMULAS/recomputeStatMods on purpose — different
+   constants, different applied_stat_mod trackers, different listener — so
+   this whole mechanic can be deleted later without touching the skill math
+   at all.
 
-   damages: nonlinear (a flat step, not per-point) — floor((str−9)/2),
-   clamped at 0, matching the game's own table (0 until str 11, then +1
-   every 2 points). poison_resistance/magic_resistance are plain ×2. (The
-   HP/mana max × level mechanic was tried and pulled back out — see git
-   history — the level-based multiplier produced an unwanted jump at the
-   very first level-up given this sheet's level starts at 0.) ============ */
+   All four below are the wiki's real formulas (dropping cheats). damages
+   and armor_class/poison_resistance are floor/round of a sum that already
+   includes its own inner max(1, ...) or max(0, ...) term (per the wiki),
+   so each lands exactly on this sheet's own default at level 0 /
+   attributes-and-skills at their starting values — no jump on a fresh
+   character (same reasoning as GAUGE_MAX_FORMULAS below). damages is
+   rounded rather than floored (matches this sheet's own default of 3;
+   floor would give 2) since the wiki doesn't specify either way. ======== */
 const SINGLE_STAT_FORMULAS = {
-  damages: function (a) { return Math.max(Math.floor((a.strength - 9) / 2), 0); },
-  poison_resistance: function (a) { return a.constitution * 2; },
-  magic_resistance: function (a) { return a.mental * 2; }
+  damages: function (a) { return Math.round(Math.max(1, a.strength / 2 - 5) + a.close_combat / 10); },
+  armor_class: function (a) { return Math.max(1, Math.floor(a.defense / 10 - 1)); },
+  magic_resistance: function (a) { return Math.floor(a.mental * (2 + a.casting / 100)); },
+  poison_resistance: function (a) { return Math.floor(a.constitution * 2 + a.defense / 4); }
 };
 const SINGLE_STAT_NAMES = Object.keys(SINGLE_STAT_FORMULAS);
+const SINGLE_STAT_SKILL_INPUTS = ["defense", "casting", "close_combat"];
 
 function recomputeSingleStatMods(v) {
   const a = {};
   ATTR_NAMES.forEach(function (attr) { a[attr] = parseInt(v[attr], 10) || 0; });
+  SINGLE_STAT_SKILL_INPUTS.forEach(function (skill) { a[skill] = parseInt(v[skill], 10) || 0; });
   const update = {};
   SINGLE_STAT_NAMES.forEach(function (name) {
     const newTotal = SINGLE_STAT_FORMULAS[name](a);
@@ -707,13 +715,75 @@ function recomputeSingleStatMods(v) {
   setAttrs(update);
 }
 
-const SINGLE_STAT_MOD_GETATTRS = ATTR_NAMES.concat(SINGLE_STAT_NAMES)
+const SINGLE_STAT_MOD_GETATTRS = ATTR_NAMES.concat(SINGLE_STAT_SKILL_INPUTS).concat(SINGLE_STAT_NAMES)
   .concat(SINGLE_STAT_NAMES.map(function (s) { return s + "_applied_stat_mod"; }));
 
-on("change:strength change:mental change:dexterity change:constitution",
+on("change:strength change:mental change:dexterity change:constitution change:defense change:casting change:close_combat",
   function () { getAttrs(SINGLE_STAT_MOD_GETATTRS, recomputeSingleStatMods); });
 
 on("sheet:opened", function () { getAttrs(SINGLE_STAT_MOD_GETATTRS, recomputeSingleStatMods); });
+/* ========================================================================= */
+
+/* Caster level: hidden (never shown to the player), wiki.arx-libertatis.org/
+   Caster_level — "(full_casting + full_mind) / 10", clamped 1-10 ("full_mind"
+   is that wiki's own name for the Mental attribute). Not equipment-moddable
+   (no item.json field for it) and never manually edited, so a plain
+   recompute-and-set is enough — no delta/seed tracking needed like the
+   visible stats above. Meant for spell power/duration/mana cost and scroll
+   potency later, not wired into anything yet. */
+function recomputeCasterLevel(v) {
+  const casting = parseInt(v.casting, 10) || 0;
+  const mental = parseInt(v.mental, 10) || 0;
+  setAttrs({ caster_level: Math.max(1, Math.min(10, Math.floor((casting + mental) / 10))) });
+}
+
+on("change:casting change:mental", function () { getAttrs(["casting", "mental"], recomputeCasterLevel); });
+
+on("sheet:opened", function () { getAttrs(["casting", "mental"], recomputeCasterLevel); });
+
+/* ============================================================================
+   SEPARATE, REMOVABLE BLOCK — health_max/mana_max scale with level and their
+   own governing attribute (wiki.arx-libertatis.org/Stats: "full_max_health =
+   full_constitution * (level + 2)", "full_max_mana = full_mental * (level +
+   1)"). Same delta technique as the blocks above, tracked in its own
+   attr_<name>_max_applied_stat_mod (see base.html.j2) so it never clobbers
+   the equipment bonus living in attr_<name>_max_applied_mod on the same
+   field. Level 0 + constitution/mental = 6 (this sheet's own starting
+   values) already lands exactly on the current health/mana defaults (12/6),
+   so a fresh character sees no jump — only leveling up or changing the
+   governing attribute moves it. ============================================ */
+const GAUGE_MAX_FORMULAS = {
+  health_max: function (a) { return a.constitution * (a.level + 2); },
+  mana_max: function (a) { return a.mental * (a.level + 1); }
+};
+const GAUGE_MAX_NAMES = Object.keys(GAUGE_MAX_FORMULAS);
+
+function recomputeGaugeMax(v) {
+  const a = {
+    constitution: parseInt(v.constitution, 10) || 0,
+    mental: parseInt(v.mental, 10) || 0,
+    level: parseInt(v.level, 10) || 0
+  };
+  const update = {};
+  GAUGE_MAX_NAMES.forEach(function (name) {
+    const newTotal = GAUGE_MAX_FORMULAS[name](a);
+    const prevApplied = parseInt(v[name + "_applied_stat_mod"], 10) || 0;
+    const current = parseInt(v[name], 10) || 0;
+    const delta = newTotal - prevApplied;
+    if (delta !== 0) { update[name] = current + delta; }
+    update[name + "_applied_stat_mod"] = newTotal;
+  });
+  setAttrs(update);
+}
+
+const GAUGE_MAX_GETATTRS = ["constitution", "mental", "level"]
+  .concat(GAUGE_MAX_NAMES)
+  .concat(GAUGE_MAX_NAMES.map(function (s) { return s + "_applied_stat_mod"; }));
+
+on("change:constitution change:mental change:level",
+  function () { getAttrs(GAUGE_MAX_GETATTRS, recomputeGaugeMax); });
+
+on("sheet:opened", function () { getAttrs(GAUGE_MAX_GETATTRS, recomputeGaugeMax); });
 /* ========================================================================= */
 
 /* Postures: one active at a time (attr_posture), clicking the active one
