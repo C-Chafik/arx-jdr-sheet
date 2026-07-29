@@ -6,7 +6,7 @@
   position: absolute;
   width: 6.1%;
   height: 10.2%;
-  cursor: url('{{ASSET_BASE}}/ui/cursor-points.png') 4 4, help;
+  cursor: url('{{ASSET_BASE}}/ui/cursor-hover.png') 6 4, help;
   /* Invisible zone (the icon is engraved in the background image). */
   padding: 0;
   border: none;
@@ -18,7 +18,7 @@
 
 /* Only roll buttons are clickable; hover-only zones (health, mana) are divs. */
 button.sheet-hover-zone {
-  cursor: url('{{ASSET_BASE}}/ui/cursor-points.png') 4 4, pointer;
+  cursor: url('{{ASSET_BASE}}/ui/cursor-hover.png') 6 4, pointer;
 }
 
 button.sheet-hover-zone:active {
@@ -68,19 +68,6 @@ button.sheet-hover-zone:active {
 .sheet-hover--close_combat     { left: 58.4%; top: 69.6%; }
 .sheet-hover--projectile       { left: 70.2%; top: 69.6%; }
 .sheet-hover--defense          { left: 81.5%; top: 69.6%; }
-
-/* Left-page zones (resistances, vitals, damages) get the plain action cursor
-   instead of the "info" one above — only the right page (attributes/skills)
-   is meant to feel like a hover tooltip. Two classes to outweigh
-   button.sheet-hover-zone's specificity regardless of div vs button. */
-.sheet-hover-zone.sheet-hover--armor_class,
-.sheet-hover-zone.sheet-hover--magic_resistance,
-.sheet-hover-zone.sheet-hover--poison_resistance,
-.sheet-hover-zone.sheet-hover--health,
-.sheet-hover-zone.sheet-hover--mana,
-.sheet-hover-zone.sheet-hover--damages {
-  cursor: url('{{ASSET_BASE}}/ui/cursor-hover.png') 6 4, pointer;
-}
 
 /* Left page — resistance shields, measured on the source PNG.
    The press-flash is clipped to a shield silhouette (icons aren't square). */

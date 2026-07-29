@@ -267,9 +267,9 @@ def test_trash_deletes_held_item():
 def test_custom_cursors_are_wired():
     css = build.build_css("x")
     assert "cursor-default.png" in css
-    assert "cursor-points.png" in css
-    # selected-hover.png and base-hover-2.png were merged into one asset
-    # (cursor-hover.png) during the assets refactor.
+    # cursor-points.png is retired — stat hover zones now use cursor-hover.png,
+    # same as every other interactive element.
+    assert "cursor-points.png" not in css
     assert "cursor-hover.png" in css
     assert 'input[name="attr_hand"]:not([value=""]) ~ .sheet-purse' in css
 
