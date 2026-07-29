@@ -1575,13 +1575,13 @@
     "label": "Arc",
     "icon": "items/bow.png",
     "cat": "arme_principale",
-    "size": "1x3"
+    "size": "3x2"
   },
   "sam-sword": {
     "label": "Sam Sword",
     "icon": "items/sam-sword.png",
     "cat": "arme_secondaire",
-    "size": "2x3",
+    "size": "3x3",
     "legendary": true
   },
   "bedroll": {
