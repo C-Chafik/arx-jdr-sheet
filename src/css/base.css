@@ -76,13 +76,33 @@
   background: rgba(255, 248, 220, 0.25);
 }
 
+/* Non-editable stats (attr_damages, CA/CAM/CAP, the gauges' _max side): a
+   <span name="attr_X"> standing in for a readonly <input> — Roll20 doesn't
+   reliably refresh a readonly input's displayed value from setAttrs, spans
+   do (see recomputeModifiers in inventory.js). Same look as the number
+   inputs they replace — crucially flex, not just block: an <input> centers
+   its value vertically on its own, a plain block span doesn't, which is
+   what made these look shifted up compared to the inputs they replaced. */
+.sheet-field span[name^="attr_"] {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  height: 100% !important;
+  color: #2b1d0e;
+  font-family: inherit;
+  font-size: 28px;
+  text-align: center;
+}
+
 .sheet-gauge {
   display: flex;
   align-items: center;
   width: 9.5%;
 }
 
-.sheet-gauge input[type="number"] {
+.sheet-gauge input[type="number"],
+.sheet-gauge .sheet-gauge-max {
   width: 80%;
   /* Flex items refuse to shrink below their content's min size by default —
     without this, a bigger font pushes these past their 45% and the whole

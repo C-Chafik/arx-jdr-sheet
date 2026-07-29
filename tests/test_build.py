@@ -52,7 +52,8 @@ def test_css_positions_every_field():
 
 
 HOVER_STATS = [a for a in POSITIONED_FIELDS if a not in ("level", "character_name")]
-NO_ROLL = ["health", "mana"]  # hover-only icons, not clickable
+NO_ROLL = ["health", "mana", "strength", "mental", "dexterity", "constitution",
+           "armor_class", "magic_resistance", "poison_resistance"]  # hover-only icons, not clickable
 
 
 def test_inventory_toggle_and_band_are_wired():

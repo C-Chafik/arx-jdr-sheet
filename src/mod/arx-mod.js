@@ -6,6 +6,8 @@
      !arxforgetallrunes          un-learn every rune (reverse of !arxlearnall)
      !arxlockmap <1-8>           re-lock a single map level (level 1 can't be locked)
      !arxlockallmaps             re-lock every map level except level 1
+     !arxunlockguardian          unlock the Guardian posture
+     !arxlockguardian            re-lock the Guardian posture
      !arxpreset <1-3> <spell_id> set a memorized-spell slot
      !arxpage <1-10>             switch the magic book to that spell page
      !arxtab base|magic          switch the active sheet page               */
@@ -153,6 +155,26 @@ on("chat:message", function (msg) {
   if (!charId) { whisper("Sélectionne d'abord un token."); return; }
   arxSetAttr(charId, "known_map_" + level, "");
   whisper("Niveau " + level + " re-verrouillé.");
+});
+
+on("chat:message", function (msg) {
+  if (msg.type !== "api" || msg.content.indexOf("!arxunlockguardian") !== 0) { return; }
+  if (!playerIsGM(msg.playerid)) { return; }
+  const whisper = function (text) { sendChat("ARX", "/w gm " + text); };
+  const charId = arxCharIdFromMsg(msg);
+  if (!charId) { whisper("Sélectionne d'abord un token."); return; }
+  arxSetAttr(charId, "posture_guardian_unlocked", "1");
+  whisper("Posture du Gardien débloquée.");
+});
+
+on("chat:message", function (msg) {
+  if (msg.type !== "api" || msg.content.indexOf("!arxlockguardian") !== 0) { return; }
+  if (!playerIsGM(msg.playerid)) { return; }
+  const whisper = function (text) { sendChat("ARX", "/w gm " + text); };
+  const charId = arxCharIdFromMsg(msg);
+  if (!charId) { whisper("Sélectionne d'abord un token."); return; }
+  arxSetAttr(charId, "posture_guardian_unlocked", "");
+  whisper("Posture du Gardien re-verrouillée.");
 });
 
 on("chat:message", function (msg) {

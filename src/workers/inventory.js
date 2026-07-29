@@ -507,12 +507,20 @@ Object.keys(SPELLS).forEach(function (spellId) {
    static roll button's value="" can't do) — main hand, plus " + <secondary>"
    if the off hand holds an actual secondary weapon (not a shield/other). */
 on("clicked:roll_damages", function () {
-  getAttrs(["equip_main_hand", "equip_off_hand"], function (v) {
+  getAttrs(["equip_main_hand", "equip_off_hand", "posture", "damages"], function (v) {
     const mainItem = ITEMS[v.equip_main_hand];
     const offItem = ITEMS[v.equip_off_hand];
     let weaponLabel = mainItem ? mainItem.label : "Mains nues";
     if (offItem && offItem.cat === "arme_secondaire") { weaponLabel += " + " + offItem.label; }
-    startRoll("&{template:default} {{name=Dégâts — " + weaponLabel + "}} {{Valeur=@{damages}}}",
+    const offensive = v.posture === "offensive";
+    /* Normally 1d<damages> (e.g. 15 damages -> 1d15); Offensive skips the
+       die and just deals the flat value — its actual "always max damage"
+       effect, now that damage is a real range. damages<1 also skips the
+       die (1d0 is invalid) and just shows 0. */
+    const damages = parseInt(v.damages, 10) || 0;
+    const valeur = (offensive || damages < 1) ? "@{damages}" : "[[1d@{damages}]]";
+    if (offensive) { weaponLabel += " (Maximum)"; }
+    startRoll("&{template:default} {{name=Dégâts — " + weaponLabel + "}} {{Valeur=" + valeur + "}}",
       function (results) { finishRoll(results.rollId, {}); });
   });
 });
@@ -707,3 +715,30 @@ on("change:strength change:mental change:dexterity change:constitution",
 
 on("sheet:opened", function () { getAttrs(SINGLE_STAT_MOD_GETATTRS, recomputeSingleStatMods); });
 /* ========================================================================= */
+
+/* Postures: one active at a time (attr_posture), clicking the active one
+   again clears it — same toggle pattern as clicked:cast_<spellId>. */
+["defensive", "offensive", "focus", "guardian"].forEach(function (name) {
+  on("clicked:posture_" + name, function () {
+    getAttrs(["posture"], function (v) {
+      setAttrs({ posture: v.posture === name ? "" : name });
+    });
+  });
+});
+
+/* Guardian is GM-gated, not level-gated: attr_posture_guardian_unlocked is
+   only ever set by the !arxunlockguardian API command (see arx-mod.js). If
+   the GM re-locks it (!arxlockguardian) while it's the active posture,
+   clear the posture too (same clamp-on-drop pattern as the gauges). */
+on("change:posture_guardian_unlocked", function () {
+  getAttrs(["posture_guardian_unlocked", "posture"], function (v) {
+    if (v.posture_guardian_unlocked !== "1" && v.posture === "guardian") { setAttrs({ posture: "" }); }
+  });
+});
+
+/* Focus posture: 0/1 flag multiplied into the skill roll formulas (see
+   base.html.j2) — recomputed on every posture change, not just Focus's own
+   click, since switching AWAY from Focus must also flip it back off. */
+on("change:posture", function () {
+  getAttrs(["posture"], function (v) { setAttrs({ focus_active: v.posture === "focus" ? "1" : "0" }); });
+});

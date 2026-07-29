@@ -52,7 +52,7 @@
     "mana_max": -1
   },
   "one-handed-sword": {
-    "label": "Épée à une main",
+    "label": "Épée à une main en acier",
     "icon": "items/one-handed-sword.png",
     "cat": "arme_secondaire",
     "size": "1x3",
@@ -77,13 +77,13 @@
     "mana_max": 2
   },
   "one-handed-sword-light": {
-    "label": "Épée légère",
+    "label": "Dague légère en bronze",
     "icon": "items/one-handed-sword-light.png",
     "cat": "arme_secondaire",
     "size": "1x2"
   },
   "wooden-club": {
-    "label": "Gourdin",
+    "label": "Gourdin en bois",
     "icon": "items/wooden-club.png",
     "cat": "arme_principale",
     "size": "1x2"
@@ -109,19 +109,19 @@
     "legendary": true
   },
   "chest-leather": {
-    "label": "Plastron de cuir",
+    "label": "Veste en cuir",
     "icon": "items/chest-leather.png",
     "cat": "armure_haute",
     "size": "2x2"
   },
   "chest-leather-ac": {
-    "label": "Plastron de cuir renforcé",
+    "label": "Veste en cuir renforcé",
     "icon": "items/chest-leather-ac.png",
     "cat": "armure_haute",
     "size": "2x2"
   },
   "chest-leather-stealth": {
-    "label": "Plastron de cuir souple",
+    "label": "Veste en cuir souple",
     "icon": "items/chest-leather-stealth.png",
     "cat": "armure_haute",
     "size": "2x2"
@@ -139,13 +139,13 @@
     "size": "2x3"
   },
   "chestplate": {
-    "label": "Plastron",
+    "label": "Plastron en acier",
     "icon": "items/chestplate.png",
     "cat": "armure_haute",
     "size": "2x3"
   },
   "chestplate-ac": {
-    "label": "Plastron renforcé",
+    "label": "Plastron en acier renforcé",
     "icon": "items/chestplate-ac.png",
     "cat": "armure_haute",
     "size": "2x3"
@@ -176,19 +176,19 @@
     "size": "2x3"
   },
   "legging-leather": {
-    "label": "Jambières de cuir",
+    "label": "Pantalon en cuir",
     "icon": "items/legging-leather.png",
     "cat": "armure_basse",
     "size": "2x3"
   },
   "legging-leather-ac": {
-    "label": "Jambières de cuir renforcées",
+    "label": "Pantalon en cuir renforcé",
     "icon": "items/legging-leather-ac.png",
     "cat": "armure_basse",
     "size": "2x3"
   },
   "legging-leather-stealth": {
-    "label": "Jambières de cuir souples",
+    "label": "Pantalon en cuir souple",
     "icon": "items/legging-leather-stealth.png",
     "cat": "armure_basse",
     "size": "2x3"
@@ -201,19 +201,19 @@
     "legendary": true
   },
   "legging-plate": {
-    "label": "Jambières de plaques",
+    "label": "Jambières en plaque d'acier",
     "icon": "items/legging-plate.png",
     "cat": "armure_basse",
     "size": "2x3"
   },
   "legging-plate-ac": {
-    "label": "Jambières de plaques renforcées",
+    "label": "Jambières en plaque d'acier renforcées",
     "icon": "items/legging-plate-ac.png",
     "cat": "armure_basse",
     "size": "2x3"
   },
   "golden-legging-plate": {
-    "label": "Jambières de plaques dorées",
+    "label": "Jambières dorées",
     "icon": "items/golden-legging-plate.png",
     "cat": "armure_basse",
     "size": "2x3"
@@ -238,19 +238,19 @@
     "legendary": true
   },
   "plate-helmet": {
-    "label": "Casque de plaques",
+    "label": "Casque de plaques d'acier",
     "icon": "items/plate-helmet.png",
     "cat": "casque",
     "size": "1x1"
   },
   "plate-helmet-ac": {
-    "label": "Casque de plaques renforcé",
+    "label": "Casque de plaques d'acier renforcé",
     "icon": "items/plate-helmet-ac.png",
     "cat": "casque",
     "size": "1x1"
   },
   "golden-plate-helmet": {
-    "label": "Casque de plaques doré",
+    "label": "Casque doré",
     "icon": "items/golden-plate-helmet.png",
     "cat": "casque",
     "size": "1x1"
@@ -263,13 +263,13 @@
     "legendary": true
   },
   "metal-shield": {
-    "label": "Bouclier en métal",
+    "label": "Bouclier en acier",
     "icon": "items/metal-shield.png",
     "cat": "bouclier",
     "size": "2x2"
   },
   "tower-shield-metal": {
-    "label": "Pavois en métal",
+    "label": "Pavois en acier",
     "icon": "items/tower-shield-metal.png",
     "cat": "bouclier",
     "size": "2x3"
@@ -1578,9 +1578,9 @@
     "size": "3x2"
   },
   "sam-sword": {
-    "label": "Sam Sword",
+    "label": "L'épée de Samuel",
     "icon": "items/sam-sword.png",
-    "cat": "arme_secondaire",
+    "cat": "arme_principale",
     "size": "3x3",
     "legendary": true
   },

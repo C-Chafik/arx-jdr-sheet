@@ -5,6 +5,15 @@
                  "close_combat", "projectile", "defense"] %}
 {% set gauges = ["health", "mana"] %}
 {% set singles = ["armor_class", "magic_resistance", "poison_resistance", "damages"] %}
+{# Posture Focus adds the skill's own governing attribute to the roll
+   target (see the Postures conversation). Single-attribute skills are
+   unambiguous; the 3 mixed-formula ones use their dominant coefficient
+   (Technique has no dominant term — Dextérité picked arbitrarily). #}
+{% set skill_primary_attr = {
+  "stealth": "dexterity", "technical": "dexterity", "intuition": "mental",
+  "ethereal_link": "mental", "object_knowledge": "mental", "casting": "mental",
+  "close_combat": "strength", "projectile": "dexterity", "defense": "constitution",
+} %}
 {# Base stats before any modifier — see the user's own numbers, not a design guess. #}
 {% set defaults = {
   "strength": 6, "mental": 6, "dexterity": 6, "constitution": 6,
@@ -32,13 +41,43 @@
   <div class="sheet-field sheet-field--level">
     <input type="number" name="attr_level" value="0" />
   </div>
+  {# Postures: one active at a time (attr_posture), clicking the active one
+     again clears it — same toggle pattern as clicked:cast_<spellId> (see
+     inventory.js). Guardian stays hidden until the GM unlocks it via the
+     !arxunlockguardian API command (attr_posture_guardian_unlocked) — a GM
+     call, not tied to level. #}
+  <input type="hidden" class="sheet-hand-mirror" name="attr_posture" value="" />
+  <input type="hidden" class="sheet-hand-mirror" name="attr_posture_guardian_unlocked" value="" />
+  {# 0/1 flag, worker-maintained (see recomputeFocusActive in inventory.js)
+     — multiplied into the skill roll formulas above so the Focus bonus
+     only applies live, without converting those buttons to type="action". #}
+  <input type="hidden" class="sheet-hand-mirror" name="attr_focus_active" value="0" />
+{% for name in ["defensive", "offensive", "focus", "guardian"] %}
+  <button type="action" class="sheet-posture-btn sheet-posture-btn--{{ name }}" name="act_posture_{{ name }}"></button>
+{% endfor %}
+  <div class="sheet-statbar sheet-statbar--posture-defensive">Posture Défensive — Parade et Esquive autorisé</div>
+  <div class="sheet-statbar sheet-statbar--posture-offensive">Posture Offensive — Dégâts maximum, seuil critique doublé</div>
+  <div class="sheet-statbar sheet-statbar--posture-focus">Focus — Bonus de stats sur les jets, réduction du coût en mana</div>
+  <div class="sheet-statbar sheet-statbar--posture-guardian">Posture du Gardien - Effet inconnue</div>
+{% set read_only_stats = ["damages", "armor_class", "magic_resistance", "poison_resistance"] %}
 {% for name in attributes + skills + singles %}
   <div class="sheet-field sheet-field--{{ name }}">
+{% if name in read_only_stats %}
+    {# Not manually editable (only equipment/attribute mods touch it) — CA/
+       CAM/CAP stay hover-only (no roll, see stats.j2's no_roll), damages is
+       still rolled via act_roll_damages. A <span name="attr_X"> instead of
+       a readonly <input>: Roll20 doesn't reliably refresh a readonly
+       input's DISPLAYED value from setAttrs, spans do (see
+       recomputeModifiers/recomputeSingleStatMods in inventory.js, and the
+       notes-page saga earlier in this project). #}
+    <span name="attr_{{ name }}">{{ defaults[name] }}</span>
+{% else %}
     {# The one and only visible/editable value — manual edits (leveling,
        point-buy) are safe: equipment changes only ever apply the DELTA in
        gear bonus on top of whatever's here (see recomputeModifiers in
        inventory.js), never a full recompute from scratch. #}
     <input type="number" name="attr_{{ name }}" value="{{ defaults[name] }}" />
+{% endif %}
   </div>
   {# Remembers the equipment bonus last baked into attr_{{ name }}, so the
      next equipment change can apply just the difference. #}
@@ -63,7 +102,11 @@
   <div class="sheet-field sheet-gauge sheet-field--{{ name }}">
     <input type="number" name="attr_{{ name }}" value="{{ defaults[name] }}" />
     <span class="sheet-gauge-sep">/</span>
-    <input type="number" name="attr_{{ name }}_max" value="{{ defaults[name] }}" />
+    {# Max isn't manually editable, only equipment mods touch it — a
+       <span name="attr_X"> instead of a readonly <input>, same reasoning
+       as attr_damages above (readonly inputs don't reliably refresh from
+       setAttrs on Roll20). #}
+    <span class="sheet-gauge-max" name="attr_{{ name }}_max">{{ defaults[name] }}</span>
   </div>
   {# Only the MAX side takes equipment modifiers (same delta technique as
      the other stats — see recomputeModifiers in inventory.js). No
@@ -83,7 +126,12 @@
 {% elif name == "damages" %}
   <button type="action" class="sheet-hover-zone sheet-hover--{{ name }}" name="act_roll_damages"></button>
 {% elif name in skills %}
-{% set roll_value = "&{template:default} {{" ~ "name=" ~ label ~ "}} {{" ~ "Valeur=@{" ~ name ~ "}}} {{" ~ "Jet=[[1d100]]}}" %}
+  {# Focus posture bonus (@{focus_active}, worker-maintained 0/1 flag —
+     see recomputeFocusActive in inventory.js) folded straight into the
+     roll target via multiply-by-flag: adds the skill's own governing
+     attribute only while Focus is active, 0 otherwise. No need to convert
+     this button to type="action" just for this. #}
+{% set roll_value = "&{template:default} {{" ~ "name=" ~ label ~ "}} {{" ~ "Valeur=@{" ~ name ~ "}+(@{" ~ skill_primary_attr[name] ~ "}*@{focus_active})}} {{" ~ "Jet=[[1d100]]}}" %}
   <button type="roll" class="sheet-hover-zone sheet-hover--{{ name }}" name="roll_{{ name }}" value="{{ roll_value }}"></button>
 {% else %}
   <button type="roll" class="sheet-hover-zone sheet-hover--{{ name }}" name="roll_{{ name }}" value=""></button>

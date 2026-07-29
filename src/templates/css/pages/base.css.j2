@@ -23,6 +23,54 @@
   text-shadow: 0 0 5px rgba(246, 233, 198, 0.95), 0 0 2px rgba(246, 233, 198, 0.95);
 }
 
+/* Postures: a small row right of the level field. Source art is huge (the
+   3 shield icons) or tiny (guardian, ~32px) — all rendered at the same
+   small size, guardian very slightly smaller than the rest (see the
+   conversation: "un peu plus grand que la posture du gardien"). */
+.sheet-posture-btn {
+  position: absolute;
+  top: 7.3%;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: url('{{ "{{ASSET_BASE}}" }}/ui/cursor-hover.png') 6 4, pointer;
+  transition: filter 0.2s ease-out;
+  opacity: 0.55;
+}
+.sheet-posture-btn:hover { filter: brightness(1.3) drop-shadow(0 0 4px rgba(255, 220, 130, 0.9)); }
+.sheet-posture-btn--defensive { left: 72%; background-image: url('{{ "{{ASSET_BASE}}" }}/book/posture-defensive.png'); }
+.sheet-posture-btn--offensive { left: 76%; background-image: url('{{ "{{ASSET_BASE}}" }}/book/posture-offensive.png'); }
+.sheet-posture-btn--focus     { left: 80%; background-image: url('{{ "{{ASSET_BASE}}" }}/book/posture-focus.png'); }
+.sheet-posture-btn--guardian  { left: 84%; width: 28px; height: 28px; background-image: url('{{ "{{ASSET_BASE}}" }}/book/posture-guardian.png'); }
+
+/* Active posture reads at full opacity + a golden glow, so it stands out
+   beyond just "less dim" than the other 3. */
+.sheet-arx:has(input[name="attr_posture"][value="defensive"]) .sheet-posture-btn--defensive,
+.sheet-arx:has(input[name="attr_posture"][value="offensive"]) .sheet-posture-btn--offensive,
+.sheet-arx:has(input[name="attr_posture"][value="focus"]) .sheet-posture-btn--focus,
+.sheet-arx:has(input[name="attr_posture"][value="guardian"]) .sheet-posture-btn--guardian {
+  opacity: 1;
+  filter: drop-shadow(0 0 6px rgba(255, 220, 130, 0.95)) drop-shadow(0 0 3px rgba(255, 220, 130, 0.95));
+}
+
+/* Guardian stays hidden until the GM unlocks it (attr_posture_guardian_
+   unlocked) via the !arxunlockguardian API command (see arx-mod.js) — not
+   tied to level, purely a GM call. */
+.sheet-posture-btn--guardian { display: none; }
+.sheet-arx:has(input[name="attr_posture_guardian_unlocked"][value="1"]) .sheet-posture-btn--guardian {
+  display: block;
+}
+
+.sheet-arx:has(.sheet-posture-btn--defensive:hover) .sheet-statbar--posture-defensive { display: block; }
+.sheet-arx:has(.sheet-posture-btn--offensive:hover) .sheet-statbar--posture-offensive { display: block; }
+.sheet-arx:has(.sheet-posture-btn--focus:hover) .sheet-statbar--posture-focus { display: block; }
+.sheet-arx:has(.sheet-posture-btn--guardian:hover) .sheet-statbar--posture-guardian { display: block; }
+
 /* Right page — attributes (values under the 4 icons) */
 .sheet-field--strength     { left: 55.4%; top: 23.6%; }
 .sheet-field--mental       { left: 64.3%; top: 23.6%; }
@@ -41,14 +89,28 @@
 .sheet-field--defense          { left: 80.2%; top: 80.6%; }
 
 /* Left page — resistances (under the three shields) */
-.sheet-field--armor_class       { left: 10.5%; top: 32.6%; }
-.sheet-field--magic_resistance  { left: 10.3%; top: 50.6%; }
-.sheet-field--poison_resistance { left: 10.2%; top: 67.9%; }
+.sheet-field--armor_class       { left: 11.7%; top: 32.6%; }
+.sheet-field--magic_resistance  { left: 11.5%; top: 50.6%; }
+.sheet-field--poison_resistance { left: 11.4%; top: 67.9%; }
 
 /* Left page — vitals */
 .sheet-field--health  { left: 42.0%; top: 32.1%; }
 .sheet-field--mana    { left: 42.0%; top: 49.7%; }
-.sheet-field--damages { left: 43.0%; top: 67.4%; }
+.sheet-field--damages { left: 44.2%; top: 67.4%; }
+
+/* These 4 fields hold a read-only <span> now, not an <input> (see
+   base.html.j2's read_only_stats) — an <input> centers its value
+   vertically on its own, a plain span doesn't. .sheet-gauge (health/mana)
+   already gets this for free from its own flex layout; these don't have
+   an equivalent flex parent, so give them one directly instead of relying
+   on the span alone. !important: Roll20 injects its own default styling
+   that can otherwise silently win (same issue as the Notes page fields). */
+.sheet-field--damages, .sheet-field--armor_class,
+.sheet-field--magic_resistance, .sheet-field--poison_resistance {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
 
 /* ---- Equipment-modifier tint: dark blue when the current gear bonus on a
    stat is positive, bright red when negative, base ink color when zero/no
@@ -70,12 +132,12 @@
   "close_combat": ".sheet-field--close_combat input[type=\"number\"]",
   "projectile": ".sheet-field--projectile input[type=\"number\"]",
   "defense": ".sheet-field--defense input[type=\"number\"]",
-  "armor_class": ".sheet-field--armor_class input[type=\"number\"]",
-  "magic_resistance": ".sheet-field--magic_resistance input[type=\"number\"]",
-  "poison_resistance": ".sheet-field--poison_resistance input[type=\"number\"]",
-  "damages": ".sheet-field--damages input[type=\"number\"]",
-  "health_max": ".sheet-field--health input[name=\"attr_health_max\"]",
-  "mana_max": ".sheet-field--mana input[name=\"attr_mana_max\"]",
+  "armor_class": ".sheet-field--armor_class span[name=\"attr_armor_class\"]",
+  "magic_resistance": ".sheet-field--magic_resistance span[name=\"attr_magic_resistance\"]",
+  "poison_resistance": ".sheet-field--poison_resistance span[name=\"attr_poison_resistance\"]",
+  "damages": ".sheet-field--damages span[name=\"attr_damages\"]",
+  "health_max": ".sheet-field--health span[name=\"attr_health_max\"]",
+  "mana_max": ".sheet-field--mana span[name=\"attr_mana_max\"]",
 } %}
 {% for stat, selector in mod_stat_selectors.items() %}
 .sheet-arx:has(input[name="attr_{{ stat }}_applied_mod"]:not([value=""]):not([value="0"]):not([value^="-"])) {{ selector }} {

@@ -21,5 +21,8 @@
     ("mana",              "Mana",                     "La réserve d'énergie magique, actuelle et maximum."),
     ("damages",           "Dégâts",                   "Les dégâts infligés par l'attaque équipée."),
 ] %}
-{# Hover-only icons: no click, no roll button. #}
-{% set no_roll = ["health", "mana"] %}
+{# Hover-only icons: no click, no roll button. Attributes and the 3
+   armor-class-style singles (CA/CAM/CAP) were never designed with a roll
+   in mind ("on touche pas") — explicitly excluded here now. #}
+{% set no_roll = ["health", "mana", "strength", "mental", "dexterity", "constitution",
+                   "armor_class", "magic_resistance", "poison_resistance"] %}
