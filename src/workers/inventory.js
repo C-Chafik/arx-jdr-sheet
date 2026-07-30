@@ -354,17 +354,18 @@ on("clicked:goto_magic", function () { setAttrs({ sheet_tab: "magic" }); });
    CSS animation running on it — attr_recipe_spell staying set is what made
    the recipe-reveal replay from scratch every time you come back (same
    root cause as sheet:opened, different trigger: a tab switch, not a full
-   sheet reopen). Clear it here too so coming back never auto-replays it. */
+   sheet reopen). Cleared on EVERY route away from magic (base/notes/map),
+   not just goto_base — the magic page gets hidden the same way regardless
+   of which page you land on next. */
 on("clicked:goto_base", function () { setAttrs({ sheet_tab: "base", recipe_spell: "" }); });
 /* Notes: reachable from both base and magic (map-menu-button shows on
    both), leaving always goes back to base (single "back" ribbon, same one
    magic already uses). */
-on("clicked:goto_notes", function () { setAttrs({ sheet_tab: "notes" }); });
+on("clicked:goto_notes", function () { setAttrs({ sheet_tab: "notes", recipe_spell: "" }); });
 
-/* Map: no page yet — the ribbon is rendered anyway (see tabs.css's 3-slot
-   assignment table) so it just sets sheet_tab; the book shows no page
-   content until pages/map.html.j2 exists. */
-on("clicked:goto_map", function () { setAttrs({ sheet_tab: "map" }); });
+/* Map: the ribbon is rendered on every page anyway (see tabs.css's 3-slot
+   assignment table). */
+on("clicked:goto_map", function () { setAttrs({ sheet_tab: "map", recipe_spell: "" }); });
 
 /* Map levels: 8 always-reachable tabs (no rune-known gating, unlike the
    grimoire's spell pages) — see clicked:goto_maplevel_N and map.css.j2. */

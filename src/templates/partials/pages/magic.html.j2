@@ -50,9 +50,9 @@
   <input type="hidden" name="attr_craft_runes" value="" />
   <input type="hidden" name="attr_forget_mode" value="0" />
   <button type="action" class="sheet-craft-reset" name="act_craft_reset"></button>
-  {# Launch: consumes the crafted rune combination — will trigger the actual
-     Roll20 dice roll once that mechanic is designed (see SPEC.md); for now
-     it just clears the combo. #}
+  {# Launch: matches the crafted combination against spells.json and, on a
+     match, rolls 1d100 roll-under against Magie (see clicked:craft_confirm
+     in inventory.js) — consumes the combo either way, matched or not. #}
   <button type="action" class="sheet-craft-confirm" name="act_craft_confirm"></button>
   {# Memorize: matches the crafted rune combination against presets.json and
      fills the first empty preset slot on an exact match (works for both

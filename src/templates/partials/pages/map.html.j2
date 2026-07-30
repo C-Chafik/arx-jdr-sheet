@@ -20,7 +20,8 @@
   </div>
 {% endfor %}
   {# Right page: one free-form note per dungeon level, in the same writable
-     rectangle the (now unreachable, see tabs.html.j2) Notes page used. #}
+     rectangle the Notes page's own right-hand field uses (see notes.css.j2)
+     — both pages share the same notes.png backdrop. #}
 {% for n in range(1, 9) %}
   <textarea class="sheet-map-note sheet-map-note--{{ n }}" name="attr_map_note_{{ n }}"></textarea>
 {% endfor %}
