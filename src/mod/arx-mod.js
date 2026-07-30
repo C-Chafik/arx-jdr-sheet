@@ -344,5 +344,5 @@ on("chat:message", function (msg) {
     "!arxpreset <1-3> <spell_id> — définit un emplacement de sort mémorisé",
     "!arxpage <1-10> — change la page de sorts affichée",
     "!arxtab base|magic — change la page active de la fiche"
-  ].join("\n"));
+  ].join("<br>"));
 });
