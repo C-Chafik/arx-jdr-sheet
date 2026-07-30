@@ -4,6 +4,8 @@ Custom character sheet for the **Arx Fatalis** tabletop RPG, built as a "legacy"
 
 Nothing is hand-written directly in the final HTML/CSS: everything starts in `src/`, assembled by `build.py`, and generated into `build/`.
 
+<img width="1136" height="721" alt="Capture d’écran 2026-07-30 à 23 00 13" src="https://github.com/user-attachments/assets/324e8cc9-744f-41f2-a6aa-be7af69ee07e" />
+
 ## Features
 
 - **Base page**: level, 4 attributes, 9 skills, Health/Mana gauges, damages, 3 resistances (armor class / magic resistance / poison resistance), postures (Defensive/Offensive/Focus/Guardian), character name synced with the Roll20 journal.
