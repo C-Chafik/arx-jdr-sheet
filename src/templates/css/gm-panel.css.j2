@@ -1,0 +1,148 @@
+/* GM admin panel: gear icon + a tall paginated band (mj-inventory.png,
+   3 cols × 11 rows per page) listing the FULL items.json catalog, one
+   "give" button per item. Gated behind attr_gm_panel_unlocked — only the
+   !arxunlockpanel API command can set it (see arx-mod.js), never the sheet
+   itself, so the gear icon stays invisible until the GM explicitly turns
+   it on for a given character (meant to be their own utility character,
+   never a player's). First pass on sizing/position — expect a tuning pass
+   once the real asset is in place. */
+
+{% set gm_cols, gm_rows = 3, 11 %}
+{% set gm_per_page = gm_cols * gm_rows %}
+{% set gm_pages = ((items | length - 1) // gm_per_page) + 1 %}
+
+/* ---- Gear icon: sits just above the craft-seq strip, in the same reserved
+   right-hand column of .sheet-arx (see base.css). Invisible unless unlocked. ---- */
+.sheet-gm-panel-toggle {
+  display: none;
+  position: absolute;
+  top: 40px;
+  left: 1216px;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-image: url('{{ "{{ASSET_BASE}}" }}/ui/gear.png');
+  cursor: url('{{ "{{ASSET_BASE}}" }}/ui/cursor-hover.png') 6 4, pointer;
+  transition: filter 0.2s ease-out;
+}
+.sheet-gm-panel-toggle:hover { filter: brightness(1.35) drop-shadow(0 0 6px rgba(255, 220, 130, 0.8)); }
+.sheet-arx:has(input[name="attr_gm_panel_unlocked"][value="1"]) .sheet-gm-panel-toggle {
+  display: block;
+}
+.sheet-arx:has(.sheet-gm-panel-toggle:hover) .sheet-statbar--gm-panel-toggle { display: block; }
+
+/* ---- The panel itself: a tall band sliding out to the right, clear of the
+   craft-seq strip (see magic-slots.css.j2), only rendered/usable once
+   unlocked (the toggle to open/close it is invisible otherwise anyway). ---- */
+.sheet-gm-panel {
+  position: absolute;
+  top: 0;
+  left: 1270px;
+  width: 190px;
+  height: 677px;
+  background-image: url('{{ "{{ASSET_BASE}}" }}/ui/mj-inventory.png');
+  background-size: 100% 100%;
+  max-width: 0;
+  overflow: hidden;
+  transition: max-width 0.4s ease-out;
+}
+.sheet-arx:has(input[name="attr_gm_panel_open"][value="1"]) .sheet-gm-panel {
+  max-width: 190px;
+}
+
+/* ---- Grid: shared cell positions (like .sheet-bag-cell-N), a fixed icon
+   per item (unlike the bag, nothing here is attribute-driven — every slot's
+   content is baked in at build time from items.json's own order). ---- */
+{% set gm_ox, gm_oy = 8.0, 2.0 %}
+{% set gm_px, gm_py = 30.0, 8.5 %}
+{% set gm_sw, gm_sh = 26.0, 7.2 %}
+{% for i in range(gm_per_page) %}
+.sheet-gm-panel-cell-{{ i }} {
+  left: {{ "%.2f" | format(gm_ox + (i % gm_cols) * gm_px) }}%;
+  top: {{ "%.2f" | format(gm_oy + (i // gm_cols) * gm_py) }}%;
+}
+{% endfor %}
+
+.sheet-gm-panel-slot {
+  display: none;
+  position: absolute;
+  width: {{ gm_sw }}%;
+  height: {{ gm_sh }}%;
+}
+{% for p in range(1, gm_pages + 1) %}
+input[name="attr_gm_panel_page"][value="{{ p }}"] ~ .sheet-gm-panel .sheet-gm-panel-page--{{ p }} {
+  display: block;
+}
+{% endfor %}
+
+.sheet-gm-panel-slot button {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: url('{{ "{{ASSET_BASE}}" }}/ui/cursor-hover.png') 6 4, pointer;
+}
+.sheet-gm-panel-slot:hover .sheet-gm-panel-icon {
+  filter: brightness(1.4) drop-shadow(0 0 6px rgba(255, 220, 130, 0.9));
+}
+
+.sheet-gm-panel-icon {
+  position: absolute;
+  left: 5%;
+  top: 5%;
+  width: 90%;
+  height: 90%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  pointer-events: none;
+  transition: filter 0.2s ease-out;
+}
+{% for item_id, item in items.items() %}
+.sheet-gm-panel-icon--{{ item_id }} { background-image: url('{{ "{{ASSET_BASE}}" }}/{{ item.icon }}'); }
+{% endfor %}
+
+/* Item name on hover — reuses the same billboard as the bag's own item
+   tooltips (sheet.html.j2 already renders one per item). */
+{% for item_id in items %}
+.sheet-arx:has(.sheet-gm-panel-slot:hover .sheet-gm-panel-icon--{{ item_id }}) .sheet-statbar--item-{{ item_id }} {
+  display: block;
+}
+{% endfor %}
+
+/* ---- Page navigation: same up/down arrow pattern as the bag levels. ---- */
+.sheet-gm-panel-nav {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 12%;
+  height: 4%;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: url('{{ "{{ASSET_BASE}}" }}/ui/cursor-hover.png') 6 4, pointer;
+  transition: filter 0.2s ease-out;
+}
+.sheet-gm-panel-nav:hover { filter: brightness(1.35) drop-shadow(0 0 5px rgba(255, 220, 130, 0.8)); }
+.sheet-gm-panel-nav--up   { top: 1%; background-image: url('{{ "{{ASSET_BASE}}" }}/ui/inventory-up-button.png'); }
+.sheet-gm-panel-nav--down { top: 94.5%; background-image: url('{{ "{{ASSET_BASE}}" }}/ui/inventory-down-button.png'); }
+.sheet-gm-panel-nav--up   { display: none; }
+{% for p in range(2, gm_pages + 1) %}
+input[name="attr_gm_panel_page"][value="{{ p }}"] ~ .sheet-gm-panel .sheet-gm-panel-nav--up { display: block; }
+{% endfor %}
+.sheet-gm-panel-nav--down { display: none; }
+{% for p in range(1, gm_pages) %}
+input[name="attr_gm_panel_page"][value="{{ p }}"] ~ .sheet-gm-panel .sheet-gm-panel-nav--down { display: block; }
+{% endfor %}

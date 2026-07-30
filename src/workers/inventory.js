@@ -344,6 +344,32 @@ on("clicked:bag_down", function () {
   });
 });
 
+/* GM admin panel: same open/close + page-nav pattern as the bag toggle and
+   its level nav above — see gm-panel.css.j2/gm-panel.html.j2. Giving an
+   item is NOT handled here: each slot's own button fires "!arxgive <id>"
+   straight to chat (see gm-panel.html.j2), reusing arx-mod.js's existing
+   command unchanged. */
+const GM_PANEL_COLS = 3, GM_PANEL_ROWS = 11;
+const GM_PANEL_PAGES = Math.ceil(Object.keys(ITEMS).length / (GM_PANEL_COLS * GM_PANEL_ROWS));
+
+on("clicked:gm_panel_toggle", function () {
+  getAttrs(["gm_panel_open"], function (v) {
+    setAttrs({ gm_panel_open: v.gm_panel_open === "1" ? "0" : "1" });
+  });
+});
+on("clicked:gm_panel_page_up", function () {
+  getAttrs(["gm_panel_page"], function (v) {
+    const page = parseInt(v.gm_panel_page, 10) || 1;
+    if (page > 1) { setAttrs({ gm_panel_page: page - 1 }); }
+  });
+});
+on("clicked:gm_panel_page_down", function () {
+  getAttrs(["gm_panel_page"], function (v) {
+    const page = parseInt(v.gm_panel_page, 10) || 1;
+    if (page < GM_PANEL_PAGES) { setAttrs({ gm_panel_page: page + 1 }); }
+  });
+});
+
 /* Page navigation (base <-> magic) and the inventory band toggle: buttons +
    this worker, not a radio/checkbox styled with CSS-only tricks — Roll20
    discourages label[for]/input[id] pairing (multiple sheet copies can be in

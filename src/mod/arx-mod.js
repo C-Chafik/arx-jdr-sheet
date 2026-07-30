@@ -8,6 +8,7 @@
      !arxlockallmaps             re-lock every map level except level 1
      !arxunlockguardian          unlock the Guardian posture
      !arxlockguardian            re-lock the Guardian posture
+     !arxunlockpanel             unlock the GM admin panel on this character
      !arxresetinventory          empty every bag slot + clear the hand (fixes stuck/ghost cells)
      !arxresetall                factory-reset the whole character (stats, inventory, magic, map, postures, gold)
      !arxpreset <1-3> <spell_id> set a memorized-spell slot
@@ -212,6 +213,20 @@ on("chat:message", function (msg) {
   whisper("Posture du Gardien re-verrouillée.");
 });
 
+/* Unlocks the GM admin panel (gear icon + full-catalog "give" grid, see
+   base.css.j2/sheet.html.j2) on the SELECTED character's own sheet — meant
+   for the GM's own utility character, never a player's. Only this command
+   can set the flag; a player has no in-sheet way to trigger it themselves. */
+on("chat:message", function (msg) {
+  if (msg.type !== "api" || msg.content.indexOf("!arxunlockpanel") !== 0) { return; }
+  if (!playerIsGM(msg.playerid)) { return; }
+  const whisper = function (text) { sendChat("ARX", "/w gm " + text); };
+  const charId = arxCharIdFromMsg(msg);
+  if (!charId) { whisper("Sélectionne d'abord un token."); return; }
+  arxSetAttr(charId, "gm_panel_unlocked", "1");
+  whisper("Panel MJ débloqué sur ce personnage.");
+});
+
 /* Nuclear option for a stuck/ghost bag cell (e.g. a leftover "#bag_N" covered-
    cell pointer that never got cleared): empties every bag slot on every
    level and drops whatever's in hand, rather than hunting down one attribute
@@ -339,6 +354,7 @@ on("chat:message", function (msg) {
     "!arxlockallmaps — reverrouille tous les niveaux sauf le 1",
     "!arxunlockguardian — débloque la posture du Gardien",
     "!arxlockguardian — reverrouille la posture du Gardien",
+    "!arxunlockpanel — débloque le panel MJ sur ce personnage",
     "!arxresetinventory — vide toutes les cases de sac + relâche la main",
     "!arxresetall — réinitialise tout le personnage (stats, inventaire, magie, carte, postures, or)",
     "!arxpreset <1-3> <spell_id> — définit un emplacement de sort mémorisé",

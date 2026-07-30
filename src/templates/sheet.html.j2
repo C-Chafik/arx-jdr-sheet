@@ -35,6 +35,21 @@
   <button type="action" class="sheet-purse" name="act_slot_purse"></button>
   {# Live gold count, shown just above the purse on hover only. #}
   <div class="sheet-gold-readout"><input type="number" class="sheet-gold-display" name="attr_gold" value="0" /></div>
+  {# GM admin panel: full catalog, one "give" button per item — gated behind
+     attr_gm_panel_unlocked, settable only via the !arxunlockpanel API
+     command (see arx-mod.js), never by the sheet itself. Meant for the GM's
+     own utility character, not a player's. The gear icon (and everything
+     behind it) stays display:none unless unlocked — see gm-panel.css.j2. #}
+  <input type="hidden" class="sheet-hand-mirror" name="attr_gm_panel_unlocked" value="" />
+  <input type="hidden" class="sheet-hand-mirror" name="attr_gm_panel_open" value="0" />
+  <input type="hidden" class="sheet-hand-mirror" name="attr_gm_panel_page" value="1" />
+  <button type="action" class="sheet-gm-panel-toggle" name="act_gm_panel_toggle"></button>
+  <div class="sheet-statbar sheet-statbar--gm-panel-toggle">Panel MJ</div>
+  <div class="sheet-gm-panel">
+{% include "partials/gm-panel.html.j2" %}
+    <button type="action" class="sheet-gm-panel-nav sheet-gm-panel-nav--up" name="act_gm_panel_page_up"></button>
+    <button type="action" class="sheet-gm-panel-nav sheet-gm-panel-nav--down" name="act_gm_panel_page_down"></button>
+  </div>
   <div class="sheet-book">
 {% include "partials/tabs.html.j2" %}
 {% include "partials/pages/base.html.j2" %}
