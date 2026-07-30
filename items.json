@@ -1046,7 +1046,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Vision nocturne",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-projectile_magique": {
     "label": "Parchemin : Projectile magique",
@@ -1055,7 +1056,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Projectile magique",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-ignit": {
     "label": "Parchemin : Etincelle",
@@ -1064,7 +1066,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Etincelle",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-extinction": {
     "label": "Parchemin : Extinction",
@@ -1073,7 +1076,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Extinction",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-health": {
     "label": "Parchemin : Sphère de soin",
@@ -1082,7 +1086,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Sphère de soin",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-trap-detection": {
     "label": "Parchemin : Détection des pièges",
@@ -1091,7 +1096,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Détection des pièges",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-protection": {
     "label": "Parchemin : Aura de protection",
@@ -1100,7 +1106,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Aura de protection",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-vulnerability": {
     "label": "Parchemin : Vulnérabilité",
@@ -1109,7 +1116,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Vulnérabilité",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-celerity": {
     "label": "Parchemin : Célérité",
@@ -1118,7 +1126,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Célérité",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-revelation": {
     "label": "Parchemin : Révélation",
@@ -1127,7 +1136,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Révélation",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-fireball": {
     "label": "Parchemin : Boule de feu",
@@ -1136,7 +1146,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Boule de feu",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-sustentation": {
     "label": "Parchemin : Sustentation",
@@ -1145,7 +1156,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Sustentation",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-blessing": {
     "label": "Parchemin : Bénédiction",
@@ -1154,7 +1166,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Bénédiction",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-negate_field": {
     "label": "Parchemin : Negation de champ",
@@ -1163,7 +1176,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Negation de champ",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-fire_protection": {
     "label": "Parchemin : Protection contre le feu",
@@ -1172,7 +1186,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Protection contre le feu",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-telekinezie": {
     "label": "Parchemin : Télékinezie",
@@ -1181,7 +1196,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Télékinezie",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-rune_guarding": {
     "label": "Parchemin : Rune explosive",
@@ -1190,7 +1206,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Rune explosive",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-levitation": {
     "label": "Parchemin : Lévitation",
@@ -1199,7 +1216,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Lévitation",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-antidote": {
     "label": "Parchemin : Antidote",
@@ -1208,7 +1226,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Antidote",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-repell_undead": {
     "label": "Parchemin : Repousser les morts",
@@ -1217,7 +1236,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Repousser les morts",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-raise_undead": {
     "label": "Parchemin : Invocation de mort vivant",
@@ -1226,7 +1246,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Invocation de mort vivant",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-paralysis": {
     "label": "Parchemin : Paralysie",
@@ -1235,7 +1256,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Paralysie",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-force_field": {
     "label": "Parchemin : Champ de force",
@@ -1244,7 +1266,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Champ de force",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-disarm_trap": {
     "label": "Parchemin : Désactivation des pièges",
@@ -1253,7 +1276,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Désactivation des pièges",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-third_eye": {
     "label": "Parchemin : Troisième Oeil",
@@ -1262,7 +1286,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Troisième Oeil",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-fire_field": {
     "label": "Parchemin : Champ de flammes",
@@ -1271,7 +1296,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Champ de flammes",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-lighting_strike": {
     "label": "Parchemin : Foudre (Projection)",
@@ -1280,7 +1306,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Foudre (Projection)",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-confusion": {
     "label": "Parchemin : Confusion",
@@ -1289,7 +1316,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Confusion",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-invisibility": {
     "label": "Parchemin : Invisibilité",
@@ -1298,7 +1326,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Invisibilité",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-mana_drain": {
     "label": "Parchemin : Drain de mana",
@@ -1307,7 +1336,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Drain de mana",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-chaos": {
     "label": "Parchemin : Chaos",
@@ -1316,7 +1346,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Chaos",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-enchantement": {
     "label": "Parchemin : Enchantement",
@@ -1325,7 +1356,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Enchantement",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-invocation_demon": {
     "label": "Parchemin : Invocation démoniaque (Non contrôlé)",
@@ -1334,7 +1366,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Invocation démoniaque (Non contrôlé)",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-negate_magic": {
     "label": "Parchemin : Aura d'antimagie",
@@ -1343,7 +1376,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Aura d'antimagie",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-incineration": {
     "label": "Parchemin : Incandescence",
@@ -1352,7 +1386,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Incandescence",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-mass_paralysis": {
     "label": "Parchemin : Paralysie massive",
@@ -1361,7 +1396,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Paralysie massive",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-mass_lightning_strike": {
     "label": "Parchemin : Champ de foudre",
@@ -1370,7 +1406,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Champ de foudre",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-mind_control": {
     "label": "Parchemin : Contrôle mental",
@@ -1379,7 +1416,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Contrôle mental",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-the_world": {
     "label": "Parchemin : Faille temporelle",
@@ -1388,7 +1426,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Faille temporelle",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-mass_incineration": {
     "label": "Parchemin : Fournaise",
@@ -1397,7 +1436,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Fournaise",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-portal_activation": {
     "label": "Parchemin : Activation de portail",
@@ -1406,7 +1446,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Activation de portail",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-ice_field": {
     "label": "Parchemin : Champ de glace",
@@ -1415,7 +1456,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Champ de glace",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-curse": {
     "label": "Parchemin : Malédiction",
@@ -1424,7 +1466,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Malédiction",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-life_drain": {
     "label": "Parchemin : Drain de vie",
@@ -1433,7 +1476,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Drain de vie",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-firewall": {
     "label": "Parchemin : Mur de feu",
@@ -1442,7 +1486,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Mur de feu",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-harm": {
     "label": "Parchemin : Sphère de douleur",
@@ -1451,7 +1496,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Sphère de douleur",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-ice_bolt": {
     "label": "Parchemin : Boule de glace",
@@ -1460,7 +1506,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Boule de glace",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-make_friend": {
     "label": "Parchemin : Devenir amis",
@@ -1469,7 +1516,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Devenir amis",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-poison_projection": {
     "label": "Parchemin : Projection de poison",
@@ -1478,7 +1526,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Projection de poison",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-cold_protection": {
     "label": "Parchemin : Protection contre le froid",
@@ -1487,7 +1536,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Protection contre le froid",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-slow_down": {
     "label": "Parchemin : Ralentissement",
@@ -1496,7 +1546,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Ralentissement",
-    "spell_casting": 50
+    "spell_casting": 50,
+    "caster_level": 50
   },
   "scroll-mind_control-iserbius": {
     "label": "Parchemin : Contrôle mental (Iserbius)",
@@ -1505,7 +1556,8 @@
     "size": "1x1",
     "effect": "scroll",
     "spell_label": "Parchemin : Puissant Contrôle mental d'Iserbius",
-    "spell_casting": 85
+    "spell_casting": 85,
+    "caster_level": 85
   },
   "carte-niveau-1": {
     "label": "Carte du niveau 1",

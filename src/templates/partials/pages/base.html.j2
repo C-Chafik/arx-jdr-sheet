@@ -14,6 +14,13 @@
   "ethereal_link": "mental", "object_knowledge": "mental", "casting": "mental",
   "close_combat": "strength", "projectile": "dexterity", "defense": "constitution",
 } %}
+{# French display labels for skill_primary_attr, used in the Focus roll's
+   "Valeur" line (see below) — same 4 attributes as stats.j2's own labels,
+   duplicated here since stats.j2 keys by stat name, not by this dict's
+   purpose. #}
+{% set attr_labels = {
+  "strength": "Force", "mental": "Mental", "dexterity": "Dextérité", "constitution": "Constitution",
+} %}
 {# Base stats before any modifier — see the user's own numbers, not a design guess. #}
 {% set defaults = {
   "strength": 6, "mental": 6, "dexterity": 6, "constitution": 6,
@@ -137,13 +144,16 @@
 {% elif name == "damages" %}
   <button type="action" class="sheet-hover-zone sheet-hover--{{ name }}" name="act_roll_damages"></button>
 {% elif name in skills %}
-  {# Focus posture bonus (@{focus_active}, worker-maintained 0/1 flag —
-     see recomputeFocusActive in inventory.js) folded straight into the
-     roll target via multiply-by-flag: adds the skill's own governing
-     attribute only while Focus is active, 0 otherwise. No need to convert
-     this button to type="action" just for this. #}
-{% set roll_value = "&{template:default} {{" ~ "name=" ~ label ~ "}} {{" ~ "Valeur=@{" ~ name ~ "}+(@{" ~ skill_primary_attr[name] ~ "}*@{focus_active})}} {{" ~ "Jet=[[1d100]]}}" %}
-  <button type="roll" class="sheet-hover-zone sheet-hover--{{ name }}" name="roll_{{ name }}" value="{{ roll_value }}"></button>
+  {# Two roll buttons, swapped via CSS on attr_posture=focus (see
+     base.css.j2) — same spot, only one ever visible/clickable at a time.
+     Focus's bonus needs to read as "12 + Dextérité (Focus)" in the chat,
+     not a raw "12+(6*1)" formula nor a hidden-behind-hover total, so it
+     can't be a single formula-driven button: the attribute's own French
+     label is static text, only the skill value itself is live. #}
+{% set roll_value = "&{template:default} {{" ~ "name=" ~ label ~ "}} {{" ~ "Valeur=@{" ~ name ~ "}}} {{" ~ "Jet=[[1d100]]}}" %}
+  <button type="roll" class="sheet-hover-zone sheet-hover--{{ name }} sheet-roll--no-focus" name="roll_{{ name }}" value="{{ roll_value }}"></button>
+{% set roll_value_focus = "&{template:default} {{" ~ "name=" ~ label ~ "}} {{" ~ "Valeur=@{" ~ name ~ "} + " ~ attr_labels[skill_primary_attr[name]] ~ " (Focus) = [[@{" ~ name ~ "}+@{" ~ skill_primary_attr[name] ~ "}]]}} {{" ~ "Jet=[[1d100]]}}" %}
+  <button type="roll" class="sheet-hover-zone sheet-hover--{{ name }} sheet-roll--focus" name="roll_{{ name }}_focus" value="{{ roll_value_focus }}"></button>
 {% else %}
   <button type="roll" class="sheet-hover-zone sheet-hover--{{ name }}" name="roll_{{ name }}" value=""></button>
 {% endif %}

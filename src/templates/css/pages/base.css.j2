@@ -71,6 +71,14 @@
 .sheet-arx:has(.sheet-posture-btn--focus:hover) .sheet-statbar--posture-focus { display: block; }
 .sheet-arx:has(.sheet-posture-btn--guardian:hover) .sheet-statbar--posture-guardian { display: block; }
 
+/* Skill rolls: two stacked buttons per skill (base.html.j2), only one ever
+   shown — the Focus one reads "12 + Dextérité (Focus)" in the chat, the
+   other just "12". Swapping which is visible/clickable via attr_posture,
+   same pattern as the posture buttons above. */
+.sheet-roll--focus { display: none; }
+.sheet-arx:has(input[name="attr_posture"][value="focus"]) .sheet-roll--focus { display: block; }
+.sheet-arx:has(input[name="attr_posture"][value="focus"]) .sheet-roll--no-focus { display: none; }
+
 /* Right page — attributes (values under the 4 icons) */
 .sheet-field--strength     { left: 55.4%; top: 23.6%; }
 .sheet-field--mental       { left: 64.3%; top: 23.6%; }

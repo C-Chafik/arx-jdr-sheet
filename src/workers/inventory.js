@@ -291,15 +291,17 @@ on("clicked:slot_grimoire", function () {
 });
 
 /* Reading a scroll (items.json's scroll-* entries, effect "scroll"): 1d100
-   roll-under against the scroll's OWN fixed spell_casting — never the
-   player's live @{casting} — labeled with its spell_label, then the scroll
-   is consumed (it's one-shot, same as a memorized preset). */
+   roll-under against the scroll's OWN fixed spell_casting and caster_level
+   — never the player's live @{casting}/@{caster_level} (wiki.arx-libertatis.
+   org/Caster_level: "Precast spells from reading scrolls always have a
+   fixed caster level") — labeled with its spell_label, then the scroll is
+   consumed (it's one-shot, same as a memorized preset). */
 on("clicked:read_scroll", function () {
   getAttrs(["hand", "hand_from"], function (v) {
     const hand = v.hand || "";
     const item = ITEMS[hand];
     if (!item || item.effect !== "scroll") { return; }
-    startRoll("&{template:default} {{name=" + item.spell_label + "}} {{Valeur=" + item.spell_casting + "}} {{Jet=[[1d100]]}}",
+    startRoll("&{template:default} {{name=" + item.spell_label + "}} {{Valeur=" + item.spell_casting + "}} {{Niveau=" + item.caster_level + "}} {{Jet=[[1d100]]}}",
       function (results) { finishRoll(results.rollId, {}); });
     const update = { hand: "", hand_from: "", hand_cat: "", hand_effect: "", fit: "" };
     ownCells(v.hand_from || "", hand).forEach(function (c) { update[c] = ""; });
@@ -440,7 +442,7 @@ on("clicked:craft_confirm", function () {
     });
     if (matchId) {
       const label = SPELLS[matchId].label;
-      startRoll("&{template:default} {{name=" + label + "}} {{Valeur=@{casting}}} {{Jet=[[1d100]]}}",
+      startRoll("&{template:default} {{name=" + label + "}} {{Valeur=@{casting}}} {{Niveau=@{caster_level}}} {{Jet=[[1d100]]}}",
         function (results) { finishRoll(results.rollId, {}); });
     }
     const update = craftPositions([]);
@@ -483,7 +485,7 @@ on("clicked:craft_reset", function () {
       const presetId = v["preset_slot_" + n];
       if (!presetId || !PRESETS[presetId]) { return; }
       const label = PRESETS[presetId].label;
-      startRoll("&{template:default} {{name=Sort mémorisé : " + label + "}} {{Valeur=@{casting}}} {{Jet=[[1d100]]}}",
+      startRoll("&{template:default} {{name=Sort mémorisé : " + label + "}} {{Valeur=@{casting}}} {{Niveau=@{caster_level}}} {{Jet=[[1d100]]}}",
         function (results) { finishRoll(results.rollId, {}); });
       const update = {};
       update["preset_slot_" + n] = "";
@@ -520,7 +522,7 @@ on("clicked:roll_damages", function () {
        die (1d0 is invalid) and just shows 0. */
     const damages = parseInt(v.damages, 10) || 0;
     const valeur = (offensive || damages < 1) ? "@{damages}" : "[[1d@{damages}]]";
-    if (offensive) { weaponLabel += " (Maximum)"; }
+    if (offensive) { weaponLabel += " (Offensive)"; }
     startRoll("&{template:default} {{name=Dégâts — " + weaponLabel + "}} {{Valeur=" + valeur + "}}",
       function (results) { finishRoll(results.rollId, {}); });
   });

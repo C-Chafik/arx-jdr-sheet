@@ -72,7 +72,9 @@ def test_every_icon_has_hover_zone_statbar_and_css():
     html = build.render_html()
     css = build.build_css("x")
     for name in HOVER_STATS:
-        assert f'class="sheet-hover-zone sheet-hover--{name}"' in html, name
+        # Substring, not an exact class= match: skills carry an extra
+        # sheet-roll--no-focus/sheet-roll--focus class (see below).
+        assert f'sheet-hover-zone sheet-hover--{name}' in html, name
         if name in NO_ROLL:
             assert f'name="roll_{name}"' not in html, name
         elif name == "damages":
@@ -81,7 +83,11 @@ def test_every_icon_has_hover_zone_statbar_and_css():
             # clicked:roll_damages in inventory.js.
             assert 'name="act_roll_damages"' in html, name
         else:
+            # Skills: two roll buttons (plain + Focus variant), swapped via
+            # CSS on attr_posture=focus — see base.css.j2's sheet-roll--focus
+            # rules and base.html.j2's roll_value_focus.
             assert f'name="roll_{name}"' in html, name
+            assert f'name="roll_{name}_focus"' in html, name
         assert f'class="sheet-statbar sheet-statbar--{name}"' in html, name
         assert f".sheet-hover--{name} " in css or f".sheet-hover--{name}," in css, name
         assert f".sheet-hover--{name}:hover" in css, name
