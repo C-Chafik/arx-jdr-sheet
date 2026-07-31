@@ -9,12 +9,17 @@ const PER_LEVEL = COLS * ROWS;
 const BAG_SLOTS = [];
 for (let i = 1; i <= PER_LEVEL * BAGS; i++) { BAG_SLOTS.push("bag_" + i); }
 
+/* main_principale: main hand only (heavy/dominant-hand weapons).
+   main_secondaire: off hand only (shields). ambidextrie: either hand —
+   daggers, torches, grimoires, or anything else not tied to a specific
+   hand (was called "arme_secondaire" before, a name that lied about it
+   already working in both hands). */
 const EQUIP_ACCEPTS = {
   equip_head: ["casque"],
   equip_torso: ["armure_haute"],
   equip_belt: ["armure_basse"],
-  equip_main_hand: ["arme_principale", "arme_secondaire"],
-  equip_off_hand: ["arme_secondaire", "bouclier"],
+  equip_main_hand: ["main_principale", "ambidextrie"],
+  equip_off_hand: ["ambidextrie", "main_secondaire"],
   equip_jewel_1: ["bijoux"],
   equip_jewel_2: ["bijoux"]
 };
@@ -370,6 +375,35 @@ on("clicked:gm_panel_page_down", function () {
   });
 });
 
+/* Accent-insensitive match: French labels are full of accents (Épée,
+   Résistance...), a GM searching "epee" should still find "Épée" — strips
+   combining diacritics after NFD-normalizing, so é/è/ê/ë all fold to e. */
+function gmPanelFold(s) { return s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase(); }
+
+/* Search: glows EVERY item whose id or label contains the typed text
+   (accent- and case-insensitive), dims every other item, and jumps to the
+   first match's page so at least one result is immediately visible — a
+   sheet worker can't physically regroup/hide grid cells (no DOM access
+   outside CSS :has() rules), so this is the closest thing to a live filter:
+   every match stays lit across every page, not just the first one. Fires
+   on both a click AND a plain change (Enter or blur commits the text field
+   the same way). Item order = items.json's own order, same as everywhere
+   else it's relied on this session. */
+const GM_PANEL_ITEM_IDS = Object.keys(ITEMS);
+on("clicked:gm_panel_search change:gm_panel_search", function () {
+  getAttrs(["gm_panel_search"], function (v) {
+    const term = gmPanelFold((v.gm_panel_search || "").trim());
+    if (!term) { setAttrs({ gm_panel_filter: "" }); return; }
+    const matches = GM_PANEL_ITEM_IDS.filter(function (id) {
+      return gmPanelFold(id).indexOf(term) !== -1 || gmPanelFold(ITEMS[id].label).indexOf(term) !== -1;
+    });
+    if (!matches.length) { setAttrs({ gm_panel_filter: "" }); return; }
+    const idx = GM_PANEL_ITEM_IDS.indexOf(matches[0]);
+    const page = Math.floor(idx / (GM_PANEL_COLS * GM_PANEL_ROWS)) + 1;
+    setAttrs({ gm_panel_page: page, gm_panel_filter: "|" + matches.join("|") + "|" });
+  });
+});
+
 /* Page navigation (base <-> magic) and the inventory band toggle: buttons +
    this worker, not a radio/checkbox styled with CSS-only tricks — Roll20
    discourages label[for]/input[id] pairing (multiple sheet copies can be in
@@ -533,14 +567,17 @@ Object.keys(SPELLS).forEach(function (spellId) {
 });
 
 /* Damages: needs the equipped weapon's own label (an item lookup, which a
-   static roll button's value="" can't do) — main hand, plus " + <secondary>"
-   if the off hand holds an actual secondary weapon (not a shield/other). */
+   static roll button's value="" can't do) — main hand, plus " + <off-hand>"
+   if the off hand holds an "ambidextrie" item (dagger, etc — not a shield).
+   NOTE: "ambidextrie" also covers non-weapon utility items (torch, grimoire)
+   by design — none exist in items.json yet, but once one does, this will
+   need a real "is this actually a weapon" check instead of just the cat. */
 on("clicked:roll_damages", function () {
   getAttrs(["equip_main_hand", "equip_off_hand", "posture", "damages"], function (v) {
     const mainItem = ITEMS[v.equip_main_hand];
     const offItem = ITEMS[v.equip_off_hand];
     let weaponLabel = mainItem ? mainItem.label : "Mains nues";
-    if (offItem && offItem.cat === "arme_secondaire") { weaponLabel += " + " + offItem.label; }
+    if (offItem && offItem.cat === "ambidextrie") { weaponLabel += " + " + offItem.label; }
     const offensive = v.posture === "offensive";
     /* Normally 1d<damages> (e.g. 15 damages -> 1d15); Offensive skips the
        die and just deals the flat value — its actual "always max damage"

@@ -9,6 +9,7 @@
      !arxunlockguardian          unlock the Guardian posture
      !arxlockguardian            re-lock the Guardian posture
      !arxunlockpanel             unlock the GM admin panel on this character
+     !arxlockpanel               re-lock the GM admin panel on this character
      !arxresetinventory          empty every bag slot + clear the hand (fixes stuck/ghost cells)
      !arxresetall                factory-reset the whole character (stats, inventory, magic, map, postures, gold)
      !arxpreset <1-3> <spell_id> set a memorized-spell slot
@@ -227,6 +228,16 @@ on("chat:message", function (msg) {
   whisper("Panel MJ débloqué sur ce personnage.");
 });
 
+on("chat:message", function (msg) {
+  if (msg.type !== "api" || msg.content.indexOf("!arxlockpanel") !== 0) { return; }
+  if (!playerIsGM(msg.playerid)) { return; }
+  const whisper = function (text) { sendChat("ARX", "/w gm " + text); };
+  const charId = arxCharIdFromMsg(msg);
+  if (!charId) { whisper("Sélectionne d'abord un token."); return; }
+  arxSetAttr(charId, "gm_panel_unlocked", "");
+  whisper("Panel MJ re-verrouillé sur ce personnage.");
+});
+
 /* Nuclear option for a stuck/ghost bag cell (e.g. a leftover "#bag_N" covered-
    cell pointer that never got cleared): empties every bag slot on every
    level and drops whatever's in hand, rather than hunting down one attribute
@@ -355,6 +366,7 @@ on("chat:message", function (msg) {
     "!arxunlockguardian — débloque la posture du Gardien",
     "!arxlockguardian — reverrouille la posture du Gardien",
     "!arxunlockpanel — débloque le panel MJ sur ce personnage",
+    "!arxlockpanel — reverrouille le panel MJ sur ce personnage",
     "!arxresetinventory — vide toutes les cases de sac + relâche la main",
     "!arxresetall — réinitialise tout le personnage (stats, inventaire, magie, carte, postures, or)",
     "!arxpreset <1-3> <spell_id> — définit un emplacement de sort mémorisé",

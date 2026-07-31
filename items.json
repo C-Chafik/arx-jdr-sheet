@@ -54,7 +54,7 @@
   "one-handed-sword": {
     "label": "Épée à une main en acier",
     "icon": "items/one-handed-sword.png",
-    "cat": "arme_secondaire",
+    "cat": "ambidextrie",
     "size": "1x3",
     "strength": 2,
     "mental": 2,
@@ -79,19 +79,19 @@
   "one-handed-sword-light": {
     "label": "Dague légère en bronze",
     "icon": "items/one-handed-sword-light.png",
-    "cat": "arme_secondaire",
+    "cat": "ambidextrie",
     "size": "1x2"
   },
   "wooden-club": {
     "label": "Gourdin en bois",
     "icon": "items/wooden-club.png",
-    "cat": "arme_principale",
+    "cat": "main_principale",
     "size": "1x2"
   },
   "wooden-shield": {
     "label": "Bouclier en bois",
     "icon": "items/wooden-shield.png",
-    "cat": "bouclier",
+    "cat": "main_secondaire",
     "size": "2x2"
   },
   "ylside-chest": {
@@ -265,19 +265,19 @@
   "metal-shield": {
     "label": "Bouclier en acier",
     "icon": "items/metal-shield.png",
-    "cat": "bouclier",
+    "cat": "main_secondaire",
     "size": "2x2"
   },
   "tower-shield-metal": {
     "label": "Pavois en acier",
     "icon": "items/tower-shield-metal.png",
-    "cat": "bouclier",
+    "cat": "main_secondaire",
     "size": "2x3"
   },
   "shield-of-elders": {
     "label": "Bouclier des Anciens",
     "icon": "items/shield-of-elders.png",
-    "cat": "bouclier",
+    "cat": "main_secondaire",
     "size": "2x3",
     "legendary": true
   },
@@ -1626,13 +1626,13 @@
   "bow": {
     "label": "Arc",
     "icon": "items/bow.png",
-    "cat": "arme_principale",
+    "cat": "main_principale",
     "size": "3x2"
   },
   "sam-sword": {
     "label": "L'épée de Samuel",
     "icon": "items/sam-sword.png",
-    "cat": "arme_principale",
+    "cat": "main_principale",
     "size": "3x3",
     "legendary": true
   },

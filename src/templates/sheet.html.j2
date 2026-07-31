@@ -43,13 +43,29 @@
   <input type="hidden" class="sheet-hand-mirror" name="attr_gm_panel_unlocked" value="" />
   <input type="hidden" class="sheet-hand-mirror" name="attr_gm_panel_open" value="0" />
   <input type="hidden" class="sheet-hand-mirror" name="attr_gm_panel_page" value="1" />
+  {# Set by the worker on search (see clicked:/change:gm_panel_search in
+     inventory.js): every matching item id, delimited "|id|id|" like
+     fitMask/craft_runes — glows each match, dims everything else (see
+     gm-panel.css.j2). Empty means no active search, nothing dimmed. #}
+  <input type="hidden" class="sheet-hand-mirror" name="attr_gm_panel_filter" value="" />
   <button type="action" class="sheet-gm-panel-toggle" name="act_gm_panel_toggle"></button>
-  <div class="sheet-statbar sheet-statbar--gm-panel-toggle">Panel MJ</div>
+  {# "Panel MJ" in the same per-character rainbow treatment as secret spells —
+     purely decorative, no mechanical meaning here. #}
+  <div class="sheet-statbar sheet-statbar--gm-panel-toggle">{% for char in "Panel MJ" %}<span class="sheet-rainbow-{{ loop.index0 % 6 }}">{{ char }}</span>{% endfor %}</div>
   <div class="sheet-gm-panel">
 {% include "partials/gm-panel.html.j2" %}
     <button type="action" class="sheet-gm-panel-nav sheet-gm-panel-nav--up" name="act_gm_panel_page_up"></button>
     <button type="action" class="sheet-gm-panel-nav sheet-gm-panel-nav--down" name="act_gm_panel_page_down"></button>
   </div>
+  {# Search: outside/below the panel (not nested in it — that box clips
+     anything past its own edges for the slide animation), so it never
+     overlaps the nav arrows. Jumps to the page of (and highlights) the
+     first item whose id/label contains this text — see
+     clicked:gm_panel_search in inventory.js. Not a live filter (sheet
+     workers can't toggle arbitrary element display outside CSS :has()
+     rules), a "find it" jump instead. #}
+  <input type="text" class="sheet-gm-panel-search" name="attr_gm_panel_search" placeholder="Rechercher..." />
+  <button type="action" class="sheet-gm-panel-search-btn" name="act_gm_panel_search"></button>
   <div class="sheet-book">
 {% include "partials/tabs.html.j2" %}
 {% include "partials/pages/base.html.j2" %}

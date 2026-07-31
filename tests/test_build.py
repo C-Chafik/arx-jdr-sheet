@@ -97,8 +97,8 @@ def test_items_catalog_loads():
     items = build.load_items()
     assert "krahoz" in items
     for item in items.values():
-        assert item["cat"] in {"casque", "arme_principale", "arme_secondaire",
-                               "bouclier", "armure_haute", "armure_basse",
+        assert item["cat"] in {"casque", "main_principale", "ambidextrie",
+                               "main_secondaire", "armure_haute", "armure_basse",
                                "bijoux", "objet"}, item
 
 
@@ -220,7 +220,7 @@ def test_legendary_items_get_permanent_glow_and_red_hover_text():
     # rather than depending on production data.
     fake_items = {
         "legendary-sword": {"label": "Épée légendaire", "icon": "item-fake.png",
-                             "cat": "arme_principale", "size": "1x2", "legendary": True},
+                             "cat": "main_principale", "size": "1x2", "legendary": True},
         "plain-apple": {"label": "Pomme", "icon": "item-apple.png",
                         "cat": "objet", "size": "1x1"},
     }

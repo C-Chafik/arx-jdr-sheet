@@ -11,22 +11,26 @@
 {% set gm_per_page = gm_cols * gm_rows %}
 {% set gm_pages = ((items | length - 1) // gm_per_page) + 1 %}
 
-/* ---- Gear icon: sits just above the craft-seq strip, in the same reserved
-   right-hand column of .sheet-arx (see base.css). Invisible unless unlocked. ---- */
+/* ---- Gear icon: same left column as the purse/inventory toggle (see
+   inventory.css) — NOT inside the panel's own 1260-1450px footprint, or the
+   panel (rendered after it in the DOM) draws over it once open, blocking
+   every further click including the one meant to close it. Invisible
+   unless unlocked. z-index matches the purse/toggle it stacks above. */
 .sheet-gm-panel-toggle {
   display: none;
   position: absolute;
-  top: 40px;
+  top: 80px;
   left: 1216px;
   width: 34px;
   height: 34px;
   padding: 0;
   border: none;
   background-color: transparent;
+  z-index: 10;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  background-image: url('{{ "{{ASSET_BASE}}" }}/ui/gear.png');
+  background-image: url('{{ "{{ASSET_BASE}}" }}/ui/mj-menu-button.png');
   cursor: url('{{ "{{ASSET_BASE}}" }}/ui/cursor-hover.png') 6 4, pointer;
   transition: filter 0.2s ease-out;
 }
@@ -36,13 +40,15 @@
 }
 .sheet-arx:has(.sheet-gm-panel-toggle:hover) .sheet-statbar--gm-panel-toggle { display: block; }
 
-/* ---- The panel itself: a tall band sliding out to the right, clear of the
-   craft-seq strip (see magic-slots.css.j2), only rendered/usable once
-   unlocked (the toggle to open/close it is invisible otherwise anyway). ---- */
+/* ---- The panel itself: a tall band sliding out to the RIGHT of the book,
+   clear of the craft-seq strip (see magic-slots.css.j2), only rendered/
+   usable once unlocked (the toggle to open/close it is invisible otherwise
+   anyway). Fixed left, growing width — .sheet-arx is sized to include this
+   space (see base.css), so it stays inside the visible sheet. ---- */
 .sheet-gm-panel {
   position: absolute;
   top: 0;
-  left: 1270px;
+  left: 1260px;
   width: 190px;
   height: 677px;
   background-image: url('{{ "{{ASSET_BASE}}" }}/ui/mj-inventory.png');
@@ -55,12 +61,78 @@
   max-width: 190px;
 }
 
+/* ---- Search: jumps to (and glows) the first matching item — see
+   clicked:gm_panel_search in inventory.js. Not a live filter, a "find it"
+   button, so it needs an explicit trigger rather than firing on every
+   keystroke. Sits BELOW the panel (a sibling, not nested in it — that box
+   clips anything past its own edges for the slide animation), so it never
+   overlaps the nav arrows. Only shown while the panel is open. */
+.sheet-gm-panel-search {
+  display: none;
+  position: absolute !important;
+  left: 1260px !important;
+  top: 685px !important;
+  width: 145px !important;
+  height: 28px !important;
+  padding: 0 4px !important;
+  border: none !important;
+  border-bottom: 1px solid rgba(43, 29, 14, 0.5) !important;
+  background: transparent !important;
+  color: #2b1d0e !important;
+  font-family: inherit;
+  font-size: 12px;
+}
+.sheet-gm-panel-search-btn {
+  display: none;
+  position: absolute;
+  left: 1410px;
+  top: 685px;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #2b1d0e;
+  font-size: 16px;
+  line-height: 28px;
+  text-align: center;
+  cursor: url('{{ "{{ASSET_BASE}}" }}/ui/cursor-hover.png') 6 4, pointer;
+  transition: filter 0.2s ease-out;
+}
+.sheet-gm-panel-search-btn::before { content: "🔍"; }
+.sheet-gm-panel-search-btn:hover { filter: brightness(1.3); }
+.sheet-arx:has(input[name="attr_gm_panel_open"][value="1"]) .sheet-gm-panel-search,
+.sheet-arx:has(input[name="attr_gm_panel_open"][value="1"]) .sheet-gm-panel-search-btn {
+  display: block;
+}
+
+{# Search filter: same substring-list trick as fitMask/craft_runes. While a
+   search is active (attr_gm_panel_filter non-empty), every item dims by
+   default — the second loop below then re-lights the ones that actually
+   match, which must come AFTER the dim rule in the stylesheet for its
+   !important-free override to win (same specificity, source order breaks
+   the tie). This is the closest a sheet-worker can get to a live filter
+   without DOM access: nothing is hidden, but only matches stay lit,
+   across every page, not just the first. #}
+{% for item_id in items %}
+.sheet-arx:has(input[name="attr_gm_panel_filter"]:not([value=""])) .sheet-gm-panel-icon--{{ item_id }} {
+  opacity: 0.2;
+  filter: grayscale(1) brightness(0.6);
+}
+{% endfor %}
+{% for item_id in items %}
+.sheet-arx:has(input[name="attr_gm_panel_filter"][value*="|{{ item_id }}|"]) .sheet-gm-panel-icon--{{ item_id }} {
+  opacity: 1;
+  filter: brightness(1.8) drop-shadow(0 0 10px rgba(255, 220, 130, 1));
+}
+{% endfor %}
+
 /* ---- Grid: shared cell positions (like .sheet-bag-cell-N), a fixed icon
    per item (unlike the bag, nothing here is attribute-driven — every slot's
    content is baked in at build time from items.json's own order). ---- */
-{% set gm_ox, gm_oy = 8.0, 2.0 %}
-{% set gm_px, gm_py = 30.0, 8.5 %}
-{% set gm_sw, gm_sh = 26.0, 7.2 %}
+{% set gm_ox, gm_oy = 8.0, 8.0 %}
+{% set gm_px, gm_py = 30.0, 8.0 %}
+{% set gm_sw, gm_sh = 26.0, 6.8 %}
 {% for i in range(gm_per_page) %}
 .sheet-gm-panel-cell-{{ i }} {
   left: {{ "%.2f" | format(gm_ox + (i % gm_cols) * gm_px) }}%;
@@ -136,8 +208,15 @@ input[name="attr_gm_panel_page"][value="{{ p }}"] ~ .sheet-gm-panel .sheet-gm-pa
   transition: filter 0.2s ease-out;
 }
 .sheet-gm-panel-nav:hover { filter: brightness(1.35) drop-shadow(0 0 5px rgba(255, 220, 130, 0.8)); }
-.sheet-gm-panel-nav--up   { top: 1%; background-image: url('{{ "{{ASSET_BASE}}" }}/ui/inventory-up-button.png'); }
-.sheet-gm-panel-nav--down { top: 94.5%; background-image: url('{{ "{{ASSET_BASE}}" }}/ui/inventory-down-button.png'); }
+{# Same image for both directions — the down arrow is just the up one
+   rotated 180°, no second asset needed. Combined with the base rule's own
+   translateX(-50%) centering, since `transform` isn't additive across rules. #}
+.sheet-gm-panel-nav--up   { top: 1%; background-image: url('{{ "{{ASSET_BASE}}" }}/ui/mj-inventory-navigation.png'); }
+.sheet-gm-panel-nav--down {
+  top: 94.5%;
+  background-image: url('{{ "{{ASSET_BASE}}" }}/ui/mj-inventory-navigation.png');
+  transform: translateX(-50%) rotate(180deg);
+}
 .sheet-gm-panel-nav--up   { display: none; }
 {% for p in range(2, gm_pages + 1) %}
 input[name="attr_gm_panel_page"][value="{{ p }}"] ~ .sheet-gm-panel .sheet-gm-panel-nav--up { display: block; }
