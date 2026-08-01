@@ -780,10 +780,11 @@ on("change:strength change:mental change:dexterity change:constitution",
 on("sheet:opened", function () { getAttrs(STAT_MOD_GETATTRS, recomputeStatMods); });
 
 /* ============================================================================
-   Hard caps: attributes 24, level 10. A dedicated change: listener per
-   field, same pattern as the health/mana "clamp current to max" rule
-   above — it runs AFTER whatever just wrote the value (manual edit or
-   equipment mod), so it always sees the latest total. */
+   Hard caps: attributes 24, level 10, skills 125. A dedicated change:
+   listener per field, same pattern as the health/mana "clamp current to
+   max" rule above — it runs AFTER whatever just wrote the value (manual
+   edit, equipment mod, or attribute-derived skill bonus), so it always
+   sees the latest total. */
 ATTR_NAMES.forEach(function (attr) {
   on("change:" + attr, function () {
     getAttrs([attr], function (v) {
@@ -799,6 +800,18 @@ ATTR_NAMES.forEach(function (attr) {
 on("change:level", function () {
   getAttrs(["level"], function (v) {
     if ((parseInt(v.level, 10) || 0) > 10) { setAttrs({ level: 10 }); }
+  });
+});
+
+SKILL_NAMES.forEach(function (skill) {
+  on("change:" + skill, function () {
+    getAttrs([skill], function (v) {
+      if ((parseInt(v[skill], 10) || 0) > 125) {
+        const update = {};
+        update[skill] = 125;
+        setAttrs(update);
+      }
+    });
   });
 });
 
