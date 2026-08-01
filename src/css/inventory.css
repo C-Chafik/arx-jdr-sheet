@@ -2,13 +2,15 @@
    from under the book when the always-visible button is checked.
    Both visuals are separate assets — nothing is baked into ARX-BASE-2. */
 
-/* The button (50 × 50 source → 34 px on sheet). Pushed out to the right edge
-   of the widened .sheet-arx (see base.css) — same top/height as before, only
-   the horizontal position moved to use the extra room. */
+/* The button (50 × 50 source → 34 px on sheet). Sits below the book
+   (top:685 > the book's own 677px height, see base.css), toward its right
+   edge (book right edge is at x:1100, band's own footprint only reaches
+   x:1000 — left:1060 clears both), rather than in the reserved strip to
+   the book's right. */
 .sheet-inventory-toggle {
   position: absolute;
-  left: 1216px;
-  top: 670px;
+  left: 1000px;
+  top: 660px;
   width: 34px;
   height: 34px;
   margin: 0;
@@ -33,13 +35,18 @@
   filter: brightness(1.35) drop-shadow(0 0 6px rgba(255, 220, 130, 0.8));
 }
 
-/* The money purse: same size as the inventory toggle, sitting directly
-   above it — both now top-level controls positioned against .sheet-arx
-   rather than living inside the (percentage-based) inventory band. */
+/* The money purse: a top-level control positioned against .sheet-arx
+   (not the percentage-based inventory band), but placed to visually sit
+   in the band's own gap between the bag-level nav arrows (see
+   .sheet-bag-nav in inventory-slots.css.j2 — arrows at left:90%, top:24%/
+   72% of the 900×172 band whose own box starts at ~100,629 — this is the
+   px equivalent of the vertical/horizontal midpoint between them). Staying
+   a sibling (not nested in .sheet-inventory) keeps it always clickable even
+   while the band is collapsed. */
 .sheet-purse {
   position: absolute;
-  left: 1216px;
-  top: 628px;
+  left: 940px;
+  top: 712px;
   width: 34px;
   height: 34px;
   padding: 0;
@@ -63,13 +70,19 @@ input[name="attr_hand_effect"][value="currency"] ~ .sheet-purse {
 }
 
 /* Gold readout: the live attr_gold input, shown only while hovering the purse,
-   positioned just above it (plain sibling selector — no :has() needed since
-   the purse button precedes this div in the DOM). */
+   positioned to its right (plain sibling selector — no :has() needed since
+   the purse button precedes this div in the DOM). z-index is required here:
+   the purse sits inside .sheet-book's own 1100×677 footprint, and .sheet-book
+   has an explicit z-index:1 (base.css) — without a z-index of our own the
+   book paints over this readout even while display:block (this is what
+   silently broke the hover once the purse moved inside that footprint; the
+   purse itself is fine since it already carries z-index:10). */
 .sheet-gold-readout {
   display: none;
   position: absolute;
-  left: 1198px; /* centered on the purse (1216 + 34/2 − 70/2) */
-  top: 606px;
+  left: 963px; /* right of the purse (925 + 34 + 4px gap) */
+  top: 719px; /* vertically centered on the purse (712 + (34 − ~20) / 2) */
+  z-index: 10;
   width: 70px;
   text-align: center;
   pointer-events: none;

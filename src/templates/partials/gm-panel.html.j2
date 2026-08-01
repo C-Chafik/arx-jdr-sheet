@@ -2,11 +2,16 @@
    paginated (3 cols × 11 rows per page — see gm-panel.css.j2 for the
    matching grid math). Purely a static catalog display (unlike the bag,
    nothing here is attribute-driven): each slot's icon and page are fixed at
-   build time by the item's own position in items.json. Clicking a slot
-   fires "!arxgive <item_id>" as a literal type="roll" value — Roll20 sends
-   that straight to chat exactly as if typed, so arx-mod.js's existing
-   !arxgive command (msg.selected = the currently selected token) handles
-   it unchanged, no new API logic needed for the actual giving. #}
+   build time by the item's own position in items.json.
+   Two stacked buttons per slot, swapped via CSS on attr_gm_panel_loot_open
+   (mirrored onto this admin character by arx-mod.js whenever a loot pool
+   opens/closes — see !arxlootopen/!arxlootclose): with no loot pool open,
+   clicking gives the item straight to the selected token ("!arxgive
+   <item_id>", the sheet's original default); with one open, clicking adds
+   it to the shared pool instead ("!arxlootadd <item_id>"). Both are literal
+   type="roll" values — Roll20 sends them straight to chat exactly as if
+   typed, so arx-mod.js's existing commands handle them unchanged, no new
+   API logic needed for the actual giving/adding. #}
 {% set gm_cols, gm_rows = 3, 11 %}
 {% set gm_per_page = gm_cols * gm_rows %}
 {% set gm_items = items.items() | list %}
@@ -16,6 +21,7 @@
 {% set gm_cell = idx % gm_per_page %}
   <div class="sheet-gm-panel-slot sheet-gm-panel-cell-{{ gm_cell }} sheet-gm-panel-page--{{ gm_page }}">
     <span class="sheet-gm-panel-icon sheet-gm-panel-icon--{{ item_id }}"></span>
-    <button type="roll" name="act_gm_give_{{ item_id }}" value="!arxgive {{ item_id }}"></button>
+    <button type="roll" class="sheet-gm-panel-btn--give" name="act_gm_give_{{ item_id }}" value="!arxgive {{ item_id }}"></button>
+    <button type="roll" class="sheet-gm-panel-btn--loot-add" name="act_gm_loot_add_{{ item_id }}" value="!arxlootadd {{ item_id }}"></button>
   </div>
 {% endfor %}

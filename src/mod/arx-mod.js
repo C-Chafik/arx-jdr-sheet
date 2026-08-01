@@ -10,6 +10,11 @@
      !arxlockguardian            re-lock the Guardian posture
      !arxunlockpanel             unlock the GM admin panel on this character
      !arxlockpanel               re-lock the GM admin panel on this character
+     !arxlootopen bag|body|chest|place|secured-chest
+                                  open a shared loot pool for the currently selected tokens
+     !arxlootadd <item_id>       add an item to the open loot pool
+     !arxlootclose               close the loot pool (hides it for everyone who had it)
+     !arxloottake <cell>         (not for GM use — fired by a player's own "take" button)
      !arxresetinventory          empty every bag slot + clear the hand (fixes stuck/ghost cells)
      !arxresetall                factory-reset the whole character (stats, inventory, magic, map, postures, gold)
      !arxpreset <1-3> <spell_id> set a memorized-spell slot
@@ -90,17 +95,11 @@ function arxCellsFor(anchorIndex, w, h) {
   return cells;
 }
 
-on("chat:message", function (msg) {
-  if (msg.type !== "api" || msg.content.indexOf("!arxgive") !== 0) { return; }
-  if (!playerIsGM(msg.playerid)) { return; }
-  const whisper = function (text) { sendChat("ARX", "/w gm " + text); };
-  const itemId = msg.content.trim().split(/\s+/)[1];
-  if (!itemId || !ARX_ITEMS[itemId]) { whisper("Item inconnu : " + (itemId || "(vide)")); return; }
-  if (!msg.selected || !msg.selected.length) { whisper("Sélectionne d'abord un token."); return; }
-  const token = getObj("graphic", msg.selected[0]._id);
-  const charId = token && token.get("represents");
-  if (!charId) { whisper("Ce token ne représente aucun personnage."); return; }
-
+/* Places an item in the first free bag slot (respecting its real
+   items.json footprint) on the given character — shared by !arxgive and
+   !arxloottake so both hand out items exactly the same way. Returns true
+   on success, false if there's no room (caller decides how to report that). */
+function arxGiveToCharacter(charId, itemId) {
   const countAttr = findObjs({ type: "attribute", characterid: charId, name: "bag_count" })[0];
   let count = countAttr ? parseInt(countAttr.get("current"), 10) : 1;
   if (!(count >= 1 && count <= ARX_BAGS)) { count = 1; }
@@ -122,10 +121,27 @@ on("chat:message", function (msg) {
     if (!free) { continue; }
     const anchor = "bag_" + a;
     cells.forEach(function (c) { attrs[c].set("current", c === anchor ? itemId : "#" + anchor); });
-    sendChat("ARX", "Obtenu : " + ARX_ITEMS[itemId].label);
-    return;
+    return true;
   }
-  whisper("Sac plein (pas de place " + size.w + "x" + size.h + ") !");
+  return false;
+}
+
+on("chat:message", function (msg) {
+  if (msg.type !== "api" || msg.content.indexOf("!arxgive") !== 0) { return; }
+  if (!playerIsGM(msg.playerid)) { return; }
+  const whisper = function (text) { sendChat("ARX", "/w gm " + text); };
+  const itemId = msg.content.trim().split(/\s+/)[1];
+  if (!itemId || !ARX_ITEMS[itemId]) { whisper("Item inconnu : " + (itemId || "(vide)")); return; }
+  if (!msg.selected || !msg.selected.length) { whisper("Sélectionne d'abord un token."); return; }
+  const token = getObj("graphic", msg.selected[0]._id);
+  const charId = token && token.get("represents");
+  if (!charId) { whisper("Ce token ne représente aucun personnage."); return; }
+  if (arxGiveToCharacter(charId, itemId)) {
+    sendChat("ARX", "Obtenu : " + ARX_ITEMS[itemId].label);
+  } else {
+    const size = arxSizeOf(itemId);
+    whisper("Sac plein (pas de place " + size.w + "x" + size.h + ") !");
+  }
 });
 
 on("chat:message", function (msg) {
@@ -236,6 +252,171 @@ on("chat:message", function (msg) {
   if (!charId) { whisper("Sélectionne d'abord un token."); return; }
   arxSetAttr(charId, "gm_panel_unlocked", "");
   whisper("Panel MJ re-verrouillé sur ce personnage.");
+});
+
+/* ============================================================================
+   Shared loot panel: one pool at a time, visible only to whichever
+   characters the GM opened it for (see loot-panel.html.j2/loot-panel.css.j2
+   — this sheet never writes attr_loot_*, only this script does, except the
+   take buttons, which are static per-cell "!arxloottake N" roll buttons —
+   this script resolves cell N's CURRENT contents itself from state.ARX_LOOT
+   rather than trusting a possibly-stale mirrored attribute).
+   state.ARX_LOOT persists across API sandbox restarts (Roll20's own state
+   mechanism), so a loot drop survives a script reload mid-session.
+   cells: { <cellNumber>: itemId, or "#<anchorNumber>" for a covered cell of
+   a multi-cell item } — same anchor+covered-cell idea as the bag, just on
+   its own 3x11 grid with no levels. ============================================ */
+const ARX_LOOT_COLS = 3, ARX_LOOT_ROWS = 11;
+const ARX_LOOT_TOTAL = ARX_LOOT_COLS * ARX_LOOT_ROWS;
+const ARX_LOOT_SKINS = ["bag", "body", "chest", "place", "secured-chest"];
+state.ARX_LOOT = state.ARX_LOOT || { skin: "chest", cells: {}, subscribers: [] };
+
+function arxWhisperTo(msg, text) {
+  const player = getObj("player", msg.playerid);
+  const name = player ? player.get("_displayname") : "gm";
+  sendChat("ARX", "/w \"" + name + "\" " + text);
+}
+
+/* Resolves which character a player-triggered command (like !arxloottake)
+   applies to: a selected token still wins if there is one (lets the GM
+   override by selecting a specific token), but with nothing selected —
+   e.g. a player clicking "Take" straight from their own open sheet,
+   without ever having clicked their token on the map — falls back to
+   whichever character lists this player in its "controlled by" list. */
+function arxResolveCharacterForPlayer(msg) {
+  if (msg.selected && msg.selected.length) {
+    const token = getObj("graphic", msg.selected[0]._id);
+    const charId = token && token.get("represents");
+    if (charId) { return charId; }
+  }
+  const owned = findObjs({ type: "character" }).find(function (c) {
+    const controllers = (c.get("controlledby") || "").split(",").map(function (s) { return s.trim(); });
+    return controllers.indexOf(msg.playerid) !== -1;
+  });
+  return owned ? owned.id : null;
+}
+
+function arxLootCellsFor(anchor, w, h) {
+  const idx = anchor - 1;
+  const col = idx % ARX_LOOT_COLS;
+  const row = Math.floor(idx / ARX_LOOT_COLS);
+  if (col + w > ARX_LOOT_COLS || row + h > ARX_LOOT_ROWS) { return null; }
+  const cells = [];
+  for (let r = 0; r < h; r++) {
+    for (let c = 0; c < w; c++) { cells.push(1 + (row + r) * ARX_LOOT_COLS + col + c); }
+  }
+  return cells;
+}
+
+/* Pushes the current shared pool onto every subscribed character's own
+   mirrored attributes, so each of their sheets shows the same thing. */
+function arxLootRefresh() {
+  const loot = state.ARX_LOOT;
+  loot.subscribers.forEach(function (charId) {
+    for (let i = 1; i <= ARX_LOOT_TOTAL; i++) {
+      arxSetAttr(charId, "loot_" + i, loot.cells[i] || "");
+    }
+    arxSetAttr(charId, "loot_skin", loot.skin);
+    arxSetAttr(charId, "loot_open", "1");
+  });
+}
+
+/* Flips the GM admin panel's own "is a loot pool open" flag on every
+   admin character (gm_panel_unlocked=1) — drives the two-mode catalog
+   click (give directly vs add to the open pool, see gm-panel.css.j2). Not
+   scoped to loot subscribers: the admin character giving/adding items is
+   usually NOT one of the players watching the loot. */
+function arxRefreshAdminLootFlag(isOpen) {
+  findObjs({ type: "attribute", name: "gm_panel_unlocked", current: "1" }).forEach(function (attr) {
+    arxSetAttr(attr.get("characterid"), "gm_panel_loot_open", isOpen ? "1" : "0");
+  });
+}
+
+/* Opens a fresh pool for exactly the currently selected tokens' characters
+   (trusted-players model: whoever the GM selects "sees" the loot — some
+   players in, some out, is the whole point, so this is manual, not an
+   auto-detect-every-ARX-character scan). */
+on("chat:message", function (msg) {
+  if (msg.type !== "api" || msg.content.indexOf("!arxlootopen") !== 0) { return; }
+  if (!playerIsGM(msg.playerid)) { return; }
+  const whisper = function (text) { sendChat("ARX", "/w gm " + text); };
+  const skin = msg.content.trim().split(/\s+/)[1];
+  if (ARX_LOOT_SKINS.indexOf(skin) === -1) { whisper("Usage : !arxlootopen " + ARX_LOOT_SKINS.join("|")); return; }
+  if (!msg.selected || !msg.selected.length) { whisper("Sélectionne les tokens qui doivent voir ce butin."); return; }
+  const charIds = [];
+  msg.selected.forEach(function (sel) {
+    const token = getObj("graphic", sel._id);
+    const charId = token && token.get("represents");
+    if (charId && charIds.indexOf(charId) === -1) { charIds.push(charId); }
+  });
+  if (!charIds.length) { whisper("Aucun des tokens sélectionnés ne représente un personnage."); return; }
+  state.ARX_LOOT = { skin: skin, cells: {}, subscribers: charIds };
+  arxLootRefresh();
+  arxRefreshAdminLootFlag(true);
+  whisper("Butin ouvert (" + skin + ") pour " + charIds.length + " personnage(s).");
+});
+
+on("chat:message", function (msg) {
+  if (msg.type !== "api" || msg.content.indexOf("!arxlootadd") !== 0) { return; }
+  if (!playerIsGM(msg.playerid)) { return; }
+  const whisper = function (text) { sendChat("ARX", "/w gm " + text); };
+  const itemId = msg.content.trim().split(/\s+/)[1];
+  if (!itemId || !ARX_ITEMS[itemId]) { whisper("Item inconnu : " + (itemId || "(vide)")); return; }
+  if (!state.ARX_LOOT.subscribers.length) { whisper("Aucun butin ouvert (!arxlootopen d'abord)."); return; }
+  const loot = state.ARX_LOOT;
+  const size = arxSizeOf(itemId);
+  for (let a = 1; a <= ARX_LOOT_TOTAL; a++) {
+    const cells = arxLootCellsFor(a, size.w, size.h);
+    if (!cells) { continue; }
+    const free = cells.every(function (c) { return !loot.cells[c]; });
+    if (!free) { continue; }
+    cells.forEach(function (c) { loot.cells[c] = (c === a) ? itemId : "#" + a; });
+    arxLootRefresh();
+    sendChat("ARX", "Ajouté au butin : " + ARX_ITEMS[itemId].label);
+    return;
+  }
+  whisper("Butin plein (pas de place " + size.w + "x" + size.h + ") !");
+});
+
+on("chat:message", function (msg) {
+  if (msg.type !== "api" || msg.content.indexOf("!arxlootclose") !== 0) { return; }
+  if (!playerIsGM(msg.playerid)) { return; }
+  state.ARX_LOOT.subscribers.forEach(function (charId) { arxSetAttr(charId, "loot_open", "0"); });
+  state.ARX_LOOT = { skin: "chest", cells: {}, subscribers: [] };
+  arxRefreshAdminLootFlag(false);
+  sendChat("ARX", "/w gm Butin fermé.");
+});
+
+/* Take: NOT gated by playerIsGM — any player's own sheet fires this
+   directly (see loot-panel.html.j2's take buttons). Resolves cell N's
+   CURRENT contents from state.ARX_LOOT itself (the authoritative source,
+   not the mirrored attribute), gives it to whichever token the clicking
+   player has selected (their own, in the trusted-players model this was
+   built for), clears it from the shared pool, and refreshes every
+   subscriber so it disappears everywhere at once — a public message
+   announces the pickup, since a shared loot pile is meant to be seen. */
+on("chat:message", function (msg) {
+  if (msg.type !== "api" || msg.content.indexOf("!arxloottake") !== 0) { return; }
+  if (!state.ARX_LOOT.subscribers.length) { return; }
+  const cellArg = parseInt(msg.content.trim().split(/\s+/)[1], 10);
+  if (!(cellArg >= 1 && cellArg <= ARX_LOOT_TOTAL)) { return; }
+  const loot = state.ARX_LOOT;
+  const raw = loot.cells[cellArg];
+  if (!raw) { return; }
+  const anchor = (String(raw).charAt(0) === "#") ? parseInt(String(raw).slice(1), 10) : cellArg;
+  const itemId = loot.cells[anchor];
+  if (!itemId || !ARX_ITEMS[itemId]) { return; }
+  const charId = arxResolveCharacterForPlayer(msg);
+  if (!charId) { arxWhisperTo(msg, "Impossible de savoir quel personnage récupère l'objet — sélectionne ton token."); return; }
+  if (!arxGiveToCharacter(charId, itemId)) {
+    arxWhisperTo(msg, "Sac plein, impossible de prendre : " + ARX_ITEMS[itemId].label);
+    return;
+  }
+  Object.keys(loot.cells).forEach(function (k) {
+    if (Number(k) === anchor || loot.cells[k] === "#" + anchor) { delete loot.cells[k]; }
+  });
+  arxLootRefresh();
+  sendChat("ARX", ARX_ITEMS[itemId].label + " pris dans le butin.");
 });
 
 /* Nuclear option for a stuck/ghost bag cell (e.g. a leftover "#bag_N" covered-
@@ -367,6 +548,10 @@ on("chat:message", function (msg) {
     "!arxlockguardian — reverrouille la posture du Gardien",
     "!arxunlockpanel — débloque le panel MJ sur ce personnage",
     "!arxlockpanel — reverrouille le panel MJ sur ce personnage",
+    "!arxlootopen bag|body|chest|place|secured-chest — ouvre un butin partagé pour les tokens sélectionnés",
+    "!arxlootadd <item_id> — ajoute un objet au butin ouvert",
+    "!arxlootclose — ferme le butin partagé",
+    "!arxloottake <case> — pas pour le MJ, déclenché par le bouton \"Prendre\" du joueur",
     "!arxresetinventory — vide toutes les cases de sac + relâche la main",
     "!arxresetall — réinitialise tout le personnage (stats, inventaire, magie, carte, postures, or)",
     "!arxpreset <1-3> <spell_id> — définit un emplacement de sort mémorisé",

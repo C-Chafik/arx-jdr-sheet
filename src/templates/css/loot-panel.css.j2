@@ -1,0 +1,76 @@
+/* ===== Shared loot panel — GENERATED from items.json + grid constants.
+   11x3 grid (33 cells) on one of 5 skins (ui/loot-*.png, all 115x378),
+   flush against the book's own right edge (left of the GM panel — players
+   need loot often, only the GM uses the admin panel further out). Gated on
+   attr_loot_open (set only by !arxlootopen/!arxlootclose in arx-mod.js —
+   never by this sheet). Items
+   keep their real items.json footprint via the same anchor+covered-cell
+   system as the bag, just reusing the bag's own generic .sheet-slot icon
+   reveal/hover rules (inventory-slots.css.j2) since these cells share that
+   class — only the multi-cell SIZE math below is loot-specific (different
+   grid pitch than the bag's own). ===== */
+
+{% set loot_cols, loot_rows = 3, 11 %}
+{% set loot_total = loot_cols * loot_rows %}
+{% set loot_ox, loot_oy = 8.0, 2.0 %}
+{% set loot_px, loot_py = 30.0, 8.7 %}
+{% set loot_sw, loot_sh = 26.0, 7.5 %}
+
+.sheet-loot-panel {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 1100px;
+  width: 190px;
+  height: 677px;
+  background-size: 100% 100%;
+}
+{% for skin in ["bag", "body", "chest", "place", "secured-chest"] %}
+.sheet-arx:has(input[name="attr_loot_skin"][value="{{ skin }}"]) .sheet-loot-panel {
+  background-image: url('{{ "{{ASSET_BASE}}" }}/ui/loot-{{ skin }}.png');
+}
+{% endfor %}
+.sheet-arx:has(input[name="attr_loot_open"][value="1"]) .sheet-loot-panel {
+  display: block;
+}
+
+{% for i in range(loot_total) %}
+.sheet-loot-cell-{{ i }} {
+  left: {{ "%.2f" | format(loot_ox + (i % loot_cols) * loot_px) }}%;
+  top: {{ "%.2f" | format(loot_oy + (i // loot_cols) * loot_py) }}%;
+}
+{% endfor %}
+
+.sheet-loot-slot {
+  width: {{ loot_sw }}%;
+  height: {{ loot_sh }}%;
+}
+.sheet-loot-slot button[type="roll"] {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: url('{{ "{{ASSET_BASE}}" }}/ui/cursor-hover.png') 6 4, pointer;
+}
+
+/* Multi-cell items span their real footprint, same formula as the bag's
+   own (inventory-slots.css.j2) but against loot's own grid pitch. */
+{% for item_id, item in items.items() %}
+{% set w = (item.size | default("1x1")).split("x")[0] | int %}
+{% set h = (item.size | default("1x1")).split("x")[1] | int %}
+{% if w > 1 or h > 1 %}
+.sheet-loot-panel .sheet-slot input[value="{{ item_id }}"] + .sheet-item-icon {
+  width: {{ "%.1f" | format(((w - 1) * loot_px / loot_sw + 0.8) * 100) }}%;
+  height: {{ "%.1f" | format(((h - 1) * loot_py / loot_sh + 0.8) * 100) }}%;
+}
+.sheet-loot-panel .sheet-slot input[value="{{ item_id }}"] ~ button {
+  width: {{ "%.1f" | format(((w - 1) * loot_px / loot_sw + 1) * 100) }}%;
+  height: {{ "%.1f" | format(((h - 1) * loot_py / loot_sh + 1) * 100) }}%;
+  z-index: 3;
+}
+{% endif %}
+{% endfor %}

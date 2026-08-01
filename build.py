@@ -17,7 +17,8 @@ BUILD = ROOT / "build"
 CSS_FILES = ["base.css", "tabs.css", "inventory.css",
              "pages/base.css.j2", "pages/base-hover.css", "pages/notes.css.j2",
              "pages/map.css.j2",
-             "inventory-slots.css.j2", "magic-slots.css.j2", "gm-panel.css.j2"]
+             "inventory-slots.css.j2", "magic-slots.css.j2", "gm-panel.css.j2",
+             "loot-panel.css.j2"]
 
 WORKER_FILES = ["inventory.js"]
 
@@ -26,7 +27,7 @@ ASSET_BASE = "https://raw.githubusercontent.com/C-Chafik/arx-jdr-sheet/main/asse
 PREVIEW_ASSET_BASE = "../assets"
 
 # ? Increase this value everytime you need to clear the cache of github assets
-ASSET_VERSION = "7"
+ASSET_VERSION = "8"
 
 ITEMS_FILE = ROOT / "items.json"
 SPELLS_FILE = ROOT / "spells.json"

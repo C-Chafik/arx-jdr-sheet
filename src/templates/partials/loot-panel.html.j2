@@ -1,0 +1,23 @@
+{# Shared loot panel: one pool at a time, visible only to whichever
+   characters the GM opened it for (see !arxlootopen/!arxlootadd/
+   !arxloottake/!arxlootclose in arx-mod.js — this sheet never writes to
+   attr_loot_*, only the API script does, except the take buttons below).
+   11x3 grid (33 cells), no levels/pages — items keep their real
+   items.json footprint, same anchor+covered-cell system as the bag. The
+   background skin (bag/body/chest/place/secured-chest) is picked by the
+   GM per drop via attr_loot_skin. #}
+<input type="hidden" class="sheet-hand-mirror" name="attr_loot_open" value="0" />
+<input type="hidden" class="sheet-hand-mirror" name="attr_loot_skin" value="chest" />
+<div class="sheet-loot-panel">
+{% for i in range(1, 34) %}
+  <div class="sheet-slot sheet-loot-slot sheet-loot-cell-{{ i - 1 }}">
+    <input type="hidden" name="attr_loot_{{ i }}" value="" />
+    <span class="sheet-item-icon"></span>
+    {# Static per-cell take command — arx-mod.js resolves cell N's CURRENT
+       item from state.ARX_LOOT itself (the authoritative source, not this
+       mirrored attribute), so the button never needs to change even though
+       the cell's contents do. Covered cells (#anchor) redirect there too. #}
+    <button type="roll" name="roll_loot_take_{{ i }}" value="!arxloottake {{ i }}"></button>
+  </div>
+{% endfor %}
+</div>

@@ -48,6 +48,11 @@
      fitMask/craft_runes — glows each match, dims everything else (see
      gm-panel.css.j2). Empty means no active search, nothing dimmed. #}
   <input type="hidden" class="sheet-hand-mirror" name="attr_gm_panel_filter" value="" />
+  {# Mirrored by arx-mod.js onto every admin character (gm_panel_unlocked=1)
+     whenever a loot pool opens/closes (see !arxlootopen/!arxlootclose) —
+     drives which of the two buttons per catalog slot is live: give
+     directly, or add to the open pool (see gm-panel.html.j2/.css.j2). #}
+  <input type="hidden" class="sheet-hand-mirror" name="attr_gm_panel_loot_open" value="0" />
   <button type="action" class="sheet-gm-panel-toggle" name="act_gm_panel_toggle"></button>
   {# "Panel MJ" in the same per-character rainbow treatment as secret spells —
      purely decorative, no mechanical meaning here. #}
@@ -66,6 +71,7 @@
      rules), a "find it" jump instead. #}
   <input type="text" class="sheet-gm-panel-search" name="attr_gm_panel_search" placeholder="Rechercher..." />
   <button type="action" class="sheet-gm-panel-search-btn" name="act_gm_panel_search"></button>
+{% include "partials/loot-panel.html.j2" %}
   <div class="sheet-book">
 {% include "partials/tabs.html.j2" %}
 {% include "partials/pages/base.html.j2" %}

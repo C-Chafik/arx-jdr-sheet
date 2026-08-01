@@ -4,13 +4,18 @@
 
 .sheet-arx {
   position: relative;
-  /* +160px on the right of the (unchanged, flush top-left) 1100×677 book for
-     the craft-seq strip (see magic-slots.css.j2), +190px more for the GM
-     admin panel sliding out further right (see gm-panel.css.j2) — both need
-     to sit INSIDE this declared width, or Roll20's own sheet container
-     clips/hides whatever falls outside it (confirmed: the panel rendered
-     off-screen before this was widened to include its space). */
-  width: 1450px;
+  /* +190px on the right of the (unchanged, flush top-left) 1100×677 book,
+     flush against its own right edge, for the shared loot panel
+     (see loot-panel.css.j2, sized to match the GM panel rather than its own
+     smaller native art), then +190px more for the GM admin panel
+     (see gm-panel.css.j2) — loot sits closer to the book than the GM panel
+     on purpose: players need it often, only the GM uses the admin panel.
+     Both need to sit INSIDE this declared width, or Roll20's own sheet
+     container clips/hides whatever falls outside it (confirmed: the GM
+     panel rendered off-screen before this was widened to include its
+     space). The craft-seq strip (magic-slots.css.j2) spills up to 160px
+     past the book's right edge too, but stays within this same width. */
+  width: 1500px;
   /* Reserve the open-inventory height up front (book 677 − 48 overlap + band 172),
      so the backdrop never rescales when the band slides out. */
   min-height: 801px;

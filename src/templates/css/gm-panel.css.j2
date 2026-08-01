@@ -41,14 +41,16 @@
 .sheet-arx:has(.sheet-gm-panel-toggle:hover) .sheet-statbar--gm-panel-toggle { display: block; }
 
 /* ---- The panel itself: a tall band sliding out to the RIGHT of the book,
-   clear of the craft-seq strip (see magic-slots.css.j2), only rendered/
-   usable once unlocked (the toggle to open/close it is invisible otherwise
-   anyway). Fixed left, growing width — .sheet-arx is sized to include this
-   space (see base.css), so it stays inside the visible sheet. ---- */
+   only rendered/usable once unlocked (the toggle to open/close it is
+   invisible otherwise anyway). Sits AFTER the loot panel (see
+   loot-panel.css.j2) — players need quick access to loot, the GM can afford
+   to scroll a bit further for their own admin tools. Fixed left, growing
+   width — .sheet-arx is sized to include this space (see base.css), so it
+   stays inside the visible sheet. ---- */
 .sheet-gm-panel {
   position: absolute;
   top: 0;
-  left: 1260px;
+  left: 1290px;
   width: 190px;
   height: 677px;
   background-image: url('{{ "{{ASSET_BASE}}" }}/ui/mj-inventory.png');
@@ -70,7 +72,7 @@
 .sheet-gm-panel-search {
   display: none;
   position: absolute !important;
-  left: 1260px !important;
+  left: 1290px !important;
   top: 685px !important;
   width: 145px !important;
   height: 28px !important;
@@ -85,7 +87,7 @@
 .sheet-gm-panel-search-btn {
   display: none;
   position: absolute;
-  left: 1410px;
+  left: 1440px;
   top: 685px;
   width: 28px;
   height: 28px;
@@ -162,6 +164,16 @@ input[name="attr_gm_panel_page"][value="{{ p }}"] ~ .sheet-gm-panel .sheet-gm-pa
   border: none;
   background: transparent;
   cursor: url('{{ "{{ASSET_BASE}}" }}/ui/cursor-hover.png') 6 4, pointer;
+}
+{# Two-mode click: with no loot pool open, "give" is the live button;
+   with one open, "add to loot" takes over instead — see
+   attr_gm_panel_loot_open, mirrored by !arxlootopen/!arxlootclose. #}
+.sheet-gm-panel-btn--loot-add { display: none; }
+.sheet-arx:has(input[name="attr_gm_panel_loot_open"][value="1"]) .sheet-gm-panel-btn--give {
+  display: none;
+}
+.sheet-arx:has(input[name="attr_gm_panel_loot_open"][value="1"]) .sheet-gm-panel-btn--loot-add {
+  display: block;
 }
 .sheet-gm-panel-slot:hover .sheet-gm-panel-icon {
   filter: brightness(1.4) drop-shadow(0 0 6px rgba(255, 220, 130, 0.9));
