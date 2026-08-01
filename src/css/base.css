@@ -124,3 +124,18 @@
   font-size: 23px;
   text-align: center;
 }
+
+/* Roll20 decorates every <button type="roll"> with its own d20 badge (a glyph
+   in a ::before, plus a background image on older builds). All our roll
+   buttons are invisible click zones drawn by the artwork underneath (skills,
+   GM panel, loot slots), so the badge just shows through. <button type="action">
+   is left alone by Roll20, which is why the bag and tabs never showed it. */
+.sheet-arx button[type="roll"]::before,
+.sheet-arx button[type="roll"]::after {
+  content: none !important;
+  display: none !important;
+}
+.sheet-arx button[type="roll"] {
+  background-image: none !important;
+  font-size: 0 !important;
+}
