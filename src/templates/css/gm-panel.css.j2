@@ -11,16 +11,16 @@
 {% set gm_per_page = gm_cols * gm_rows %}
 {% set gm_pages = ((items | length - 1) // gm_per_page) + 1 %}
 
-/* ---- Gear icon: same left column as the purse/inventory toggle (see
-   inventory.css) — NOT inside the panel's own 1260-1450px footprint, or the
-   panel (rendered after it in the DOM) draws over it once open, blocking
-   every further click including the one meant to close it. Invisible
-   unless unlocked. z-index matches the purse/toggle it stacks above. */
+/* ---- Gear icon: directly below the inventory toggle (see inventory.css)
+   — NOT inside the panel's own footprint, or the panel (rendered after it
+   in the DOM) draws over it once open, blocking every further click
+   including the one meant to close it. Invisible unless unlocked. z-index
+   matches the toggle it sits under. */
 .sheet-gm-panel-toggle {
   display: none;
   position: absolute;
-  top: 80px;
-  left: 1216px;
+  top: 702px; /* below .sheet-inventory-toggle (inventory.css: top:660 + height:34 + 8px gap) */
+  left: 1010px; /* same column as .sheet-inventory-toggle */
   width: 34px;
   height: 34px;
   padding: 0;
