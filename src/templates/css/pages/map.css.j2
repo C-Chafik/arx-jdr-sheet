@@ -8,8 +8,8 @@
   display: none;
   position: absolute;
   left: 1.6%;
-  width: 7.2%;
-  height: 5.5%;
+  width: 8.5%;
+  height: 6.5%;
   padding: 0;
   border: none;
   background-color: transparent;
@@ -26,14 +26,16 @@
   display: block;
 }
 {% endfor %}
-.sheet-map-level-tab--1 { top: 12.5%; }
-.sheet-map-level-tab--2 { top: 19.0%; }
-.sheet-map-level-tab--3 { top: 27.5%; }
-.sheet-map-level-tab--4 { top: 34.0%; }
-.sheet-map-level-tab--5 { top: 45.0%; }
-.sheet-map-level-tab--6 { top: 53.0%; }
-.sheet-map-level-tab--7 { top: 59.5%; }
-.sheet-map-level-tab--8 { top: 65.0%; }
+{# Same fixed 8-point step as the magicbook's own spell-page tabs
+   (magic-slots.css.j2) — was the same hodgepodge of hand-tuned gaps. #}
+.sheet-map-level-tab--1 { top: 12%; }
+.sheet-map-level-tab--2 { top: 20%; }
+.sheet-map-level-tab--3 { top: 28%; }
+.sheet-map-level-tab--4 { top: 36%; }
+.sheet-map-level-tab--5 { top: 44%; }
+.sheet-map-level-tab--6 { top: 52%; }
+.sheet-map-level-tab--7 { top: 60%; }
+.sheet-map-level-tab--8 { top: 68%; }
 
 /* Left page: the current level's own map art (already framed/bordered in
    the source image) — only the level matching attr_map_level shows. Box

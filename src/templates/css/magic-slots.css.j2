@@ -271,8 +271,8 @@ input[name="attr_hand_effect"][value="rune"] ~ .sheet-book .sheet-grimoire {
   display: none;
   position: absolute;
   left: 1.6%;
-  width: 7.2%;
-  height: 5.5%;
+  width: 8.5%;
+  height: 6.5%;
   padding: 0;
   border: none;
   background-color: transparent;
@@ -293,16 +293,20 @@ input[name="attr_hand_effect"][value="rune"] ~ .sheet-book .sheet-grimoire {
 }
 {% endif %}
 {% endfor %}
-.sheet-spell-page-tab--1  { top: 12.5%; }
-.sheet-spell-page-tab--2  { top: 19.0%; }
-.sheet-spell-page-tab--3  { top: 27.5%; }
-.sheet-spell-page-tab--4  { top: 34.0%; }
-.sheet-spell-page-tab--5  { top: 45.0%; }
-.sheet-spell-page-tab--6  { top: 53.0%; }
-.sheet-spell-page-tab--7  { top: 59.5%; }
-.sheet-spell-page-tab--8  { top: 65.0%; }
-.sheet-spell-page-tab--9  { top: 72.0%; }
-.sheet-spell-page-tab--10 { top: 85.0%; }
+{# Fixed 8-point step (was a hodgepodge of hand-tuned gaps ranging 5.5 to
+   13 points) — same cadence reused by the map page's level tabs
+   (map.css.j2), which share this exact art/position scheme minus the
+   last 2 tabs. #}
+.sheet-spell-page-tab--1  { top: 12%; }
+.sheet-spell-page-tab--2  { top: 20%; }
+.sheet-spell-page-tab--3  { top: 28%; }
+.sheet-spell-page-tab--4  { top: 36%; }
+.sheet-spell-page-tab--5  { top: 44%; }
+.sheet-spell-page-tab--6  { top: 52%; }
+.sheet-spell-page-tab--7  { top: 60%; }
+.sheet-spell-page-tab--8  { top: 68%; }
+.sheet-spell-page-tab--9  { top: 76%; }
+.sheet-spell-page-tab--10 { top: 84%; }
 
 /* ---- The 4 fixed spell-slot positions on the left page: a 2×2 grid
    (1=top-left, 2=top-right, 3=bottom-left, 4=bottom-right) centered on the

@@ -48,29 +48,18 @@
   filter: brightness(1.3) drop-shadow(0 0 6px rgba(255, 220, 130, 0.8));
 }
 
-/* 3 FIXED physical slots, never a 4th, never moved:
-     slot 1 = calc(38.3% - 21px)        (magique's original spot)
-     slot 2 = calc(38.3% - 21px + 50px)  (base's original spot)
-     slot 3 = calc(38.3% - 21px + 100px) (notes' original spot)
-   Which BUTTON occupies which slot changes with the active page — the
-   slots themselves never move. magique is always in slot 1 (hidden only on
-   its own page) and map is always in slot 3 (hidden only on its own page);
-   base and notes are the two that relocate between slots depending on the
-   active page:
-     base  -> slot 1 when magic is active, slot 2 otherwise (hidden on base)
-     notes -> slot 3 when map is active,   slot 2 otherwise (hidden on notes)
-   Verified against every page:
-     base   active -> magique(1) notes(2) map(3)
-     magic  active -> base(1)    notes(2) map(3)
-     notes  active -> magique(1) base(2)  map(3)
-     map    active -> magique(1) base(2)  notes(3) */
+/* 4 FIXED physical slots, one per tab, never shared, never moved:
+     slot 1 = calc(38.3% - 21px - 50px) -> base (Stats)
+     slot 2 = calc(38.3% - 21px)         -> magic (Magie)  [magique's original spot]
+     slot 3 = calc(38.3% - 21px + 50px)  -> map (Maps)     [base/notes' old shared spot]
+     slot 4 = calc(38.3% - 21px + 100px) -> notes          [map's original spot]
+   Each button always sits in its own slot; it's only hidden while its own
+   page is active (see the display:none rules below), leaving that slot
+   empty rather than another tab sliding into it. */
+.sheet-nav--base  { left: calc(38.3% - 21px - 50px); background-image: url('{{ASSET_BASE}}/ui/base-menu-button.png'); }
 .sheet-nav--magic { left: calc(38.3% - 21px);         background-image: url('{{ASSET_BASE}}/ui/magicbook-menu-button.png'); }
-.sheet-nav--map   { left: calc(38.3% - 21px + 100px); background-image: url('{{ASSET_BASE}}/ui/map-menu-button.png'); }
-.sheet-nav--base  { left: calc(38.3% - 21px + 50px);  background-image: url('{{ASSET_BASE}}/ui/base-menu-button.png'); }
-.sheet-nav--notes { left: calc(38.3% - 21px + 50px);  background-image: url('{{ASSET_BASE}}/ui/notes-menu-button.png'); }
-
-.sheet-arx:has(input[name="attr_sheet_tab"][value="magic"]) .sheet-nav--base  { left: calc(38.3% - 21px); }
-.sheet-arx:has(input[name="attr_sheet_tab"][value="map"])   .sheet-nav--notes { left: calc(38.3% - 21px + 100px); }
+.sheet-nav--map   { left: calc(38.3% - 21px + 50px);  background-image: url('{{ASSET_BASE}}/ui/notes-menu-button.png'); }
+.sheet-nav--notes { left: calc(38.3% - 21px + 100px); background-image: url('{{ASSET_BASE}}/ui/map-menu-button.png'); }
 
 .sheet-arx:has(input[name="attr_sheet_tab"][value="magic"]) .sheet-nav--magic { display: none; }
 .sheet-arx:has(input[name="attr_sheet_tab"][value="map"])   .sheet-nav--map   { display: none; }
