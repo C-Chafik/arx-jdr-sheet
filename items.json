@@ -1629,6 +1629,94 @@
     "cat": "main_principale",
     "size": "3x2"
   },
+  "greatsword-test": {
+    "label": "Épée à deux mains (test)",
+    "icon": "items/sam-sword.png",
+    "cat": "deux_mains",
+    "size": "3x3",
+    "strength": 8, "mental": 8, "dexterity": 8, "constitution": 8,
+    "stealth": 8, "technical": 8, "intuition": 8, "ethereal_link": 8,
+    "object_knowledge": 8, "casting": 8, "close_combat": 8, "projectile": 8,
+    "defense": 8, "armor_class": 8, "magic_resistance": 8,
+    "poison_resistance": 8, "damages": 8, "health_max": 8, "mana_max": 8
+  },
+  "casque-test": {
+    "label": "Casque (test)",
+    "icon": "items/plate-helmet.png",
+    "cat": "casque",
+    "size": "1x1",
+    "strength": 1, "mental": 1, "dexterity": 1, "constitution": 1,
+    "stealth": 1, "technical": 1, "intuition": 1, "ethereal_link": 1,
+    "object_knowledge": 1, "casting": 1, "close_combat": 1, "projectile": 1,
+    "defense": 1, "armor_class": 1, "magic_resistance": 1,
+    "poison_resistance": 1, "damages": 1, "health_max": 1, "mana_max": 1
+  },
+  "armure_haute-test": {
+    "label": "Plastron (test)",
+    "icon": "items/chestplate.png",
+    "cat": "armure_haute",
+    "size": "2x3",
+    "strength": 2, "mental": 2, "dexterity": 2, "constitution": 2,
+    "stealth": 2, "technical": 2, "intuition": 2, "ethereal_link": 2,
+    "object_knowledge": 2, "casting": 2, "close_combat": 2, "projectile": 2,
+    "defense": 2, "armor_class": 2, "magic_resistance": 2,
+    "poison_resistance": 2, "damages": 2, "health_max": 2, "mana_max": 2
+  },
+  "armure_basse-test": {
+    "label": "Jambières (test)",
+    "icon": "items/legging-plate.png",
+    "cat": "armure_basse",
+    "size": "2x3",
+    "strength": 3, "mental": 3, "dexterity": 3, "constitution": 3,
+    "stealth": 3, "technical": 3, "intuition": 3, "ethereal_link": 3,
+    "object_knowledge": 3, "casting": 3, "close_combat": 3, "projectile": 3,
+    "defense": 3, "armor_class": 3, "magic_resistance": 3,
+    "poison_resistance": 3, "damages": 3, "health_max": 3, "mana_max": 3
+  },
+  "main_principale-test": {
+    "label": "Main principale (test)",
+    "icon": "items/wooden-club.png",
+    "cat": "main_principale",
+    "size": "1x2",
+    "strength": 4, "mental": 4, "dexterity": 4, "constitution": 4,
+    "stealth": 4, "technical": 4, "intuition": 4, "ethereal_link": 4,
+    "object_knowledge": 4, "casting": 4, "close_combat": 4, "projectile": 4,
+    "defense": 4, "armor_class": 4, "magic_resistance": 4,
+    "poison_resistance": 4, "damages": 4, "health_max": 4, "mana_max": 4
+  },
+  "main_secondaire-test": {
+    "label": "Main secondaire (test)",
+    "icon": "items/metal-shield.png",
+    "cat": "main_secondaire",
+    "size": "2x2",
+    "strength": 5, "mental": 5, "dexterity": 5, "constitution": 5,
+    "stealth": 5, "technical": 5, "intuition": 5, "ethereal_link": 5,
+    "object_knowledge": 5, "casting": 5, "close_combat": 5, "projectile": 5,
+    "defense": 5, "armor_class": 5, "magic_resistance": 5,
+    "poison_resistance": 5, "damages": 5, "health_max": 5, "mana_max": 5
+  },
+  "ambidextrie-test": {
+    "label": "Ambidextrie (test)",
+    "icon": "items/one-handed-sword-light.png",
+    "cat": "ambidextrie",
+    "size": "1x2",
+    "strength": 6, "mental": 6, "dexterity": 6, "constitution": 6,
+    "stealth": 6, "technical": 6, "intuition": 6, "ethereal_link": 6,
+    "object_knowledge": 6, "casting": 6, "close_combat": 6, "projectile": 6,
+    "defense": 6, "armor_class": 6, "magic_resistance": 6,
+    "poison_resistance": 6, "damages": 6, "health_max": 6, "mana_max": 6
+  },
+  "bijoux-test": {
+    "label": "Bijoux (test)",
+    "icon": "items/ring-gold.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "strength": 7, "mental": 7, "dexterity": 7, "constitution": 7,
+    "stealth": 7, "technical": 7, "intuition": 7, "ethereal_link": 7,
+    "object_knowledge": 7, "casting": 7, "close_combat": 7, "projectile": 7,
+    "defense": 7, "armor_class": 7, "magic_resistance": 7,
+    "poison_resistance": 7, "damages": 7, "health_max": 7, "mana_max": 7
+  },
   "sam-sword": {
     "label": "L'épée de Samuel",
     "icon": "items/sam-sword.png",

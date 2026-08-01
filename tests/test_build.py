@@ -98,7 +98,7 @@ def test_items_catalog_loads():
     assert "krahoz" in items
     for item in items.values():
         assert item["cat"] in {"casque", "main_principale", "ambidextrie",
-                               "main_secondaire", "armure_haute", "armure_basse",
+                               "main_secondaire", "deux_mains", "armure_haute", "armure_basse",
                                "bijoux", "objet"}, item
 
 

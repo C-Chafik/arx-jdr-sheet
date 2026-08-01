@@ -29,7 +29,15 @@
   color: #2b1d0e;
   display: none;
 }
-.sheet-notes-field--left  { left: 88px !important; }
+.sheet-notes-field--left {
+  left: 120px !important;
+  /* Homemade Apple's cursive glyphs carry a decorative left-side flourish
+     on some letters (capitals especially) that can render outside the box
+     when they're the very first character on a line — a small left inset
+     absorbs that without shifting where the box itself sits. Only needed
+     here: the right field hasn't shown the same overhang. */
+  padding-left: 8px !important;
+}
 .sheet-notes-field--right { left: 594px !important; }
 
 {% for n in range(1, 6) %}

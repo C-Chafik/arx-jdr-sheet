@@ -14,6 +14,24 @@
   text-shadow: none;
 }
 
+/* Auto-shrink for long names (see change:character_name in inventory.js,
+   which buckets attr_character_name's length into attr_character_name_size)
+   — the field itself is a fixed-width box, so this is the only way a long
+   name still fits instead of overflowing it. "normal" matches the 24px
+   default above, so no rule is needed for that bucket. */
+.sheet-arx:has(input[name="attr_character_name_size"][value="long"]) .sheet-field--character_name input {
+  font-size: 20px;
+}
+.sheet-arx:has(input[name="attr_character_name_size"][value="longer"]) .sheet-field--character_name input {
+  font-size: 18px;
+}
+.sheet-arx:has(input[name="attr_character_name_size"][value="longest"]) .sheet-field--character_name input {
+  font-size: 16px;
+}
+.sheet-arx:has(input[name="attr_character_name_size"][value="tiny"]) .sheet-field--character_name input {
+  font-size: 14px;
+}
+
 /* Right page — header */
 .sheet-field--level { left: 64.0%; top: 7.3%; width: 4.5%; }
 

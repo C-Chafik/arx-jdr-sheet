@@ -45,6 +45,10 @@
   <div class="sheet-field sheet-field--character_name">
     <input type="text" name="attr_character_name" value="" />
   </div>
+  {# Worker-maintained length bucket (see change:character_name in
+     inventory.js) — drives the auto-shrink font-size rules in
+     base.css.j2 so long names still fit the fixed-width field. #}
+  <input type="hidden" name="attr_character_name_size" value="normal" />
   <div class="sheet-field sheet-field--level">
     <input type="number" name="attr_level" value="0" />
   </div>
@@ -169,6 +173,12 @@
   "equip_jewel_1": "Emplacement bijoux",
   "equip_jewel_2": "Emplacement bijoux",
 } %}
+{# A "deux_mains" item occupies both hand slots at once, holding the same
+   real item id in each (see the equip-target branch of clicked:slot_<slot>
+   in inventory.js) — this marks which of the two was actually clicked, so
+   the other one can be dimmed (see inventory-slots.css.j2). Empty when no
+   two-handed item is equipped. #}
+<input type="hidden" class="sheet-hand-mirror" name="attr_two_handed_primary" value="" />
 {% for slot in ["equip_head", "equip_torso", "equip_belt", "equip_main_hand",
                 "equip_off_hand", "equip_jewel_1", "equip_jewel_2"] %}
   <div class="sheet-slot sheet-slot--{{ slot }}">

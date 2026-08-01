@@ -13,13 +13,16 @@ for (let i = 1; i <= PER_LEVEL * BAGS; i++) { BAG_SLOTS.push("bag_" + i); }
    main_secondaire: off hand only (shields). ambidextrie: either hand —
    daggers, torches, grimoires, or anything else not tied to a specific
    hand (was called "arme_secondaire" before, a name that lied about it
-   already working in both hands). */
+   already working in both hands). deux_mains: greatswords, staves, bows —
+   takes both hand slots at once (see the equip-target branch of
+   clicked:slot_<slot> below), accepted by either slot so you can drop it
+   on whichever hand happens to be free. */
 const EQUIP_ACCEPTS = {
   equip_head: ["casque"],
   equip_torso: ["armure_haute"],
   equip_belt: ["armure_basse"],
-  equip_main_hand: ["main_principale", "ambidextrie"],
-  equip_off_hand: ["ambidextrie", "main_secondaire"],
+  equip_main_hand: ["main_principale", "ambidextrie", "deux_mains"],
+  equip_off_hand: ["ambidextrie", "main_secondaire", "deux_mains"],
   equip_jewel_1: ["bijoux"],
   equip_jewel_2: ["bijoux"]
 };
@@ -85,10 +88,22 @@ function cellsFor(anchorIndex, w, h) {
 
 function bagIndex(slot) { return parseInt(slot.slice(4), 10); }
 
-/* Footprint of the item currently anchored at `anchor` ([] for equip slots). */
+const OTHER_HAND_SLOT = { equip_main_hand: "equip_off_hand", equip_off_hand: "equip_main_hand" };
+
+/* Footprint of the item currently anchored at `anchor` ([] for other equip
+   slots) — a "deux_mains" item occupies BOTH hand slots at once (see the
+   equip-target branch below), so its footprint is the pair of them
+   regardless of which one was actually clicked to equip it, mirroring how
+   a multi-cell bag item's footprint always includes its own anchor cell. */
 function ownCells(anchor, itemId) {
-  if (anchor.indexOf("bag_") !== 0) { return []; }
-  return cellsFor(bagIndex(anchor), sizeOf(itemId).w, sizeOf(itemId).h) || [];
+  if (anchor.indexOf("bag_") === 0) {
+    return cellsFor(bagIndex(anchor), sizeOf(itemId).w, sizeOf(itemId).h) || [];
+  }
+  const item = ITEMS[itemId];
+  if (item && item.cat === "deux_mains" && OTHER_HAND_SLOT[anchor]) {
+    return ["equip_main_hand", "equip_off_hand"];
+  }
+  return [];
 }
 
 function equipAccepts(slot, itemId) {
@@ -150,6 +165,13 @@ ALL_SLOTS.forEach(function (slot) {
 
       const clear = { hand: "", hand_from: "", hand_cat: "", hand_effect: "", fit: "" };
       const own = ownCells(from, hand);
+      /* The item leaving `from` was a two-handed weapon occupying both hand
+         slots — reset the primary marker regardless of where it's headed
+         (bag or a fresh equip target, which sets its own value right back
+         if it's still two-handed there). */
+      if (own.indexOf("equip_main_hand") !== -1 && own.indexOf("equip_off_hand") !== -1) {
+        clear.two_handed_primary = "";
+      }
 
       if (slot.indexOf("bag_") === 0) {
         if (bagIndex(slot) > PER_LEVEL * bagCount(v)) { return; } /* locked level */
@@ -194,11 +216,24 @@ ALL_SLOTS.forEach(function (slot) {
         return;
       }
 
-      /* Equipment target: category match + empty slot (no swap). */
+      /* Equipment target: category match + empty slot (no swap). A
+         "deux_mains" item also needs its OTHER hand free — it occupies
+         both slots with the same real item id (so the existing icon-
+         reveal rule "just works" on both, no per-item CSS needed), marking
+         which one was actually clicked via attr_two_handed_primary so the
+         other can be dimmed (see inventory-slots.css.j2). */
       if (!equipAccepts(slot, hand) || here !== "") { return; }
+      const item = ITEMS[hand];
+      const otherHand = OTHER_HAND_SLOT[slot];
+      const isTwoHanded = item.cat === "deux_mains" && otherHand;
+      if (isTwoHanded && (v[otherHand] || "") !== "") { return; }
       own.forEach(function (c) { clear[c] = ""; });
       if (own.length === 0) { clear[from] = ""; }
       clear[slot] = hand;
+      if (isTwoHanded) {
+        clear[otherHand] = hand;
+        clear.two_handed_primary = slot;
+      }
       setAttrs(clear);
     });
   });
@@ -648,7 +683,15 @@ const EQUIP_SLOTS_FOR_MODS = Object.keys(EQUIP_ACCEPTS);
 function recomputeModifiers(v) {
   const newTotals = {};
   MOD_STATS.forEach(function (stat) { newTotals[stat] = 0; });
+  /* A "deux_mains" weapon's real item id sits in BOTH equip_main_hand and
+     equip_off_hand (see the equip-target branch of clicked:slot_<slot>) —
+     purely so the off-hand slot shows a dimmed mirror icon, not a second
+     copy of the item. Counting it from equip_off_hand too would double
+     its stat bonuses, so skip that slot whenever it's just mirroring the
+     two-handed weapon already counted from equip_main_hand. */
+  const twoHandedMain = ITEMS[v.equip_main_hand] && ITEMS[v.equip_main_hand].cat === "deux_mains";
   EQUIP_SLOTS_FOR_MODS.forEach(function (slot) {
+    if (slot === "equip_off_hand" && twoHandedMain && v.equip_off_hand === v.equip_main_hand) { return; }
     const item = ITEMS[v[slot]];
     if (!item) { return; }
     MOD_STATS.forEach(function (stat) {
@@ -756,6 +799,24 @@ ATTR_NAMES.forEach(function (attr) {
 on("change:level", function () {
   getAttrs(["level"], function (v) {
     if ((parseInt(v.level, 10) || 0) > 10) { setAttrs({ level: 10 }); }
+  });
+});
+
+/* Character name field is a fixed-width box (base.css.j2) — long names
+   would otherwise overflow it at the default font size. attr_character_
+   name_size buckets the name's length into a handful of steps (see the
+   matching font-size rules in base.css.j2); short names stay at full
+   size, longer ones shrink just enough to keep fitting. */
+on("change:character_name", function () {
+  getAttrs(["character_name"], function (v) {
+    const length = (v.character_name || "").length;
+    let size;
+    if (length <= 12) { size = "normal"; }
+    else if (length <= 16) { size = "long"; }
+    else if (length <= 20) { size = "longer"; }
+    else if (length <= 25) { size = "longest"; }
+    else { size = "tiny"; }
+    setAttrs({ character_name_size: size });
   });
 });
 
