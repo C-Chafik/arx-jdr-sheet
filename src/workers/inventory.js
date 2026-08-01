@@ -737,6 +737,29 @@ on("change:strength change:mental change:dexterity change:constitution",
 on("sheet:opened", function () { getAttrs(STAT_MOD_GETATTRS, recomputeStatMods); });
 
 /* ============================================================================
+   Hard caps: attributes 24, level 10. A dedicated change: listener per
+   field, same pattern as the health/mana "clamp current to max" rule
+   above — it runs AFTER whatever just wrote the value (manual edit or
+   equipment mod), so it always sees the latest total. */
+ATTR_NAMES.forEach(function (attr) {
+  on("change:" + attr, function () {
+    getAttrs([attr], function (v) {
+      if ((parseInt(v[attr], 10) || 0) > 24) {
+        const update = {};
+        update[attr] = 24;
+        setAttrs(update);
+      }
+    });
+  });
+});
+
+on("change:level", function () {
+  getAttrs(["level"], function (v) {
+    if ((parseInt(v.level, 10) || 0) > 10) { setAttrs({ level: 10 }); }
+  });
+});
+
+/* ============================================================================
    SEPARATE, REMOVABLE BLOCK — attribute/skill-derived bonuses to things that
    are NOT skills themselves (damages, armor class, poison/magic resistance),
    straight from wiki.arx-libertatis.org/Stats's "Other stats" formulas

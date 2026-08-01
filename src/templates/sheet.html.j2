@@ -54,9 +54,9 @@
      directly, or add to the open pool (see gm-panel.html.j2/.css.j2). #}
   <input type="hidden" class="sheet-hand-mirror" name="attr_gm_panel_loot_open" value="0" />
   <button type="action" class="sheet-gm-panel-toggle" name="act_gm_panel_toggle"></button>
-  {# "Panel MJ" in the same per-character rainbow treatment as secret spells —
+  {# "Pannel MJ" in the same per-character rainbow treatment as secret spells —
      purely decorative, no mechanical meaning here. #}
-  <div class="sheet-statbar sheet-statbar--gm-panel-toggle">{% for char in "Panel MJ" %}<span class="sheet-rainbow-{{ loop.index0 % 6 }}">{{ char }}</span>{% endfor %}</div>
+  <div class="sheet-statbar sheet-statbar--gm-panel-toggle">{% for char in "Pannel MJ" %}<span class="sheet-rainbow-{{ loop.index0 % 6 }}">{{ char }}</span>{% endfor %}</div>
   <div class="sheet-gm-panel">
 {% include "partials/gm-panel.html.j2" %}
     <button type="action" class="sheet-gm-panel-nav sheet-gm-panel-nav--up" name="act_gm_panel_page_up"></button>
