@@ -584,7 +584,7 @@ on("clicked:roll_damages", function () {
        effect, now that damage is a real range. damages<1 also skips the
        die (1d0 is invalid) and just shows 0. */
     const damages = parseInt(v.damages, 10) || 0;
-    const valeur = (offensive || damages < 1) ? "@{damages}" : "[[1d@{damages}]]";
+    const valeur = (offensive || damages < 1) ? "[[@{damages}]]" : "[[1d@{damages}]]";
     if (offensive) { weaponLabel += " (Offensive)"; }
     startRoll("&{template:default} {{name=Dégâts — " + weaponLabel + "}} {{Valeur=" + valeur + "}}",
       function (results) { finishRoll(results.rollId, {}); });
