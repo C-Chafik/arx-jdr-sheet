@@ -64,6 +64,15 @@
 .sheet-arx:has(.sheet-slot:hover input[value="{{ item_id }}"]) .sheet-statbar--item-{{ item_id }} { display: block; }
 {% endfor %}
 
+/* Attribute requirements appended to the hover name of items carrying
+   "min_<attr>" keys — dimmer than the name itself, and its own tone so they
+   read as constraints rather than part of the label. */
+.sheet-min-stat {
+  margin-left: 0.4em;
+  color: #d8a24a;
+  font-size: 0.8em;
+}
+
 /* Legendary items: their hover name reads in red instead of the default white. */
 {% for item_id, item in items.items() %}
 {% if item.legendary | default(false) %}
@@ -335,15 +344,28 @@ input[name="attr_fit"][value*="|bag_{{ i }}|"] ~ .sheet-inventory .sheet-slot--b
 {% endfor %}
 
 /* Equipment slots glow when the hand item's category matches AND the slot is empty (no swap). */
-{% for cat, slot in [("casque", "equip_head"), ("armure_haute", "equip_torso"),
+{% set equip_glow_pairs = [("casque", "equip_head"), ("armure_haute", "equip_torso"),
                      ("armure_basse", "equip_belt"), ("main_principale", "equip_main_hand"),
                      ("ambidextrie", "equip_main_hand"), ("ambidextrie", "equip_off_hand"),
                      ("main_secondaire", "equip_off_hand"),
                      ("deux_mains", "equip_main_hand"), ("deux_mains", "equip_off_hand"),
                      ("bijoux", "equip_jewel_1"), ("bijoux", "equip_jewel_2")] %}
+{% for cat, slot in equip_glow_pairs %}
 input[name="attr_hand_cat"][value="{{ cat }}"] ~ .sheet-book .sheet-slot--{{ slot }} input[value=""] ~ button {
   background: radial-gradient(circle, rgba(255, 232, 160, 0.45), rgba(255, 232, 160, 0) 75%);
   box-shadow: 0 0 14px rgba(255, 220, 130, 0.85);
+}
+{% endfor %}
+
+/* Same slots, red instead of gold, when the held item has a min_<attr>
+   requirement the character does not meet: the worker publishes
+   attr_hand_too_heavy at pickup and the equip click is refused (see
+   tooHeavy() in the worker — the name predates the other three attributes).
+   Listed after the gold rules and more specific, so it overrides them. */
+{% for cat, slot in equip_glow_pairs %}
+.sheet-arx:has(input[name="attr_hand_too_heavy"][value="1"]) input[name="attr_hand_cat"][value="{{ cat }}"] ~ .sheet-book .sheet-slot--{{ slot }} input[value=""] ~ button {
+  background: radial-gradient(circle, rgba(255, 90, 70, 0.45), rgba(255, 90, 70, 0) 75%);
+  box-shadow: 0 0 14px rgba(255, 60, 40, 0.85);
 }
 {% endfor %}
 

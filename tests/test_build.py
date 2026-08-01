@@ -242,6 +242,69 @@ def test_legendary_items_get_permanent_glow_and_red_hover_text():
     assert '>Pomme<' in html  # non-legendary label carries no star
 
 
+MIN_ATTRS = ["strength", "mental", "dexterity", "constitution"]
+
+
+def test_min_attributes_are_positive_ints_when_present():
+    for item_id, item in build.load_items().items():
+        for attr in MIN_ATTRS:
+            key = "min_" + attr
+            if key in item:
+                assert isinstance(item[key], int) and item[key] >= 1, f"{item_id}.{key}"
+        # a min_ key on anything but the four attributes is silently ignored
+        for key in item:
+            if key.startswith("min_"):
+                assert key[4:] in MIN_ATTRS, f"{item_id}: {key} is not enforced"
+
+
+def test_min_attributes_block_equipping():
+    html = build.render_html()
+    # the guard itself, on the equip branch only (bag/purse/loot stay free)
+    assert "function tooHeavy(" in html
+    assert 'const MIN_STATS = ["strength", "mental", "dexterity", "constitution"]' in html
+    assert 'Number(item["min_" + stat])' in html
+    assert "if (tooHeavy(v, hand)) { return; }" in html
+    # the check needs all four attributes in the click handler's getAttrs
+    assert '["hand", "hand_from", "bag_count"]).concat(MIN_STATS)' in html
+    # ...and mirrors the verdict for CSS at pickup time
+    assert 'name="attr_hand_too_heavy"' in html
+    assert "hand_too_heavy: tooHeavy(v, item)" in html
+
+
+def test_min_attributes_show_in_the_tooltip_and_redden_the_equip_glow():
+    fake_items = {
+        "heavy-armor": {"label": "Armure lourde", "icon": "item-fake.png",
+                        "cat": "armure_haute", "size": "2x3",
+                        "min_strength": 14, "min_constitution": 9},
+        "focus-ring": {"label": "Anneau de focus", "icon": "item-ring.png",
+                       "cat": "bijoux", "size": "1x1", "min_mental": 11},
+        "plain-apple": {"label": "Pomme", "icon": "item-apple.png",
+                        "cat": "objet", "size": "1x1"},
+    }
+    html = build.jinja_env().get_template("sheet.html.j2").render(
+        items=fake_items, spells=build.load_spells(), presets=build.load_presets(),
+        cols=build.GRID_COLS, rows=build.GRID_ROWS, bags=build.GRID_BAGS
+    )
+    # one suffix per requirement, in stats.j2 order (strength before constitution)
+    assert ('Armure lourde<span class="sheet-min-stat">— Force 14</span>'
+            '<span class="sheet-min-stat">— Constitution 9</span>') in html
+    assert '<span class="sheet-min-stat">— Mental 11</span>' in html
+    assert '>Pomme<' in html  # an item without any key carries no suffix
+
+    css = build.jinja_env().get_template("css/inventory-slots.css.j2").render(
+        items=fake_items, cols=build.GRID_COLS, rows=build.GRID_ROWS, bags=build.GRID_BAGS
+    )
+    assert ".sheet-min-stat {" in css
+    # every category/slot pair that glows gold must have its red counterpart
+    gold = [line for line in css.splitlines()
+            if line.startswith('input[name="attr_hand_cat"][value=')]
+    red = [line for line in css.splitlines()
+           if line.startswith('.sheet-arx:has(input[name="attr_hand_too_heavy"][value="1"])')]
+    assert gold and len(red) == len(gold), (len(red), len(gold))
+    for line in gold:
+        assert '.sheet-arx:has(input[name="attr_hand_too_heavy"][value="1"]) ' + line in css, line
+
+
 def test_currency_items_have_effect_and_value():
     for item_id, item in build.load_items().items():
         if item.get("effect") == "currency":

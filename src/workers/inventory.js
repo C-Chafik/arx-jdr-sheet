@@ -111,6 +111,27 @@ function equipAccepts(slot, itemId) {
   return (EQUIP_ACCEPTS[slot] || []).indexOf(ITEMS[itemId].cat) !== -1;
 }
 
+/* Optional "min_<attribute>" keys on any item.json entry (min_strength,
+   min_mental, min_dexterity, min_constitution — any subset, all optional):
+   the character can carry the item around freely (bag, purse, loot, GM
+   give), but cannot put it ON while ANY of them is unmet. Compared against
+   attr_<attribute> as displayed — gear bonuses already worn count — and only
+   at the moment of the equip click: an item already equipped is never
+   auto-removed if an attribute later drops. Note that an item sitting in
+   hand is still equipped (the source slot is only cleared on drop), so its
+   own bonuses still count while re-equipping it; once stored in the bag
+   those bonuses are gone, and it may become unwearable. */
+const MIN_STATS = ["strength", "mental", "dexterity", "constitution"];
+
+function tooHeavy(v, itemId) {
+  const item = ITEMS[itemId];
+  if (!item) { return false; }
+  return MIN_STATS.some(function (stat) {
+    const min = Number(item["min_" + stat]) || 0;
+    return min > 0 && (parseInt(v[stat], 10) || 0) < min;
+  });
+}
+
 function bagCount(v) {
   const n = parseInt(v.bag_count, 10);
   return (n >= 1 && n <= BAGS) ? n : 1;
@@ -136,7 +157,7 @@ function fitMask(v, itemId, own) {
 
 ALL_SLOTS.forEach(function (slot) {
   on("clicked:slot_" + slot, function () {
-    getAttrs(ALL_SLOTS.concat(["hand", "hand_from", "bag_count"]), function (v) {
+    getAttrs(ALL_SLOTS.concat(["hand", "hand_from", "bag_count"]).concat(MIN_STATS), function (v) {
       const hand = v.hand || "";
       const from = v.hand_from || "";
       const here = v[slot] || "";
@@ -152,6 +173,11 @@ ALL_SLOTS.forEach(function (slot) {
           hand_from: anchor,
           hand_cat: ITEMS[item].cat,
           hand_effect: ITEMS[item].effect || "",
+          /* Mirrored for CSS only: turns the equip-slot glow red instead of
+             gold, so the refusal below is visible BEFORE the click. Never
+             needs clearing — every glow rule also keys off attr_hand_cat,
+             which is reset with the hand, and each pickup rewrites it. */
+          hand_too_heavy: tooHeavy(v, item) ? "1" : "",
           fit: fitMask(v, item, ownCells(anchor, item))
         });
         return;
@@ -223,6 +249,7 @@ ALL_SLOTS.forEach(function (slot) {
          which one was actually clicked via attr_two_handed_primary so the
          other can be dimmed (see inventory-slots.css.j2). */
       if (!equipAccepts(slot, hand) || here !== "") { return; }
+      if (tooHeavy(v, hand)) { return; }
       const item = ITEMS[hand];
       const otherHand = OTHER_HAND_SLOT[slot];
       const isTwoHanded = item.cat === "deux_mains" && otherHand;
