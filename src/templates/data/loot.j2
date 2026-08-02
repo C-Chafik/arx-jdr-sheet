@@ -1,0 +1,13 @@
+{# Shared loot-pool skins: (id, French label). The ids MUST stay in sync with
+   ARX_LOOT_SKINS in src/mod/arx-mod.js — the mod is plain JS with no data file
+   of its own, so a test in tests/test_build.py parses it and compares. The
+   labels only exist sheet-side, for the GM strip's buttons.
+   Imported by sheet.html.j2 (markup) and css/gm-panel.css.j2 (positions and
+   textures), so the two never drift apart either. #}
+{% set loot_skins = [
+    ("bag",           "Sac"),
+    ("body",          "Corps"),
+    ("chest",         "Coffre"),
+    ("place",         "Lieu"),
+    ("secured-chest", "Coffre scellé"),
+] %}

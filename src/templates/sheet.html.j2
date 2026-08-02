@@ -74,6 +74,27 @@
      rules), a "find it" jump instead. #}
   <input type="text" class="sheet-gm-panel-search" name="attr_gm_panel_search" placeholder="Rechercher..." />
   <button type="action" class="sheet-gm-panel-search-btn" name="act_gm_panel_search"></button>
+  {# Loot strip: the last free space under the search bar, and outside the
+     panel for the same clipping reason. One button per skin while no pool is
+     open, a single "close" button while one is — swapped on the very same
+     attr_gm_panel_loot_open the catalog slots already use, so opening a pool
+     over an existing one is impossible from here. Literal type="roll" values,
+     exactly like the give/add buttons: Roll20 sends them to chat as typed and
+     arx-mod.js handles them unchanged (including its "select a token first"
+     whisper). The visual lives on a <span> rather than on the button itself —
+     button[type="roll"] carries a global background-image:none that kills
+     Roll20's d20 badge (see base.css). #}
+{% import "data/loot.j2" as loot %}
+{% for skin, label in loot.loot_skins %}
+  <div class="sheet-gm-loot-btn sheet-gm-loot-btn--skin sheet-gm-loot-btn--{{ skin }}">
+    <span class="sheet-gm-loot-face">{{ label }}</span>
+    <button type="roll" name="act_gm_loot_open_{{ skin | replace('-', '_') }}" value="!arxlootopen {{ skin }}"></button>
+  </div>
+{% endfor %}
+  <div class="sheet-gm-loot-btn sheet-gm-loot-btn--close">
+    <span class="sheet-gm-loot-face">Fermer le butin</span>
+    <button type="roll" name="act_gm_loot_close" value="!arxlootclose"></button>
+  </div>
 {% include "partials/loot-panel.html.j2" %}
   <div class="sheet-book">
 {% include "partials/tabs.html.j2" %}

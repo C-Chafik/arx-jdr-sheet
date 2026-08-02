@@ -479,3 +479,63 @@ def test_mod_script_is_generated():
     assert "!arxtab" in mod
     for item_id in build.load_items():
         assert f'"{item_id}"' in mod, item_id
+
+
+def _loot_skins():
+    """(id, label) pairs from the shared Jinja data file."""
+    module = build.jinja_env().get_template("data/loot.j2").module
+    return list(module.loot_skins)
+
+
+def test_loot_strip_skins_match_the_mod():
+    import re
+    # The mod is plain JS with no data file of its own, so the sheet's skin
+    # list can only be kept honest by reading ARX_LOOT_SKINS back out of it.
+    mod = build.render_mod()
+    line = [ln for ln in mod.splitlines() if "const ARX_LOOT_SKINS" in ln]
+    assert len(line) == 1, line
+    mod_skins = re.findall(r'"([^"]+)"', line[0])
+    assert [skin for skin, _ in _loot_skins()] == mod_skins
+
+
+def test_loot_strip_opens_every_skin_and_closes():
+    html = build.render_html()
+    css = build.build_css("x")
+    for skin, label in _loot_skins():
+        name = skin.replace("-", "_")
+        assert f'name="act_gm_loot_open_{name}" value="!arxlootopen {skin}"' in html, skin
+        assert f'<span class="sheet-gm-loot-face">{label}</span>' in html, skin
+        assert f".sheet-gm-loot-btn--{skin} .sheet-gm-loot-face" in css, skin
+        assert f"url('x/ui/loot-{skin}.png?v={build.ASSET_VERSION}')" in css, skin
+    assert 'name="act_gm_loot_close" value="!arxlootclose"' in html
+
+
+def test_loot_strip_swaps_on_the_open_pool_and_hides_with_the_panel():
+    css = build.build_css("x")
+    panel_open = '.sheet-arx:has(input[name="attr_gm_panel_open"][value="1"])'
+    pool_open = ':has(input[name="attr_gm_panel_loot_open"][value="1"])'
+    # nothing at all until the panel is open
+    assert ".sheet-gm-loot-btn {\n  display: none;" in css
+    assert f"{panel_open} .sheet-gm-loot-btn--skin {{\n  display: block;" in css
+    # ...and the skins give way to the close button once a pool is open
+    assert f"{panel_open}{pool_open} .sheet-gm-loot-btn--skin {{\n  display: none;" in css
+    assert f"{panel_open}{pool_open} .sheet-gm-loot-btn--close {{\n  display: block;" in css
+
+
+def test_loot_strip_stays_inside_the_sheet_and_clear_of_the_search_bar():
+    import re
+    css = build.build_css("x")
+    rows = {}
+    for skin, _ in _loot_skins():
+        block = css.split(f".sheet-gm-loot-btn--{skin} {{")[1].split("}")[0]
+        left, top, width = (int(re.search(rf"{p}: (\d+)px", block).group(1))
+                            for p in ("left", "top", "width"))
+        # the search input sits at top 685 height 28, .sheet-arx is 1500 × 801
+        assert top >= 713, (skin, top)
+        assert top + 38 <= 801, (skin, top)
+        assert left >= 1255 and left + width <= 1445, (skin, left, width)
+        rows.setdefault(top, []).append((left, left + width))
+    for top, spans in rows.items():
+        spans.sort()
+        for (_, end), (start, _) in zip(spans, spans[1:]):
+            assert start >= end, (top, spans)  # no overlap inside a row

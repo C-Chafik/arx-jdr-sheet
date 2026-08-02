@@ -108,6 +108,102 @@
   display: block;
 }
 
+/* ---- Loot strip: the strip of free space left under the search bar
+   (x 1255→1445, y 717→796), same sibling-of-the-panel placement and same
+   "only while the panel is open" rule. Two rows of 38px: 3 skins then 2,
+   replaced by a single full-width "close" button while a pool is open. ---- */
+{% import "data/loot.j2" as loot %}
+{% set strip_x, strip_top, strip_row2, strip_h, strip_gap = 1255, 717, 758, 38, 3 %}
+{% set strip_w1 = 61 %}{# 3 × 61 + 2 gaps = 189 #}
+{% set strip_w2 = 93 %}{# 2 × 93 + 1 gap  = 189 #}
+
+.sheet-gm-loot-btn {
+  display: none;
+  position: absolute;
+  height: {{ strip_h }}px;
+}
+{% for skin, label in loot.loot_skins %}
+{% if loop.index0 < 3 %}
+.sheet-gm-loot-btn--{{ skin }} {
+  left: {{ strip_x + loop.index0 * (strip_w1 + strip_gap) }}px;
+  top: {{ strip_top }}px;
+  width: {{ strip_w1 }}px;
+}
+{% else %}
+.sheet-gm-loot-btn--{{ skin }} {
+  left: {{ strip_x + (loop.index0 - 3) * (strip_w2 + strip_gap) }}px;
+  top: {{ strip_row2 }}px;
+  width: {{ strip_w2 }}px;
+}
+{% endif %}
+{% endfor %}
+.sheet-gm-loot-btn--close {
+  left: {{ strip_x }}px;
+  top: {{ strip_top }}px;
+  width: {{ 3 * strip_w1 + 2 * strip_gap }}px;
+}
+
+/* The skin's own artwork as the button's face, darkened by a flat gradient
+   layered over it so the label stays readable — the textures are busy and a
+   pseudo-element overlay is not an option here (see the comment on the
+   markup in sheet.html.j2). */
+.sheet-gm-loot-face {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(43, 29, 14, 0.8);
+  border-radius: 3px;
+  background-size: cover;
+  background-position: center;
+  color: #f0e2bc;
+  font-family: inherit;
+  font-size: 12px;
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.95), 0 1px 2px rgba(0, 0, 0, 0.95);
+  pointer-events: none;
+  transition: filter 0.2s ease-out;
+}
+{% for skin, label in loot.loot_skins %}
+.sheet-gm-loot-btn--{{ skin }} .sheet-gm-loot-face {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)),
+                    url('{{ "{{ASSET_BASE}}" }}/ui/loot-{{ skin }}.png');
+}
+{% endfor %}
+.sheet-gm-loot-btn--close .sheet-gm-loot-face {
+  background-image: linear-gradient(rgba(90, 20, 15, 0.75), rgba(40, 10, 8, 0.85));
+}
+.sheet-gm-loot-btn:hover .sheet-gm-loot-face {
+  filter: brightness(1.4) drop-shadow(0 0 6px rgba(255, 220, 130, 0.9));
+}
+
+.sheet-gm-loot-btn button {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: url('{{ "{{ASSET_BASE}}" }}/ui/cursor-hover.png') 6 4, pointer;
+}
+
+/* Skins while no pool is open, "close" while one is — the swap runs off the
+   same mirrored attribute as the catalog's give/add buttons above. */
+.sheet-arx:has(input[name="attr_gm_panel_open"][value="1"]) .sheet-gm-loot-btn--skin {
+  display: block;
+}
+.sheet-arx:has(input[name="attr_gm_panel_open"][value="1"]):has(input[name="attr_gm_panel_loot_open"][value="1"]) .sheet-gm-loot-btn--skin {
+  display: none;
+}
+.sheet-arx:has(input[name="attr_gm_panel_open"][value="1"]):has(input[name="attr_gm_panel_loot_open"][value="1"]) .sheet-gm-loot-btn--close {
+  display: block;
+}
+
 {# Search filter: same substring-list trick as fitMask/craft_runes. While a
    search is active (attr_gm_panel_filter non-empty), every item dims by
    default — the second loop below then re-lights the ones that actually
