@@ -285,6 +285,9 @@ def test_equipment_specs_render_in_the_tooltip():
                  "special": "Conjure les illusions", "min_constitution": 10, "min_mental": 8},
         "buckler": {"label": "Rondache", "icon": "i.png", "cat": "main_secondaire",
                     "size": "2x2", "armor_class": 3},
+        "ring": {"label": "Anneau", "icon": "i.png", "cat": "bijoux", "size": "1x1",
+                 "mental": 3, "casting": 8, "magic_resistance": 5,
+                 "special": "Murmure les secrets des morts"},
         "plain-apple": {"label": "Pomme", "icon": "i.png", "cat": "objet", "size": "1x1",
                         "effect": "food"},
     }
@@ -305,6 +308,8 @@ def test_equipment_specs_render_in_the_tooltip():
         " - [5 CA - 10 CAM | +5 MEN; -2 DEX | Conjure les illusions | (8 MEN; 10 CON)]")
     # a shield is armour that occupies a hand: defensive block AND hand code
     assert spec("Rondache") == " - [3 CA | ADD]"
+    # a jewel has neither block nor hand: CAM stays inline with the other stats
+    assert spec("Anneau") == " - [+3 MEN; +8 INC; +5 CAM | Murmure les secrets des morts]"
     # a plain object keeps a bare label: no bracket, and its reserved effect
     # ("food", a behaviour) is never mistaken for prose and printed
     assert 'sheet-statbar--item-plain-apple">Pomme</div>' in html

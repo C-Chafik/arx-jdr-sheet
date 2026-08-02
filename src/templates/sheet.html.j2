@@ -112,10 +112,13 @@
      Equipment gets a spec line after its label, sections separated by " | "
      inside one bracket, EMPTY SECTIONS DROPPED ENTIRELY (never an empty
      "| |"):
-       weapon   Label - [dice | bonuses | effect | (requirements) | hand]
-       armour   Label - [CA - CAM - CAP | bonuses | effect | (requirements)]
+       weapon   Label - [dice | bonuses | special | (requirements) | hand]
+       armour   Label - [CA - CAM - CAP | bonuses | special | (requirements)]
+       jewel    Label - [bonuses | special | (requirements)]
      A shield is armour that occupies a hand, so it gets the defensive block
      AND the hand code — the two halves of the spec meeting in one item.
+     A jewel has neither: it only ever grants stats, so CA/CAM/CAP stay in
+     the bonus list with everything else rather than being pulled out front.
      Anything with no section at all (a plain "objet") keeps a bare label.
 
      ABBR is also the display ORDER of the bonus list (Jinja keeps insertion
@@ -131,13 +134,18 @@
 {% set hand_code = {"main_principale": "1H", "main_secondaire": "ADD",
                     "deux_mains": "2H", "ambidextrie": "AMB"} %}
 {% set weapon_cats = ["main_principale", "ambidextrie", "deux_mains"] %}
+{#- Only these lead with a defensive block; a jewel's CA/CAM/CAP is a bonus
+    like any other, and a weapon's too. -#}
+{% set armour_cats = ["casque", "armure_haute", "armure_basse", "main_secondaire"] %}
 {% macro item_specs(item) %}
 {%- set is_weapon = item.cat in weapon_cats -%}
+{%- set has_defence_block = item.cat in armour_cats -%}
 {%- set sections = [] -%}
-{#- 1. what the item does: dice for a weapon, defence for everything else -#}
+{#- 1. what the item does: dice for a weapon, a defensive block for armour,
+       nothing of its own for a jewel -#}
 {%- if is_weapon -%}
 {%- if item.weap_dmg is defined %}{% set _ = sections.append(item.weap_dmg) %}{% endif -%}
-{%- else -%}
+{%- elif has_defence_block -%}
 {%- set defence = [] -%}
 {%- for name in defence_stats if item[name] is defined -%}
 {%- set _ = defence.append(item[name] ~ " " ~ abbr[name]) -%}
@@ -146,7 +154,7 @@
 {%- endif -%}
 {#- 2. bonuses and maluses: every other stat it carries, always signed -#}
 {%- set mods = [] -%}
-{%- for name, code in abbr.items() if item[name] is defined and (is_weapon or name not in defence_stats) -%}
+{%- for name, code in abbr.items() if item[name] is defined and not (has_defence_block and name in defence_stats) -%}
 {%- set _ = mods.append(("+" if item[name] > 0 else "") ~ item[name] ~ " " ~ code) -%}
 {%- endfor -%}
 {%- if mods %}{% set _ = sections.append(mods | join("; ")) %}{% endif -%}
