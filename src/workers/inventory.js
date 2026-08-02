@@ -1003,7 +1003,7 @@ on("sheet:opened", function () { getAttrs(GAUGE_MAX_GETATTRS, recomputeGaugeMax)
    pin, so an attribute change cannot put the formula's value back. */
 const GM_LEVEL = 200;
 const GM_ATTR = 600;
-const GM_GAUGE_MAX = 5000;
+const GM_GAUGE_MAX = 500;
 
 function forceGmStats(v) {
   if (v.gm_panel_unlocked !== "1") { return; }

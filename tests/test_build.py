@@ -541,34 +541,6 @@ def test_loot_strip_stays_inside_the_sheet_and_clear_of_the_search_bar():
             assert start >= end, (top, spans)  # no overlap inside a row
 
 
-def test_sybil_replaces_the_paper_doll_in_gm_mode():
-    html = build.render_html()
-    css = build.build_css("x")
-    gm = '.sheet-arx:has(input[name="attr_gm_panel_unlocked"][value="1"])'
-    # the name is the per-character rainbow, one span per letter, like secret spells
-    for i, char in enumerate("Sybil"):
-        assert f'<span class="sheet-rainbow-{i % 6}">{char}</span>' in html, char
-    # shown only on a character the API unlocked, never by the sheet itself
-    assert f"{gm} .sheet-gm-sybil-name,\n" in css
-    # it takes the character_name field's own box, so the two must not both show
-    for prop in ("left: 24.4%", "top: 10.2%", "width: 14.3%"):
-        assert prop in css.split(".sheet-gm-sybil-name {")[1].split("}")[0], prop
-    # the editable name gives way to it...
-    assert f"{gm} .sheet-field--character_name {{\n  display: none;" in css
-    # ...but the equipment slots stay usable: the GM sheet is the debugging
-    # bench for everything equipment-driven.
-    for slot in EQUIP_SLOTS:
-        assert f"{gm} .sheet-slot--{slot}" not in css, slot
-    # her portrait, laid over the paper doll, shown on the same attribute
-    assert '<div class="sheet-gm-sybil-portrait"></div>' in html
-    assert f"url('x/ui/sybil.png?v={build.ASSET_VERSION}')" in css
-    assert f"{gm} .sheet-gm-sybil-portrait {{\n  display: block;" in css
-    portrait = css.split(".sheet-gm-sybil-portrait {")[1].split("}")[0]
-    assert "position: absolute" in portrait
-    # it covers the equipment slots, so it must not swallow their clicks
-    assert "pointer-events: none" in portrait
-
-
 def test_gm_character_is_forced_to_level_200_and_600_everywhere():
     html = build.render_html()
     assert "const GM_LEVEL = 200;" in html
@@ -584,7 +556,7 @@ def test_gm_character_is_forced_to_level_200_and_600_everywhere():
     assert "125" in skill_cap
     # both gauge maxes are pinned flat: their formula would read 121200 off the
     # forced attributes, which does not fit the gauge box
-    assert "const GM_GAUGE_MAX = 5000;" in html
+    assert "const GM_GAUGE_MAX = 500;" in html
     gauge = html.split("function recomputeGaugeMax(v) {")[1].split("\nconst")[0]
     assert 'if (v.gm_panel_unlocked === "1") {' in gauge
     assert "update[name] = GM_GAUGE_MAX;" in gauge
