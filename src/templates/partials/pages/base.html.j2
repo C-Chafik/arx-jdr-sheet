@@ -49,6 +49,16 @@
      inventory.js) — drives the auto-shrink font-size rules in
      base.css.j2 so long names still fit the fixed-width field. #}
   <input type="hidden" name="attr_character_name_size" value="normal" />
+  {# GM identity: on a character whose panel is unlocked (attr_gm_panel_unlocked,
+     API-only — see !arxunlockpanel), the paper doll is not a character. The
+     equipment slots go and the name reads Sybil, in the per-character rainbow.
+     The real character_name is only hidden, never overwritten — Roll20 syncs
+     that field with the journal entry both ways. See css/gm-panel.css.j2. #}
+  <div class="sheet-gm-sybil-name">{% for char in "Sybil" %}<span class="sheet-rainbow-{{ loop.index0 % 6 }}">{{ char }}</span>{% endfor %}</div>
+  {# Her portrait, laid straight over the engraved body and the armour slots.
+     pointer-events: none, so those slots stay clickable underneath — the GM
+     sheet is still the equipment debugging bench. #}
+  <div class="sheet-gm-sybil-portrait"></div>
   <div class="sheet-field sheet-field--level">
     <input type="number" name="attr_level" value="0" />
   </div>

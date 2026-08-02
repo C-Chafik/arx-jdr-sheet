@@ -308,24 +308,28 @@
   },
   "applepie": {
     "label": "Tarte aux pommes",
+    "effect": "food",
     "icon": "items/applepie.png",
     "cat": "objet",
     "size": "1x1"
   },
   "applepie-raw": {
     "label": "Tarte aux pommes crue",
+    "effect": "food",
     "icon": "items/applepie-raw.png",
     "cat": "objet",
     "size": "1x1"
   },
   "applepie-wine": {
     "label": "Tarte aux pommes au vin",
+    "effect": "food",
     "icon": "items/applepie-wine.png",
     "cat": "objet",
     "size": "1x1"
   },
   "applepie-raw-wine": {
     "label": "Tarte aux pommes crue au vin",
+    "effect": "food",
     "icon": "items/applepie-raw-wine.png",
     "cat": "objet",
     "size": "1x1"
@@ -338,18 +342,21 @@
   },
   "bottle-wine": {
     "label": "Bouteille de vin",
+    "effect": "drinks",
     "icon": "items/bottle-wine.png",
     "cat": "objet",
     "size": "1x1"
   },
   "bread": {
     "label": "Miche de pain",
+    "effect": "food",
     "icon": "items/bread.png",
     "cat": "objet",
     "size": "1x1"
   },
   "bread-half": {
     "label": "Demi-miche de pain",
+    "effect": "food",
     "icon": "items/bread-half.png",
     "cat": "objet",
     "size": "1x1"
@@ -362,6 +369,7 @@
   },
   "cheese": {
     "label": "Fromage",
+    "effect": "food",
     "icon": "items/cheese.png",
     "cat": "objet",
     "size": "1x1"
@@ -374,6 +382,7 @@
   },
   "potion-mana": {
     "label": "Potion de mana",
+    "effect": "potions",
     "icon": "items/potion-mana.png",
     "cat": "objet",
     "size": "1x1"
@@ -963,42 +972,49 @@
   },
   "apple": {
     "label": "Pomme",
+    "effect": "food",
     "icon": "items/apple.png",
     "cat": "objet",
     "size": "1x1"
   },
   "cooked-bread": {
     "label": "Pain",
+    "effect": "food",
     "icon": "items/cooked-bread.png",
     "cat": "objet",
     "size": "1x1"
   },
   "cooked-chicken": {
     "label": "Poulet rôti",
+    "effect": "food",
     "icon": "items/cooked-chicken.png",
     "cat": "objet",
     "size": "1x1"
   },
   "cooked-fish": {
     "label": "Poisson cuit",
+    "effect": "food",
     "icon": "items/cooked-fish.png",
     "cat": "objet",
     "size": "1x1"
   },
   "mushroom": {
     "label": "Champignon",
+    "effect": "food",
     "icon": "items/mushroom.png",
     "cat": "objet",
     "size": "1x1"
   },
   "water": {
     "label": "Eau",
+    "effect": "drinks",
     "icon": "items/water.png",
     "cat": "objet",
     "size": "1x1"
   },
   "health-potion": {
     "label": "Potion de vie",
+    "effect": "potions",
     "icon": "items/health-potion.png",
     "cat": "objet",
     "size": "1x1"

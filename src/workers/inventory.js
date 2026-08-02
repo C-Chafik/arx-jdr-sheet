@@ -811,10 +811,16 @@ on("sheet:opened", function () { getAttrs(STAT_MOD_GETATTRS, recomputeStatMods);
    listener per field, same pattern as the health/mana "clamp current to
    max" rule above — it runs AFTER whatever just wrote the value (manual
    edit, equipment mod, or attribute-derived skill bonus), so it always
-   sees the latest total. */
+   sees the latest total.
+   The attribute and level caps do NOT apply to a GM character (see
+   forceGmStats below): its 600s and its level 200 are deliberate, and
+   clamping them back down would fight the forcing on every load. The skill
+   cap stays in force for everyone — the skills keep their ordinary formula
+   here, so with 600 in every attribute they all simply land on 125. */
 ATTR_NAMES.forEach(function (attr) {
   on("change:" + attr, function () {
-    getAttrs([attr], function (v) {
+    getAttrs([attr, "gm_panel_unlocked"], function (v) {
+      if (v.gm_panel_unlocked === "1") { return; }
       if ((parseInt(v[attr], 10) || 0) > 24) {
         const update = {};
         update[attr] = 24;
@@ -825,7 +831,8 @@ ATTR_NAMES.forEach(function (attr) {
 });
 
 on("change:level", function () {
-  getAttrs(["level"], function (v) {
+  getAttrs(["level", "gm_panel_unlocked"], function (v) {
+    if (v.gm_panel_unlocked === "1") { return; }
     if ((parseInt(v.level, 10) || 0) > 10) { setAttrs({ level: 10 }); }
   });
 });
@@ -957,16 +964,24 @@ function recomputeGaugeMax(v) {
   const update = {};
   GAUGE_MAX_NAMES.forEach(function (name) {
     const newTotal = GAUGE_MAX_FORMULAS[name](a);
-    const prevApplied = parseInt(v[name + "_applied_stat_mod"], 10) || 0;
-    const current = parseInt(v[name], 10) || 0;
-    const delta = newTotal - prevApplied;
-    if (delta !== 0) { update[name] = current + delta; }
+    /* GM sheet: both gauges are pinned (see GM_GAUGE_MAX). The formula would
+       otherwise read 600 × 202 = 121200 off its forced attributes. The
+       bookkeeping below still records what the formula WOULD have given, so
+       nothing drifts once the character goes back to being ordinary. */
+    if (v.gm_panel_unlocked === "1") {
+      if ((parseInt(v[name], 10) || 0) !== GM_GAUGE_MAX) { update[name] = GM_GAUGE_MAX; }
+    } else {
+      const prevApplied = parseInt(v[name + "_applied_stat_mod"], 10) || 0;
+      const current = parseInt(v[name], 10) || 0;
+      const delta = newTotal - prevApplied;
+      if (delta !== 0) { update[name] = current + delta; }
+    }
     update[name + "_applied_stat_mod"] = newTotal;
   });
   setAttrs(update);
 }
 
-const GAUGE_MAX_GETATTRS = ["constitution", "mental", "level"]
+const GAUGE_MAX_GETATTRS = ["constitution", "mental", "level", "gm_panel_unlocked"]
   .concat(GAUGE_MAX_NAMES)
   .concat(GAUGE_MAX_NAMES.map(function (s) { return s + "_applied_stat_mod"; }));
 
@@ -974,6 +989,40 @@ on("change:constitution change:mental change:level",
   function () { getAttrs(GAUGE_MAX_GETATTRS, recomputeGaugeMax); });
 
 on("sheet:opened", function () { getAttrs(GAUGE_MAX_GETATTRS, recomputeGaugeMax); });
+
+/* The GM is not a character: on a sheet the API has unlocked
+   (attr_gm_panel_unlocked, see !arxunlockpanel) the level and the four
+   attributes are pinned, out of reach of the caps above. Writing them fires
+   the ordinary change: listeners, so the skills follow through their normal
+   formulas — and, being ordinary skills, still stop at their own 125 cap.
+   Only ever writes what actually differs, so re-opening the sheet is a
+   no-op rather than a fresh setAttrs storm.
+   The two gauge maxes are pinned as well, at a flat GM_GAUGE_MAX rather than
+   at what their formula gives (constitution × (level + 2) = 121200 here):
+   six digits do not fit the gauge's box. recomputeGaugeMax honours the same
+   pin, so an attribute change cannot put the formula's value back. */
+const GM_LEVEL = 200;
+const GM_ATTR = 600;
+const GM_GAUGE_MAX = 5000;
+
+function forceGmStats(v) {
+  if (v.gm_panel_unlocked !== "1") { return; }
+  const update = {};
+  if ((parseInt(v.level, 10) || 0) !== GM_LEVEL) { update.level = GM_LEVEL; }
+  ATTR_NAMES.forEach(function (attr) {
+    if ((parseInt(v[attr], 10) || 0) !== GM_ATTR) { update[attr] = GM_ATTR; }
+  });
+  GAUGE_MAX_NAMES.forEach(function (name) {
+    if ((parseInt(v[name], 10) || 0) !== GM_GAUGE_MAX) { update[name] = GM_GAUGE_MAX; }
+  });
+  if (Object.keys(update).length) { setAttrs(update); }
+}
+
+const GM_STAT_GETATTRS = ["gm_panel_unlocked", "level"]
+  .concat(ATTR_NAMES).concat(GAUGE_MAX_NAMES);
+
+on("sheet:opened change:gm_panel_unlocked",
+  function () { getAttrs(GM_STAT_GETATTRS, forceGmStats); });
 /* ========================================================================= */
 
 /* Postures: one active at a time (attr_posture), clicking the active one

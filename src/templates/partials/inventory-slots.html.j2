@@ -27,3 +27,16 @@
      visibility. #}
   <button type="action" class="sheet-read-scroll" name="act_read_scroll"></button>
   <div class="sheet-statbar sheet-statbar--read-scroll">Lire le parchemin</div>
+  {# Consommer: holding a food/drinks/potions item (items.json's effect field)
+     and clicking this emotes "/me mange : Pomme" and empties the case — both
+     done by !arxconsume in arx-mod.js, exactly like the loot panel's Prendre
+     buttons. Neither half can be done from the sheet: a worker's startRoll
+     renders a roll template and never an emote, and Roll20 does not fire
+     clicked: for a type="roll" button (tested in game — the item stayed in
+     hand). The label lives on a <span>, not in the button: base.css blanks
+     the font on every roll button to kill Roll20's d20 badge. Shares the
+     Lire button's spot, the two can never both show. #}
+  <div class="sheet-consume">
+    <span class="sheet-consume-face">Consommer</span>
+    <button type="roll" name="act_consume" value="!arxconsume"></button>
+  </div>

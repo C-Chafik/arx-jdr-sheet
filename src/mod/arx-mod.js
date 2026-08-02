@@ -15,6 +15,7 @@
      !arxlootadd <item_id>       add an item to the open loot pool
      !arxlootclose               close the loot pool (hides it for everyone who had it)
      !arxloottake <cell>         (not for GM use — fired by a player's own "take" button)
+     !arxconsume                 (not for GM use — fired by a player's own "Consommer" button)
      !arxresetinventory          empty every bag slot + clear the hand (fixes stuck/ghost cells)
      !arxresetall                factory-reset the whole character (stats, inventory, magic, map, postures, gold)
      !arxpreset <1-3> <spell_id> set a memorized-spell slot
@@ -55,6 +56,11 @@ function arxSetAttr(charId, name, value) {
   let attr = findObjs({ type: "attribute", characterid: charId, name: name })[0];
   if (!attr) { attr = createObj("attribute", { characterid: charId, name: name, current: "" }); }
   attr.set("current", value);
+}
+
+function arxGetAttr(charId, name) {
+  const attr = findObjs({ type: "attribute", characterid: charId, name: name })[0];
+  return attr ? String(attr.get("current") || "") : "";
 }
 
 /* health_max/mana_max on the sheet (attr_health_max, attr_mana_max) are
@@ -533,6 +539,47 @@ on("chat:message", function (msg) {
   whisper("Page active = " + tab);
 });
 
+/* !arxconsume — fired by the sheet's own "Consommer" button, never typed.
+   It lives here rather than in a sheet worker for two reasons, both verified
+   in game: a worker cannot emit a /me (startRoll only ever renders a roll
+   template, which is why the scroll button could stay sheet-side), and Roll20
+   does not fire clicked: for a type="roll" button, so the worker could not
+   have removed the item either. Same shape as !arxloottake: player-triggered,
+   no playerIsGM gate, character resolved from the token or from ownership.
+   The verbs are duplicated from nothing — the sheet no longer holds a copy,
+   this map is the only one. */
+const ARX_CONSUME_VERBS = { food: "mange", drinks: "boit", potions: "consomme" };
+
+on("chat:message", function (msg) {
+  if (msg.type !== "api" || msg.content.indexOf("!arxconsume") !== 0) { return; }
+  const charId = arxResolveCharacterForPlayer(msg);
+  if (!charId) {
+    arxWhisperTo(msg, "Impossible de savoir quel personnage consomme — sélectionne ton token.");
+    return;
+  }
+  const itemId = arxGetAttr(charId, "hand");
+  const item = ARX_ITEMS[itemId];
+  const verb = item && ARX_CONSUME_VERBS[item.effect];
+  if (!verb) { arxWhisperTo(msg, "Rien de consommable en main."); return; }
+
+  /* Free the cells the item occupied. Held from the bag it owns a whole
+     footprint (anchor + covered cells); held from an equip slot — no
+     consumable is equippable today, but the sheet allows any slot to hand an
+     item over — it is just that one slot. */
+  const from = arxGetAttr(charId, "hand_from");
+  if (from.indexOf("bag_") === 0) {
+    const size = arxSizeOf(itemId);
+    const cells = arxCellsFor(parseInt(from.slice(4), 10), size.w, size.h) || [from];
+    cells.forEach(function (cell) { arxSetAttr(charId, cell, ""); });
+  } else if (from) {
+    arxSetAttr(charId, from, "");
+  }
+  ["hand", "hand_from", "hand_cat", "hand_effect", "hand_too_heavy", "fit"]
+    .forEach(function (n) { arxSetAttr(charId, n, ""); });
+
+  sendChat("character|" + charId, "/me " + verb + " : " + item.label);
+});
+
 on("chat:message", function (msg) {
   if (msg.type !== "api" || msg.content.indexOf("!arxhelp") !== 0) { return; }
   if (!playerIsGM(msg.playerid)) { return; }
@@ -552,6 +599,7 @@ on("chat:message", function (msg) {
     "!arxlootadd <item_id> — ajoute un objet au butin ouvert",
     "!arxlootclose — ferme le butin partagé",
     "!arxloottake <case> — pas pour le MJ, déclenché par le bouton \"Prendre\" du joueur",
+    "!arxconsume — pas pour le MJ, déclenché par le bouton \"Consommer\" du joueur",
     "!arxresetinventory — vide toutes les cases de sac + relâche la main",
     "!arxresetall — réinitialise tout le personnage (stats, inventaire, magie, carte, postures, or)",
     "!arxpreset <1-3> <spell_id> — définit un emplacement de sort mémorisé",

@@ -214,6 +214,56 @@ input[name="attr_hand"]:not([value=""]) ~ .sheet-inventory .sheet-trash { displa
 input[name="attr_hand_effect"][value="scroll"] ~ .sheet-inventory .sheet-read-scroll { display: block; }
 .sheet-arx:has(.sheet-read-scroll:hover) .sheet-statbar--read-scroll { display: block; }
 
+/* ---- Consommer: same slot in the band as the Lire button above, widened
+   leftward for its label. An item carries a single "effect", so a scroll can
+   never also be food and the two buttons can never both be up. Only shown
+   while a consumable is in hand, exactly like Lire and the trash. ---- */
+.sheet-consume {
+  display: none;
+  position: absolute;
+  left: 84.6%;
+  top: 8%;
+  width: 9.3%;
+  height: 13%;
+  z-index: 4;
+}
+.sheet-consume-face {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(43, 29, 14, 0.8);
+  border-radius: 3px;
+  background: linear-gradient(rgba(60, 42, 18, 0.85), rgba(30, 20, 8, 0.9));
+  color: #f0e2bc;
+  font-family: inherit;
+  font-size: 11px;
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.95);
+  pointer-events: none;
+  transition: filter 0.2s ease-out;
+}
+.sheet-consume:hover .sheet-consume-face {
+  filter: brightness(1.4) drop-shadow(0 0 5px rgba(255, 220, 130, 0.9));
+}
+.sheet-consume button {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: url('{{ "{{ASSET_BASE}}" }}/ui/cursor-hover.png') 6 4, pointer;
+}
+{% for effect in ["food", "drinks", "potions"] %}
+input[name="attr_hand_effect"][value="{{ effect }}"] ~ .sheet-inventory .sheet-consume { display: block; }
+{% endfor %}
+
 /* ---- Equipment slots on book/base.png (1598 × 984), % of .sheet-book. ---- */
 .sheet-slot--equip_main_hand { left: 17.2%; top: 11.0%; width: 6.9%; height: 9.9%; }
 .sheet-slot--equip_off_hand  { left: 38.8%; top: 11.0%; width: 6.6%; height: 9.3%; }

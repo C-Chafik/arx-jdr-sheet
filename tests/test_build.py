@@ -539,3 +539,113 @@ def test_loot_strip_stays_inside_the_sheet_and_clear_of_the_search_bar():
         spans.sort()
         for (_, end), (start, _) in zip(spans, spans[1:]):
             assert start >= end, (top, spans)  # no overlap inside a row
+
+
+def test_sybil_replaces_the_paper_doll_in_gm_mode():
+    html = build.render_html()
+    css = build.build_css("x")
+    gm = '.sheet-arx:has(input[name="attr_gm_panel_unlocked"][value="1"])'
+    # the name is the per-character rainbow, one span per letter, like secret spells
+    for i, char in enumerate("Sybil"):
+        assert f'<span class="sheet-rainbow-{i % 6}">{char}</span>' in html, char
+    # shown only on a character the API unlocked, never by the sheet itself
+    assert f"{gm} .sheet-gm-sybil-name,\n" in css
+    # it takes the character_name field's own box, so the two must not both show
+    for prop in ("left: 24.4%", "top: 10.2%", "width: 14.3%"):
+        assert prop in css.split(".sheet-gm-sybil-name {")[1].split("}")[0], prop
+    # the editable name gives way to it...
+    assert f"{gm} .sheet-field--character_name {{\n  display: none;" in css
+    # ...but the equipment slots stay usable: the GM sheet is the debugging
+    # bench for everything equipment-driven.
+    for slot in EQUIP_SLOTS:
+        assert f"{gm} .sheet-slot--{slot}" not in css, slot
+    # her portrait, laid over the paper doll, shown on the same attribute
+    assert '<div class="sheet-gm-sybil-portrait"></div>' in html
+    assert f"url('x/ui/sybil.png?v={build.ASSET_VERSION}')" in css
+    assert f"{gm} .sheet-gm-sybil-portrait {{\n  display: block;" in css
+    portrait = css.split(".sheet-gm-sybil-portrait {")[1].split("}")[0]
+    assert "position: absolute" in portrait
+    # it covers the equipment slots, so it must not swallow their clicks
+    assert "pointer-events: none" in portrait
+
+
+def test_gm_character_is_forced_to_level_200_and_600_everywhere():
+    html = build.render_html()
+    assert "const GM_LEVEL = 200;" in html
+    assert "const GM_ATTR = 600;" in html
+    assert 'on("sheet:opened change:gm_panel_unlocked"' in html
+    # the attribute and level caps must stand down, or they clamp it straight back
+    assert 'getAttrs([attr, "gm_panel_unlocked"]' in html
+    assert 'getAttrs(["level", "gm_panel_unlocked"]' in html
+    assert html.count('if (v.gm_panel_unlocked === "1") { return; }') == 2
+    # ...but the skill cap stays for everyone: skills keep their normal formula
+    skill_cap = html.split('on("change:" + skill, function () {')[1].split("});")[0]
+    assert "gm_panel_unlocked" not in skill_cap
+    assert "125" in skill_cap
+    # both gauge maxes are pinned flat: their formula would read 121200 off the
+    # forced attributes, which does not fit the gauge box
+    assert "const GM_GAUGE_MAX = 5000;" in html
+    gauge = html.split("function recomputeGaugeMax(v) {")[1].split("\nconst")[0]
+    assert 'if (v.gm_panel_unlocked === "1") {' in gauge
+    assert "update[name] = GM_GAUGE_MAX;" in gauge
+    # ...and the pin is declared before the formula block that reads it
+    assert html.index("const GM_GAUGE_MAX") > html.index("const GAUGE_MAX_NAMES")
+
+
+def test_gauges_have_no_auto_shrink():
+    """Removed on request: the GM max is pinned to a 4-digit number instead."""
+    html = build.render_html()
+    css = build.build_css("x")
+    assert "max_size" not in html
+    assert "max_size" not in css
+
+
+CONSUMABLE_EFFECTS = ["food", "drinks", "potions"]
+
+
+def test_consumables_are_wired_end_to_end():
+    html = build.render_html()
+    css = build.build_css("x")
+    items = build.load_items()
+    # the catalog actually carries the three effects
+    for effect in CONSUMABLE_EFFECTS:
+        assert any(i.get("effect") == effect for i in items.values()), effect
+    # both halves are the mod's job: a worker's startRoll renders a roll
+    # template and never an emote, and Roll20 does not fire clicked: for a
+    # type="roll" button (tested in game) — so nothing is left sheet-side
+    assert 'value="!arxconsume"' in html
+    assert "consume_phrase" not in html
+    assert 'on("clicked:consume"' not in html
+    mod = build.render_mod()
+    handler = mod.split('indexOf("!arxconsume") !== 0) { return; }')[1].split("\n});")[0]
+    assert "arxResolveCharacterForPlayer(msg)" in handler   # player-triggered
+    assert "playerIsGM" not in handler                      # ...so no GM gate, like !arxloottake
+    assert 'sendChat("character|" + charId, "/me "' in handler
+    assert "arxCellsFor(" in handler                        # frees the whole footprint
+    # one reveal rule per effect, and the button shares the scroll button's spot
+    for effect in CONSUMABLE_EFFECTS:
+        assert (f'input[name="attr_hand_effect"][value="{effect}"] ~ '
+                f'.sheet-inventory .sheet-consume {{ display: block; }}') in css, effect
+    assert ">Consommer</span>" in html
+
+
+def test_consume_verbs_cover_exactly_the_effects_used():
+    """The verbs live in the mod, the reveal rules in CSS and the values in
+    items.json — three places that must not drift apart."""
+    import json
+    import re
+    mod = build.render_mod()
+    verbs = mod.split("const ARX_CONSUME_VERBS = {")[1].split("}")[0]
+    in_worker = sorted(re.findall(r"(\w+):", verbs))
+    assert in_worker == sorted(CONSUMABLE_EFFECTS), in_worker
+    # the command must be listed in !arxhelp like every other one
+    assert "!arxconsume — pas pour le MJ" in mod
+    css = build.build_css("x")
+    in_css = sorted(set(re.findall(r'attr_hand_effect"\]\[value="(\w+)"\] ~ '
+                                   r'.sheet-inventory .sheet-consume', css)))
+    assert in_css == sorted(CONSUMABLE_EFFECTS), in_css
+    # an item is a scroll OR food, never both: that is what lets the two
+    # buttons share one spot in the band
+    in_items = {i["effect"] for i in build.load_items().values() if "effect" in i}
+    assert in_items.issuperset(CONSUMABLE_EFFECTS)
+    assert "scroll" in in_items
