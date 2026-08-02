@@ -8,6 +8,9 @@
   {# "1" while the held item's min_strength exceeds attr_strength — turns the
      equip-slot glow red (see inventory-slots.css.j2). #}
   <input type="hidden" class="sheet-hand-mirror" name="attr_hand_too_heavy" value="" />
+  {# "1" while the held ambidextrous weapon is beyond attr_dexterity for the
+     WEAK hand — reddens the off-hand slot only (see inventory-slots.css.j2). #}
+  <input type="hidden" class="sheet-hand-mirror" name="attr_hand_no_offhand" value="" />
   <input type="hidden" class="sheet-hand-mirror" name="attr_fit" value="" />
   {# Bag levels: count = unlocked, level = currently displayed. DOM order matters:
      bag_count BEFORE bag_level (nav visibility selectors chain them with ~). #}
@@ -105,15 +108,65 @@
   {# Item names on hover — same billboard as the stat descriptions.
      Revealed by generated :has() rules in css/inventory-slots.css.j2.
      Legendary items get a star marker ahead of their name.
-     Attribute requirements (min_<attr>, enforced by tooHeavy() in the
-     worker) are appended after the name, in stats.j2's own order and with
-     its own French labels. #}
+
+     Equipment gets a spec line after its label, sections separated by " | "
+     inside one bracket, EMPTY SECTIONS DROPPED ENTIRELY (never an empty
+     "| |"):
+       weapon   Label - [dice | bonuses | effect | (requirements) | hand]
+       armour   Label - [CA - CAM - CAP | bonuses | effect | (requirements)]
+     A shield is armour that occupies a hand, so it gets the defensive block
+     AND the hand code — the two halves of the spec meeting in one item.
+     Anything with no section at all (a plain "objet") keeps a bare label.
+
+     ABBR is also the display ORDER of the bonus list (Jinja keeps insertion
+     order), and doubles as the whitelist of stat keys worth printing. #}
 {% import "data/stats.j2" as stats %}
-{% set min_attrs = ["strength", "mental", "dexterity", "constitution"] %}
-{% macro min_stat_suffix(item) %}
-{%- for name, label, text in stats.stat_infos if name in min_attrs and item["min_" ~ name] is defined -%}
-<span class="sheet-min-stat">— {{ label }} {{ item["min_" ~ name] }}</span>
+{% set abbr = {"strength": "FOR", "mental": "MEN", "dexterity": "DEX", "constitution": "CON",
+               "stealth": "DIS", "technical": "TEC", "intuition": "INT", "ethereal_link": "PSY",
+               "object_knowledge": "MAN", "casting": "INC", "close_combat": "CMB",
+               "projectile": "DST", "defense": "DEF",
+               "armor_class": "CA", "magic_resistance": "CAM", "poison_resistance": "CAP",
+               "damages": "DMG", "health_max": "PV", "mana_max": "PM"} %}
+{% set defence_stats = ["armor_class", "magic_resistance", "poison_resistance"] %}
+{% set hand_code = {"main_principale": "1H", "main_secondaire": "ADD",
+                    "deux_mains": "2H", "ambidextrie": "AMB"} %}
+{% set weapon_cats = ["main_principale", "ambidextrie", "deux_mains"] %}
+{% macro item_specs(item) %}
+{%- set is_weapon = item.cat in weapon_cats -%}
+{%- set sections = [] -%}
+{#- 1. what the item does: dice for a weapon, defence for everything else -#}
+{%- if is_weapon -%}
+{%- if item.weap_dmg is defined %}{% set _ = sections.append(item.weap_dmg) %}{% endif -%}
+{%- else -%}
+{%- set defence = [] -%}
+{%- for name in defence_stats if item[name] is defined -%}
+{%- set _ = defence.append(item[name] ~ " " ~ abbr[name]) -%}
 {%- endfor -%}
+{%- if defence %}{% set _ = sections.append(defence | join(" - ")) %}{% endif -%}
+{%- endif -%}
+{#- 2. bonuses and maluses: every other stat it carries, always signed -#}
+{%- set mods = [] -%}
+{%- for name, code in abbr.items() if item[name] is defined and (is_weapon or name not in defence_stats) -%}
+{%- set _ = mods.append(("+" if item[name] > 0 else "") ~ item[name] ~ " " ~ code) -%}
+{%- endfor -%}
+{%- if mods %}{% set _ = sections.append(mods | join("; ")) %}{% endif -%}
+{#- 3. free prose. Its own key rather than a second meaning for "effect",
+       which is a typed behaviour (scroll/rune/currency/food…) wired to code:
+       one word in the wrong column there would silently make a sword edible
+       or a pie inert. -#}
+{%- if item.special is defined %}{% set _ = sections.append(item.special) %}{% endif -%}
+{#- 4. what it takes to wear it (min_<attr>, enforced by tooHeavy in the worker) -#}
+{%- set reqs = [] -%}
+{%- for name, code in abbr.items() if item["min_" ~ name] is defined -%}
+{%- set _ = reqs.append(item["min_" ~ name] ~ " " ~ code) -%}
+{%- endfor -%}
+{%- if reqs %}{% set _ = sections.append("(" ~ reqs | join("; ") ~ ")") %}{% endif -%}
+{#- 5. which hand it takes up. Nothing here for the off-hand Dexterity rule:
+       it applies to every ambidextrous weapon for every character, so
+       printing it on each of them was noise — the player meets it as a red
+       off-hand slot instead (OFFHAND_MIN_DEXTERITY in inventory.js). -#}
+{%- if item.cat in hand_code %}{% set _ = sections.append(hand_code[item.cat]) %}{% endif -%}
+{%- if sections %}<span class="sheet-item-specs"> - [{{ sections | join(" | ") }}]</span>{% endif -%}
 {% endmacro %}
 {% for item_id, item in items.items() %}
 {% set spell_id = item_id[7:] if item_id.startswith("scroll-") else "" %}
@@ -125,9 +178,9 @@
        scrolls with spell_casting >= 85 have no class/level color (see
        magic-slots.css.j2) — same per-character rainbow identity as secret
        presets instead of a flat color, not a font. #}
-    <div class="sheet-statbar sheet-statbar--item-{{ item_id }}">{% for char in item.label %}<span class="sheet-rainbow-{{ loop.index0 % 6 }}">{{ char }}</span>{% endfor %}{{ min_stat_suffix(item) }}</div>
+    <div class="sheet-statbar sheet-statbar--item-{{ item_id }}">{% for char in item.label %}<span class="sheet-rainbow-{{ loop.index0 % 6 }}">{{ char }}</span>{% endfor %}{{ item_specs(item) }}</div>
 {% else %}
-    <div class="sheet-statbar sheet-statbar--item-{{ item_id }}">{% if item.legendary | default(false) %}★ {% endif %}{{ item.label }}{{ min_stat_suffix(item) }}</div>
+    <div class="sheet-statbar sheet-statbar--item-{{ item_id }}">{% if item.legendary | default(false) %}★ {% endif %}{{ item.label }}{{ item_specs(item) }}</div>
 {% endif %}
 {% endfor %}
   {# Learned-rune names on hover (magic page only) — yellow with a star,

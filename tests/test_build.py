@@ -271,38 +271,54 @@ def test_min_attributes_block_equipping():
     assert "hand_too_heavy: tooHeavy(v, item)" in html
 
 
-def test_min_attributes_show_in_the_tooltip_and_redden_the_equip_glow():
+def test_equipment_specs_render_in_the_tooltip():
     fake_items = {
-        "heavy-armor": {"label": "Armure lourde", "icon": "item-fake.png",
-                        "cat": "armure_haute", "size": "2x3",
-                        "min_strength": 14, "min_constitution": 9},
-        "focus-ring": {"label": "Anneau de focus", "icon": "item-ring.png",
-                       "cat": "bijoux", "size": "1x1", "min_mental": 11},
-        "plain-apple": {"label": "Pomme", "icon": "item-apple.png",
-                        "cat": "objet", "size": "1x1"},
+        "heavy-blade": {"label": "Lame lourde", "icon": "i.png", "cat": "deux_mains",
+                        "size": "1x3", "weap_dmg": "2d20", "strength": 10, "stealth": -20,
+                        "special": "Paralyse temporairement l'ennemi",
+                        "min_strength": 20, "min_dexterity": 15},
+        "plain-blade": {"label": "Lame simple", "icon": "i.png", "cat": "main_principale",
+                        "size": "1x3", "weap_dmg": "2d20", "strength": 10, "stealth": -20,
+                        "min_strength": 20, "min_dexterity": 15},
+        "helm": {"label": "Casque de Poxelis", "icon": "i.png", "cat": "casque", "size": "1x1",
+                 "armor_class": 5, "magic_resistance": 10, "mental": 5, "dexterity": -2,
+                 "special": "Conjure les illusions", "min_constitution": 10, "min_mental": 8},
+        "buckler": {"label": "Rondache", "icon": "i.png", "cat": "main_secondaire",
+                    "size": "2x2", "armor_class": 3},
+        "plain-apple": {"label": "Pomme", "icon": "i.png", "cat": "objet", "size": "1x1",
+                        "effect": "food"},
     }
     html = build.jinja_env().get_template("sheet.html.j2").render(
         items=fake_items, spells=build.load_spells(), presets=build.load_presets(),
         cols=build.GRID_COLS, rows=build.GRID_ROWS, bags=build.GRID_BAGS
     )
-    # one suffix per requirement, in stats.j2 order (strength before constitution)
-    assert ('Armure lourde<span class="sheet-min-stat">— Force 14</span>'
-            '<span class="sheet-min-stat">— Constitution 9</span>') in html
-    assert '<span class="sheet-min-stat">— Mental 11</span>' in html
-    assert '>Pomme<' in html  # an item without any key carries no suffix
+    def spec(label):
+        return html.split(label, 1)[1].split("</div>")[0].replace(
+            '<span class="sheet-item-specs">', "").replace("</span>", "")
+    assert spec("Lame lourde") == (
+        " - [2d20 | +10 FOR; -20 DIS | Paralyse temporairement l\'ennemi"
+        " | (20 FOR; 15 DEX) | 2H]")
+    # no effect on this one: the section is dropped, never left empty
+    assert spec("Lame simple") == " - [2d20 | +10 FOR; -20 DIS | (20 FOR; 15 DEX) | 1H]"
+    # armour leads with its defensive block, and CA/CAM/CAP stay out of the bonuses
+    assert spec("Casque de Poxelis") == (
+        " - [5 CA - 10 CAM | +5 MEN; -2 DEX | Conjure les illusions | (8 MEN; 10 CON)]")
+    # a shield is armour that occupies a hand: defensive block AND hand code
+    assert spec("Rondache") == " - [3 CA | ADD]"
+    # a plain object keeps a bare label: no bracket, and its reserved effect
+    # ("food", a behaviour) is never mistaken for prose and printed
+    assert 'sheet-statbar--item-plain-apple">Pomme</div>' in html
 
-    css = build.jinja_env().get_template("css/inventory-slots.css.j2").render(
-        items=fake_items, cols=build.GRID_COLS, rows=build.GRID_ROWS, bags=build.GRID_BAGS
-    )
-    assert ".sheet-min-stat {" in css
-    # every category/slot pair that glows gold must have its red counterpart
-    gold = [line for line in css.splitlines()
-            if line.startswith('input[name="attr_hand_cat"][value=')]
-    red = [line for line in css.splitlines()
-           if line.startswith('.sheet-arx:has(input[name="attr_hand_too_heavy"][value="1"])')]
-    assert gold and len(red) == len(gold), (len(red), len(gold))
-    for line in gold:
-        assert '.sheet-arx:has(input[name="attr_hand_too_heavy"][value="1"]) ' + line in css, line
+
+def test_effect_stays_a_typed_behaviour():
+    """Prose belongs in "special"; "effect" only ever carries one of the eight
+    behaviours the code actually reacts to. Any other value does nothing, and
+    does it silently."""
+    RESERVED = {"scroll", "rune", "currency", "extra_bag", "map_card",
+                "food", "drinks", "potions"}
+    for item_id, item in build.load_items().items():
+        if "effect" in item:
+            assert item["effect"] in RESERVED, f"{item_id}: {item['effect']} is wired to nothing"
 
 
 def test_currency_items_have_effect_and_value():
@@ -621,3 +637,80 @@ def test_consume_verbs_cover_exactly_the_effects_used():
     in_items = {i["effect"] for i in build.load_items().values() if "effect" in i}
     assert in_items.issuperset(CONSUMABLE_EFFECTS)
     assert "scroll" in in_items
+
+
+WEAPON_DICE = {"one-handed-sword-light": "1d4", "wooden-club": "1d6",
+               "one-handed-sword": "1d8", "bow": "1d8", "sam-sword": "2d20"}
+
+
+def test_weapon_dice_are_well_formed_and_only_on_weapons():
+    import re
+    items = build.load_items()
+    for item_id, item in items.items():
+        if "weap_dmg" not in item:
+            continue
+        assert re.fullmatch(r"[1-9]\d*d[1-9]\d*", item["weap_dmg"]), item_id
+        # dice on a shield or a loaf of bread would silently never be rolled
+        assert item["cat"] in ("main_principale", "ambidextrie", "deux_mains"), \
+            f"{item_id}: {item['cat']} never reaches the damage roll"
+    for item_id, dice in WEAPON_DICE.items():
+        assert items[item_id]["weap_dmg"] == dice, item_id
+
+
+def test_damage_roll_is_computed_in_the_worker():
+    html = build.render_html()
+    handler = html.split('on("clicked:roll_damages"')[1].split("\n});")[0]
+    # RNG is the eleven-step ladder 0, 0.1 … 1.0, not a continuous draw
+    assert "Math.floor(Math.random() * 11) / 10" in handler
+    assert "const base = offensive ? damages : Math.round(damages * (0.8 + 0.2 * rng));" in handler
+    # Offensive takes each die at its maximum instead of rolling it
+    assert "values.push(offensive ? weapon.dice.faces : rollDie(weapon.dice.faces));" in handler
+    # one row per weapon, keyed by its own label, every die spelled out
+    assert 'rows += " {{" + weapon.label + "=" + values.join(" + ") + "}}"' in handler
+    # the total is accumulated here, never rebuilt by finishRoll
+    assert "values.forEach(function (value) { total += value; });" in handler
+    assert "finishRoll(results.rollId, {})" in handler
+    # nothing left of the version whose Total displayed 0
+    for gone in ("Hasard", "{{Stat=", "{{Arme=", "[[1d100]]", "{{Total=[[0]]}}", "diceMax"):
+        assert gone not in handler, gone
+    # a two-handed weapon mirrors itself into the off hand: count it once
+    assert 'mainItem.cat === "deux_mains"' in handler
+    assert '[v.equip_main_hand, mirroredTwoHanded ? "" : v.equip_off_hand]' in handler
+
+
+def test_damage_rows_use_the_weapon_label_and_the_base_row():
+    html = build.render_html()
+    handler = html.split('on("clicked:roll_damages"')[1].split("\n});")[0]
+    assert '{{Base=[[" + base + "]]}}' in handler
+    assert '{{Total=[[" + total + "]]}}' in handler
+    assert '(offensive ? " (Offensive)" : "")' in handler
+    # the weapon row is keyed by the label, so a nameless item cannot appear
+    assert "label: ITEMS[id].label" in handler
+
+
+def test_ambidextrous_weapons_need_dexterity_for_the_off_hand():
+    import re
+    html = build.render_html()
+    css = build.build_css("x")
+    # the click is refused, and only for that one slot
+    assert 'if (slot === "equip_off_hand" && offHandDenied(v, hand)) { return; }' in html
+    assert 'item.cat === "ambidextrie"' in html
+    assert 'hand_no_offhand: offHandDenied(v, item) ? "1" : ""' in html
+    assert 'name="attr_hand_no_offhand"' in html
+    # red on the off hand ONLY — the same sword must stay gold in the main hand
+    red = ('.sheet-arx:has(input[name="attr_hand_no_offhand"][value="1"]) '
+           'input[name="attr_hand_cat"][value="ambidextrie"] ~ .sheet-book '
+           '.sheet-slot--equip_off_hand input[value=""] ~ button {')
+    assert red in css
+    # the rule is universal (every character, every ambidextrous weapon), so
+    # it is deliberately absent from the tooltips — it would repeat on each
+    assert "main gauche" not in html
+    # exactly one selector keys off that flag, and it targets the off hand
+    keyed = [l for l in css.splitlines()
+             if "attr_hand_no_offhand" in l and l.startswith(".sheet-arx")]
+    assert len(keyed) == 1, keyed
+    assert ".sheet-slot--equip_off_hand" in keyed[0]
+    assert ".sheet-slot--equip_main_hand" not in keyed[0]
+    # both red states must look identical: same declarations, one source
+    heavy = css.split('.sheet-arx:has(input[name="attr_hand_too_heavy"][value="1"])')[1].split("}")[0]
+    assert heavy.split("{")[1].strip() == css.split(red)[1].split("}")[0].strip()

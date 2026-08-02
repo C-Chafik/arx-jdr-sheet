@@ -132,6 +132,20 @@ function tooHeavy(v, itemId) {
   });
 }
 
+/* An "ambidextrie" weapon goes in either hand, but wielding one in the WEAK
+   hand takes training: below this Dexterity the off-hand slot refuses it,
+   while the main hand still takes it happily. Kept apart from tooHeavy()
+   above on purpose — that one means "beyond you anywhere", this one bars a
+   single slot, so the two cannot share a flag (see inventory-slots.css.j2,
+   where they light the same red but on different selectors). */
+const OFFHAND_MIN_DEXTERITY = 16;
+
+function offHandDenied(v, itemId) {
+  const item = ITEMS[itemId];
+  return !!item && item.cat === "ambidextrie"
+    && (parseInt(v.dexterity, 10) || 0) < OFFHAND_MIN_DEXTERITY;
+}
+
 function bagCount(v) {
   const n = parseInt(v.bag_count, 10);
   return (n >= 1 && n <= BAGS) ? n : 1;
@@ -178,6 +192,8 @@ ALL_SLOTS.forEach(function (slot) {
              needs clearing — every glow rule also keys off attr_hand_cat,
              which is reset with the hand, and each pickup rewrites it. */
           hand_too_heavy: tooHeavy(v, item) ? "1" : "",
+          /* Same idea, one slot only: reddens the off hand, never the main. */
+          hand_no_offhand: offHandDenied(v, item) ? "1" : "",
           fit: fitMask(v, item, ownCells(anchor, item))
         });
         return;
@@ -250,6 +266,7 @@ ALL_SLOTS.forEach(function (slot) {
          other can be dimmed (see inventory-slots.css.j2). */
       if (!equipAccepts(slot, hand) || here !== "") { return; }
       if (tooHeavy(v, hand)) { return; }
+      if (slot === "equip_off_hand" && offHandDenied(v, hand)) { return; }
       const item = ITEMS[hand];
       const otherHand = OTHER_HAND_SLOT[slot];
       const isTwoHanded = item.cat === "deux_mains" && otherHand;
@@ -628,36 +645,78 @@ Object.keys(SPELLS).forEach(function (spellId) {
   });
 });
 
-/* Damages: needs the equipped weapon's own label (an item lookup, which a
-   static roll button's value="" can't do) — main hand, plus " + <off-hand>"
-   if the off hand holds an "ambidextrie" item (dagger, etc — not a shield).
+/* Optional "weap_dmg": "2d6" on a weapon — the dice it adds on top of the
+   Dégâts stat. Absent (or malformed) means the weapon adds nothing and hits
+   like bare hands.
    NOTE: "ambidextrie" also covers non-weapon utility items (torch, grimoire)
-   by design — none exist in items.json yet, but once one does, this will
-   need a real "is this actually a weapon" check instead of just the cat. */
+   by design — none exist in items.json yet, and the weap_dmg key is what
+   actually decides whether something contributes, not the category. */
+function weaponDice(itemId) {
+  const item = ITEMS[itemId];
+  const spec = item && typeof item.weap_dmg === "string" ? item.weap_dmg.match(/^(\d+)d(\d+)$/) : null;
+  return spec ? { count: parseInt(spec[1], 10), faces: parseInt(spec[2], 10) } : null;
+}
+
+/* Damage:
+     Base            Dégâts × (0.8 + 0.2 × RNG), RNG being one of
+                     0, 0.1, 0.2 … 1.0 — or plainly Dégâts in Offensive,
+                     which is what "dégâts maximum" means.
+     one row/weapon  every die shown individually ("10 + 5"), at its maximum
+                     in Offensive.
+     Total           the sum of all of it.
+
+   EVERYTHING IS COMPUTED HERE, and the template only ever receives finished
+   numbers. Two reasons, both learned the hard way:
+     - a template field prints a roll's TOTAL and nothing else, so "10 + 5"
+       is unreachable through Roll20's dice engine;
+     - the previous version rolled real dice and rebuilt the total through
+       finishRoll's computed-value override; the override never landed and
+       Total displayed 0 in play.
+   The trade-off is that these are Math.random() draws, not QuantumRoll dice:
+   no rolling animation, and no server-side proof. Showing every die value
+   makes the result more legible than the old single opaque number, but a
+   player could in principle tamper with their own client.
+
+   Both hands add their own dice; a "deux_mains" weapon sits in BOTH hand
+   slots (it mirrors itself so the off-hand shows a dimmed icon), so it is
+   counted once — the same guard as recomputeModifiers. */
+function rollDie(faces) { return 1 + Math.floor(Math.random() * faces); }
+
 on("clicked:roll_damages", function () {
   getAttrs(["equip_main_hand", "equip_off_hand", "posture", "damages"], function (v) {
     const mainItem = ITEMS[v.equip_main_hand];
-    const offItem = ITEMS[v.equip_off_hand];
-    let weaponLabel = mainItem ? mainItem.label : "Mains nues";
-    if (offItem && offItem.cat === "ambidextrie") { weaponLabel += " + " + offItem.label; }
+    const mirroredTwoHanded = mainItem && mainItem.cat === "deux_mains"
+                              && v.equip_off_hand === v.equip_main_hand;
     const offensive = v.posture === "offensive";
-    /* Normally 1d<damages> (e.g. 15 damages -> 1d15); Offensive skips the
-       die and just deals the flat value — its actual "always max damage"
-       effect, now that damage is a real range. damages<1 also skips the
-       die (1d0 is invalid) and just shows 0. */
     const damages = parseInt(v.damages, 10) || 0;
-    const valeur = (offensive || damages < 1) ? "[[@{damages}]]" : "[[1d@{damages}]]";
-    if (offensive) { weaponLabel += " (Offensive)"; }
-    startRoll("&{template:default} {{name=Dégâts — " + weaponLabel + "}} {{Valeur=" + valeur + "}}",
+
+    const weapons = [];
+    [v.equip_main_hand, mirroredTwoHanded ? "" : v.equip_off_hand].forEach(function (id) {
+      const dice = weaponDice(id);
+      if (dice) { weapons.push({ label: ITEMS[id].label, dice: dice }); }
+    });
+
+    /* 0, 0.1 … 1.0 — eleven steps, not a continuous draw. */
+    const rng = Math.floor(Math.random() * 11) / 10;
+    const base = offensive ? damages : Math.round(damages * (0.8 + 0.2 * rng));
+
+    let total = base;
+    let rows = "";
+    weapons.forEach(function (weapon) {
+      const values = [];
+      for (let i = 0; i < weapon.dice.count; i++) {
+        values.push(offensive ? weapon.dice.faces : rollDie(weapon.dice.faces));
+      }
+      values.forEach(function (value) { total += value; });
+      rows += " {{" + weapon.label + "=" + values.join(" + ") + "}}";
+    });
+
+    startRoll("&{template:default} {{name=Dégâts" + (offensive ? " (Offensive)" : "") + "}}"
+      + " {{Base=[[" + base + "]]}}" + rows + " {{Total=[[" + total + "]]}}",
       function (results) { finishRoll(results.rollId, {}); });
   });
 });
 
-/* attr_recipe_spell is a normal (persisted) attribute — left set from a
-   previous session, the reveal animation plays again the moment the sheet
-   re-renders on open, since CSS animations trigger whenever the matching
-   condition becomes true, not just on an actual change. It's a purely
-   transient "what am I looking at" indicator, so just clear it on open. */
 on("sheet:opened", function () { setAttrs({ recipe_spell: "" }); });
 
 /* Memorize: matches the crafted rune combination against presets.json (which

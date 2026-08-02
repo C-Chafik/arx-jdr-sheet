@@ -64,10 +64,10 @@
 .sheet-arx:has(.sheet-slot:hover input[value="{{ item_id }}"]) .sheet-statbar--item-{{ item_id }} { display: block; }
 {% endfor %}
 
-/* Attribute requirements appended to the hover name of items carrying
-   "min_<attr>" keys — dimmer than the name itself, and its own tone so they
-   read as constraints rather than part of the label. */
-.sheet-min-stat {
+/* The equipment spec line appended to an item's hover name (see the
+   item_specs macro in sheet.html.j2) — dimmer and smaller than the label, so
+   the name still reads first. */
+.sheet-item-specs {
   margin-left: 0.4em;
   color: #d8a24a;
   font-size: 0.8em;
@@ -412,12 +412,25 @@ input[name="attr_hand_cat"][value="{{ cat }}"] ~ .sheet-book .sheet-slot--{{ slo
    attr_hand_too_heavy at pickup and the equip click is refused (see
    tooHeavy() in the worker — the name predates the other three attributes).
    Listed after the gold rules and more specific, so it overrides them. */
-{% for cat, slot in equip_glow_pairs %}
-.sheet-arx:has(input[name="attr_hand_too_heavy"][value="1"]) input[name="attr_hand_cat"][value="{{ cat }}"] ~ .sheet-book .sheet-slot--{{ slot }} input[value=""] ~ button {
+{% set red_glow %}
   background: radial-gradient(circle, rgba(255, 90, 70, 0.45), rgba(255, 90, 70, 0) 75%);
   box-shadow: 0 0 14px rgba(255, 60, 40, 0.85);
+{% endset %}
+{% for cat, slot in equip_glow_pairs %}
+.sheet-arx:has(input[name="attr_hand_too_heavy"][value="1"]) input[name="attr_hand_cat"][value="{{ cat }}"] ~ .sheet-book .sheet-slot--{{ slot }} input[value=""] ~ button {
+{{- red_glow -}}
 }
 {% endfor %}
+
+/* Off hand only, and only for an ambidextrous weapon: wielding one in the
+   WEAK hand takes attr_dexterity ≥ OFFHAND_MIN_DEXTERITY (see the worker,
+   which refuses the click and publishes attr_hand_no_offhand at pickup).
+   Deliberately NOT folded into attr_hand_too_heavy above: that flag means
+   "this item is beyond you anywhere", this one only bars one slot — the very
+   same sword still goes into the main hand, and must keep glowing gold there. */
+.sheet-arx:has(input[name="attr_hand_no_offhand"][value="1"]) input[name="attr_hand_cat"][value="ambidextrie"] ~ .sheet-book .sheet-slot--equip_off_hand input[value=""] ~ button {
+{{- red_glow -}}
+}
 
 /* Cursor: grab on a filled slot when nothing is in hand. */
 /* Hovering a clickable item still in its original slot (not picked up yet). */
