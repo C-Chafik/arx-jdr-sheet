@@ -99,6 +99,70 @@ def test_items_catalog_loads():
                                "bijoux", "objet"}, item
 
 
+# items.json is ordered, not chronological: one contiguous run per group, in
+# this order. It is the GM catalog's own layout (gm-panel.html.j2 derives page
+# and cell from an item's index), so a new item belongs with its kind, never
+# appended at the end. Weapons lead because that is what the batches grow.
+ITEM_GROUP_ORDER = [
+    ("main_principale", {"cat": "main_principale"}),
+    ("ambidextrie", {"cat": "ambidextrie"}),
+    ("deux_mains", {"cat": "deux_mains"}),
+    ("main_secondaire", {"cat": "main_secondaire"}),
+    ("casque", {"cat": "casque"}),
+    ("armure_haute", {"cat": "armure_haute"}),
+    ("armure_basse", {"cat": "armure_basse"}),
+    ("bijoux", {"cat": "bijoux"}),
+    ("rune", {"effect": "rune"}),
+    ("scroll", {"effect": "scroll"}),
+    ("potions", {"effect": "potions"}),
+    ("food", {"effect": "food"}),
+    ("drinks", {"effect": "drinks"}),
+    ("currency", {"effect": "currency"}),
+    ("map_card", {"effect": "map_card"}),
+    ("extra_bag", {"effect": "extra_bag"}),
+    ("objet", {}),  # catch-all, necessarily last
+]
+
+
+def _group_of(item):
+    for name, spec in ITEM_GROUP_ORDER:
+        if all(item.get(k) == v for k, v in spec.items()):
+            return name
+    raise AssertionError(item)
+
+
+def test_items_are_grouped_by_category_in_file_order():
+    groups = [_group_of(i) for i in build.load_items().values()]
+    runs = [g for n, g in enumerate(groups) if n == 0 or g != groups[n - 1]]
+    # every group appears exactly once: a second run means an item was dropped
+    # in the wrong place, and the GM catalog page it lands on is not its kind's
+    assert len(runs) == len(set(runs)), \
+        f"groupe scindé : {[g for g in runs if runs.count(g) > 1]}"
+    expected = [name for name, _ in ITEM_GROUP_ORDER if name in set(runs)]
+    assert runs == expected, f"ordre des groupes : {runs}"
+
+
+def test_rune_order_is_the_spellbook_slot_order():
+    """RUNE_ORDER (inventory.js, arx-mod.js) maps each rune to a FIXED
+    spellbook_<n> by its rank among the runes of items.json. Reordering the
+    runes silently reshuffles every existing character's grimoire, so the
+    sequence is pinned here rather than left to whoever edits the file."""
+    runes = [k for k, v in build.load_items().items() if v.get("effect") == "rune"]
+    assert runes == [
+        "rune-aam", "rune-nhi", "rune-mega", "rune-yok", "rune-taar",
+        "rune-kaom", "rune-vitae", "rune-vista", "rune-stregum", "rune-morte",
+        "rune-cosum", "rune-comunicatum", "rune-movis", "rune-tempus",
+        "rune-folgora", "rune-spacium", "rune-tera", "rune-cetrius",
+        "rune-rhaa", "rune-fridd",
+    ], runes
+    # the two copies of the order must agree, or the API hands out slots the
+    # sheet does not read back
+    html = build.render_html()
+    assert 'const RUNE_ORDER = Object.keys(ITEMS).filter' in html
+    mod = build.render_mod()
+    assert "const ARX_RUNE_ORDER = Object.keys(ARX_ITEMS).filter" in mod
+
+
 def test_css_has_one_icon_rule_per_item():
     css = build.build_css("https://example.com/assets")
     for item_id, item in build.load_items().items():
@@ -282,6 +346,11 @@ def test_equipment_specs_render_in_the_tooltip():
                  "special": "Conjure les illusions", "min_constitution": 10, "min_mental": 8},
         "buckler": {"label": "Rondache", "icon": "i.png", "cat": "main_secondaire",
                     "size": "2x2", "armor_class": 3},
+        "spiked-shield": {"label": "Rondache à pointes", "icon": "i.png",
+                          "cat": "main_secondaire", "size": "2x2",
+                          "weap_dmg": "1d4", "armor_class": 3, "magic_resistance": 1},
+        "torch": {"label": "Torche", "icon": "i.png", "cat": "ambidextrie",
+                  "size": "1x2", "weap_dmg": "1d2"},
         "ring": {"label": "Anneau", "icon": "i.png", "cat": "bijoux", "size": "1x1",
                  "mental": 3, "casting": 8, "magic_resistance": 5,
                  "special": "Murmure les secrets des morts"},
@@ -305,6 +374,12 @@ def test_equipment_specs_render_in_the_tooltip():
         " - [5 CA - 10 CAM | +5 MEN; -2 DEX | Conjure les illusions | (8 MEN; 10 CON)]")
     # a shield is armour that occupies a hand: defensive block AND hand code
     assert spec("Rondache") == " - [3 CA | ADD]"
+    # ...and one that also hits stacks its dice IN FRONT of that block rather
+    # than replacing it — the dice really are rolled, so they must be readable
+    assert spec("Rondache à pointes") == " - [1d4 | 3 CA - 1 CAM | ADD]"
+    # dice on a non-weapon category are printed all the same: weap_dmg alone
+    # decides, exactly as rollHandDamage does
+    assert spec("Torche") == " - [1d2 | AMB]"
     # a jewel has neither block nor hand: CAM stays inline with the other stats
     assert spec("Anneau") == " - [+3 MEN; +8 INC; +5 CAM | Murmure les secrets des morts]"
     # a plain object keeps a bare label: no bracket, and its reserved effect
@@ -713,29 +788,14 @@ def test_damage_rows_use_the_weapon_label_and_the_base_row():
     assert "if (dice) {" in handler
 
 
-def test_ambidextrous_weapons_need_dexterity_for_the_off_hand():
-    import re
+def test_the_off_hand_dexterity_rule_is_gone():
+    """Removed on request: an ambidextrous weapon goes in either hand freely."""
     html = build.render_html()
     css = build.build_css("x")
-    # the click is refused, and only for that one slot
-    assert 'if (slot === "equip_off_hand" && offHandDenied(v, hand)) { return; }' in html
-    assert 'item.cat === "ambidextrie"' in html
-    assert 'hand_no_offhand: offHandDenied(v, item) ? "1" : ""' in html
-    assert 'name="attr_hand_no_offhand"' in html
-    # red on the off hand ONLY — the same sword must stay gold in the main hand
-    red = ('.sheet-arx:has(input[name="attr_hand_no_offhand"][value="1"]) '
-           'input[name="attr_hand_cat"][value="ambidextrie"] ~ .sheet-book '
-           '.sheet-slot--equip_off_hand input[value=""] ~ button {')
-    assert red in css
-    # the rule is universal (every character, every ambidextrous weapon), so
-    # it is deliberately absent from the tooltips — it would repeat on each
-    assert "main gauche" not in html
-    # exactly one selector keys off that flag, and it targets the off hand
-    keyed = [l for l in css.splitlines()
-             if "attr_hand_no_offhand" in l and l.startswith(".sheet-arx")]
-    assert len(keyed) == 1, keyed
-    assert ".sheet-slot--equip_off_hand" in keyed[0]
-    assert ".sheet-slot--equip_main_hand" not in keyed[0]
-    # both red states must look identical: same declarations, one source
-    heavy = css.split('.sheet-arx:has(input[name="attr_hand_too_heavy"][value="1"])')[1].split("}")[0]
-    assert heavy.split("{")[1].strip() == css.split(red)[1].split("}")[0].strip()
+    for gone in ("OFFHAND_MIN_DEXTERITY", "offHandDenied", "hand_no_offhand"):
+        assert gone not in html, gone
+        assert gone not in css, gone
+    # min_strength is a different rule and must survive untouched
+    assert "function tooHeavy(v, itemId)" in html
+    assert 'if (tooHeavy(v, hand)) { return; }' in html
+    assert 'input[name="attr_hand_too_heavy"][value="1"]' in css

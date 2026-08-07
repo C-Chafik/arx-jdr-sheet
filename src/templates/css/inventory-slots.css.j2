@@ -45,6 +45,31 @@
 {% endif %}
 {% endfor %}
 
+/* In an equipment slot an icon must never be drawn BIGGER than the bag draws
+   it. The equip frames are a fixed ~72 × 64 px and the icon always filled 80%
+   of that, whatever the item — so a small footprint came out zoomed the moment
+   it was equipped (a 1x1 helmet: 33.6 px in the bag, 51.4 px in the slot, ×1.5;
+   a jewel ×1.7), while a 2x3 chestplate shrank from 91 px to 51 px.
+   min() takes the bag's own pixel size, or 80% of the frame when the item is
+   too big to fit — so nothing overflows the artwork either. Centered rather
+   than inset 10%, since the box no longer fills its frame.
+   Bag geometry: the band is 900 × 172 px, hence a cell of sw × sh % and a
+   pitch of px_ × py_ % converted to px below — the very numbers the bag spans
+   above are built from. */
+{% set equip_cats = ["casque", "armure_haute", "armure_basse", "bijoux",
+                     "main_principale", "main_secondaire", "ambidextrie", "deux_mains"] %}
+{% for item_id, item in items.items() if item.cat in equip_cats %}
+{% set w = (item.size | default("1x1")).split("x")[0] | int %}
+{% set h = (item.size | default("1x1")).split("x")[1] | int %}
+.sheet-book .sheet-slot input[value="{{ item_id }}"] + .sheet-item-icon {
+  left: 50%;
+  top: 50%;
+  width: min(80%, {{ "%.1f" | format(((w - 1) * px_ + 0.8 * sw) / 100 * 900) }}px);
+  height: min(80%, {{ "%.1f" | format(((h - 1) * py_ + 0.8 * sh) / 100 * 172) }}px);
+  transform: translate(-50%, -50%);
+}
+{% endfor %}
+
 /* In the bag, the ANCHOR's button stretches over the whole footprint (above the
    covered cells' buttons), so hovering/clicking anywhere on the item acts on it. */
 {% for item_id, item in items.items() %}
@@ -457,16 +482,6 @@ input[name="attr_hand_cat"][value="{{ cat }}"] ~ .sheet-book .sheet-slot--{{ slo
 {{- red_glow -}}
 }
 {% endfor %}
-
-/* Off hand only, and only for an ambidextrous weapon: wielding one in the
-   WEAK hand takes attr_dexterity ≥ OFFHAND_MIN_DEXTERITY (see the worker,
-   which refuses the click and publishes attr_hand_no_offhand at pickup).
-   Deliberately NOT folded into attr_hand_too_heavy above: that flag means
-   "this item is beyond you anywhere", this one only bars one slot — the very
-   same sword still goes into the main hand, and must keep glowing gold there. */
-.sheet-arx:has(input[name="attr_hand_no_offhand"][value="1"]) input[name="attr_hand_cat"][value="ambidextrie"] ~ .sheet-book .sheet-slot--equip_off_hand input[value=""] ~ button {
-{{- red_glow -}}
-}
 
 /* Cursor: grab on a filled slot when nothing is in hand. */
 /* Hovering a clickable item still in its original slot (not picked up yet). */

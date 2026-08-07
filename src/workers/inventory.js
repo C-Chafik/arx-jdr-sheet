@@ -132,20 +132,6 @@ function tooHeavy(v, itemId) {
   });
 }
 
-/* An "ambidextrie" weapon goes in either hand, but wielding one in the WEAK
-   hand takes training: below this Dexterity the off-hand slot refuses it,
-   while the main hand still takes it happily. Kept apart from tooHeavy()
-   above on purpose — that one means "beyond you anywhere", this one bars a
-   single slot, so the two cannot share a flag (see inventory-slots.css.j2,
-   where they light the same red but on different selectors). */
-const OFFHAND_MIN_DEXTERITY = 16;
-
-function offHandDenied(v, itemId) {
-  const item = ITEMS[itemId];
-  return !!item && item.cat === "ambidextrie"
-    && (parseInt(v.dexterity, 10) || 0) < OFFHAND_MIN_DEXTERITY;
-}
-
 function bagCount(v) {
   const n = parseInt(v.bag_count, 10);
   return (n >= 1 && n <= BAGS) ? n : 1;
@@ -192,8 +178,6 @@ ALL_SLOTS.forEach(function (slot) {
              needs clearing — every glow rule also keys off attr_hand_cat,
              which is reset with the hand, and each pickup rewrites it. */
           hand_too_heavy: tooHeavy(v, item) ? "1" : "",
-          /* Same idea, one slot only: reddens the off hand, never the main. */
-          hand_no_offhand: offHandDenied(v, item) ? "1" : "",
           fit: fitMask(v, item, ownCells(anchor, item))
         });
         return;
@@ -266,7 +250,6 @@ ALL_SLOTS.forEach(function (slot) {
          other can be dimmed (see inventory-slots.css.j2). */
       if (!equipAccepts(slot, hand) || here !== "") { return; }
       if (tooHeavy(v, hand)) { return; }
-      if (slot === "equip_off_hand" && offHandDenied(v, hand)) { return; }
       const item = ITEMS[hand];
       const otherHand = OTHER_HAND_SLOT[slot];
       const isTwoHanded = item.cat === "deux_mains" && otherHand;

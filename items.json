@@ -1,18 +1,36 @@
 {
-  "krahoz": {
-    "label": "Krahoz",
-    "icon": "items/krahoz.png",
-    "cat": "bijoux",
-    "size": "1x1",
-    "legendary": true
+  "wooden-club": {
+    "label": "Gourdin en bois",
+    "weap_dmg": "1d6",
+    "icon": "items/wooden-club.png",
+    "cat": "main_principale",
+    "size": "1x2"
   },
-  "zohark": {
-    "label": "Zohark",
-    "icon": "items/zohark.png",
-    "cat": "bijoux",
-    "size": "1x1",
-    "legendary": true
+  "bow": {
+    "label": "Arc",
+    "weap_dmg": "1d8",
+    "icon": "items/bow.png",
+    "cat": "main_principale",
+    "size": "3x2"
   },
+  "sam-sword": {
+    "label": "L'épée de Samuel",
+    "icon": "items/sam-sword.png",
+    "cat": "main_principale",
+    "size": "3x3",
+    "legendary": true,
+    "weap_dmg": "2d20",
+    "strength": 10,
+    "stealth": -20,
+    "special": "Paralyse temporairement l'ennemi",
+    "min_strength": 20,
+    "min_dexterity": 15
+  },
+
+
+
+  
+
   "one-handed-sword": {
     "label": "Épée à une main en acier",
     "icon": "items/one-handed-sword.png",
@@ -27,30 +45,101 @@
     "cat": "ambidextrie",
     "size": "1x2"
   },
-  "wooden-club": {
-    "label": "Gourdin en bois",
-    "weap_dmg": "1d6",
-    "icon": "items/wooden-club.png",
-    "cat": "main_principale",
-    "size": "1x2"
-  },
+
+
+
+
+
   "wooden-shield": {
     "label": "Bouclier en bois",
     "icon": "items/wooden-shield.png",
     "cat": "main_secondaire",
     "size": "2x2"
   },
+  "metal-shield": {
+    "label": "Bouclier en acier",
+    "icon": "items/metal-shield.png",
+    "cat": "main_secondaire",
+    "size": "2x2"
+  },
+  "tower-shield-metal": {
+    "label": "Pavois en acier",
+    "icon": "items/tower-shield-metal.png",
+    "cat": "main_secondaire",
+    "size": "2x3"
+  },
+  "shield-of-elders": {
+    "label": "Bouclier des Anciens",
+    "icon": "items/shield-of-elders.png",
+    "cat": "main_secondaire",
+    "size": "2x3",
+    "legendary": true
+  },
+
+
+
+
+
+  "chain-helmet": {
+    "label": "Casque de mailles",
+    "icon": "items/chain-helmet.png",
+    "cat": "casque",
+    "size": "1x1"
+  },
+  "helmet-leather-stealth": {
+    "label": "Capuche de cuir",
+    "icon": "items/helmet-leather-stealth.png",
+    "cat": "casque",
+    "size": "1x1"
+  },
+  "mythril-helmet": {
+    "label": "Casque de mythril",
+    "icon": "items/mythril-helmet.png",
+    "cat": "casque",
+    "size": "1x1",
+    "legendary": true
+  },
+  "plate-helmet": {
+    "label": "Casque de plaques d'acier",
+    "icon": "items/plate-helmet.png",
+    "cat": "casque",
+    "size": "1x1"
+  },
+  "plate-helmet-ac": {
+    "label": "Casque de plaques d'acier renforcé",
+    "icon": "items/plate-helmet-ac.png",
+    "cat": "casque",
+    "size": "1x1"
+  },
+  "golden-plate-helmet": {
+    "label": "Casque doré",
+    "icon": "items/golden-plate-helmet.png",
+    "cat": "casque",
+    "size": "1x1"
+  },
+  "poxelis-helmet": {
+    "label": "Casque de Poxelis",
+    "icon": "items/poxelis-helmet.png",
+    "cat": "casque",
+    "size": "2x2",
+    "legendary": true,
+    "mental": 5,
+    "dexterity": -2,
+    "armor_class": 5,
+    "magic_resistance": 10,
+    "special": "Conjure les illusions",
+    "min_mental": 8,
+    "min_constitution": 10
+  },
+
+
+
+
+
   "ylside-chest": {
     "label": "Plastron ylsides",
     "icon": "items/ylside-chest.png",
     "cat": "armure_haute",
-    "size": "2x3",
-    "legendary": true
-  },
-  "ylside-bottoms": {
-    "label": "Jambières ylsides",
-    "icon": "items/ylside-bottoms.png",
-    "cat": "armure_basse",
     "size": "2x3",
     "legendary": true
   },
@@ -110,6 +199,16 @@
     "size": "2x3",
     "legendary": true
   },
+
+
+
+  "ylside-bottoms": {
+    "label": "Jambières ylsides",
+    "icon": "items/ylside-bottoms.png",
+    "cat": "armure_basse",
+    "size": "2x3",
+    "legendary": true
+  },
   "legging-chain": {
     "label": "Jambières de mailles",
     "icon": "items/legging-chain.png",
@@ -165,74 +264,23 @@
     "cat": "armure_basse",
     "size": "2x3"
   },
-  "chain-helmet": {
-    "label": "Casque de mailles",
-    "icon": "items/chain-helmet.png",
-    "cat": "casque",
-    "size": "1x1"
-  },
-  "helmet-leather-stealth": {
-    "label": "Capuche de cuir",
-    "icon": "items/helmet-leather-stealth.png",
-    "cat": "casque",
-    "size": "1x1"
-  },
-  "mythril-helmet": {
-    "label": "Casque de mythril",
-    "icon": "items/mythril-helmet.png",
-    "cat": "casque",
+
+
+
+
+
+  "krahoz": {
+    "label": "Krahoz",
+    "icon": "items/krahoz.png",
+    "cat": "bijoux",
     "size": "1x1",
     "legendary": true
   },
-  "plate-helmet": {
-    "label": "Casque de plaques d'acier",
-    "icon": "items/plate-helmet.png",
-    "cat": "casque",
-    "size": "1x1"
-  },
-  "plate-helmet-ac": {
-    "label": "Casque de plaques d'acier renforcé",
-    "icon": "items/plate-helmet-ac.png",
-    "cat": "casque",
-    "size": "1x1"
-  },
-  "golden-plate-helmet": {
-    "label": "Casque doré",
-    "icon": "items/golden-plate-helmet.png",
-    "cat": "casque",
-    "size": "1x1"
-  },
-  "poxelis-helmet": {
-    "label": "Casque de Poxelis",
-    "icon": "items/poxelis-helmet.png",
-    "cat": "casque",
-    "size": "2x2",
-    "legendary": true,
-    "mental": 5,
-    "dexterity": -2,
-    "armor_class": 5,
-    "magic_resistance": 10,
-    "special": "Conjure les illusions",
-    "min_mental": 8,
-    "min_constitution": 10
-  },
-  "metal-shield": {
-    "label": "Bouclier en acier",
-    "icon": "items/metal-shield.png",
-    "cat": "main_secondaire",
-    "size": "2x2"
-  },
-  "tower-shield-metal": {
-    "label": "Pavois en acier",
-    "icon": "items/tower-shield-metal.png",
-    "cat": "main_secondaire",
-    "size": "2x3"
-  },
-  "shield-of-elders": {
-    "label": "Bouclier des Anciens",
-    "icon": "items/shield-of-elders.png",
-    "cat": "main_secondaire",
-    "size": "2x3",
+  "zohark": {
+    "label": "Zohark",
+    "icon": "items/zohark.png",
+    "cat": "bijoux",
+    "size": "1x1",
     "legendary": true
   },
   "ring-gold": {
@@ -259,530 +307,9 @@
     "cat": "bijoux",
     "size": "1x1"
   },
-  "applepie": {
-    "label": "Tarte aux pommes",
-    "effect": "food",
-    "icon": "items/applepie.png",
-    "cat": "objet",
-    "size": "1x1"
-  },
-  "applepie-raw": {
-    "label": "Tarte aux pommes crue",
-    "effect": "food",
-    "icon": "items/applepie-raw.png",
-    "cat": "objet",
-    "size": "1x1"
-  },
-  "applepie-wine": {
-    "label": "Tarte aux pommes au vin",
-    "effect": "food",
-    "icon": "items/applepie-wine.png",
-    "cat": "objet",
-    "size": "1x1"
-  },
-  "applepie-raw-wine": {
-    "label": "Tarte aux pommes crue au vin",
-    "effect": "food",
-    "icon": "items/applepie-raw-wine.png",
-    "cat": "objet",
-    "size": "1x1"
-  },
-  "bottle-empty": {
-    "label": "Bouteille vide",
-    "icon": "items/bottle-empty.png",
-    "cat": "objet",
-    "size": "1x1"
-  },
-  "bottle-wine": {
-    "label": "Bouteille de vin",
-    "effect": "drinks",
-    "icon": "items/bottle-wine.png",
-    "cat": "objet",
-    "size": "1x1"
-  },
-  "bread": {
-    "label": "Miche de pain",
-    "effect": "food",
-    "icon": "items/bread.png",
-    "cat": "objet",
-    "size": "1x1"
-  },
-  "bread-half": {
-    "label": "Demi-miche de pain",
-    "effect": "food",
-    "icon": "items/bread-half.png",
-    "cat": "objet",
-    "size": "1x1"
-  },
-  "uncooked-bread": {
-    "label": "Pâte à pain",
-    "icon": "items/uncooked-bread.png",
-    "cat": "objet",
-    "size": "1x1"
-  },
-  "cheese": {
-    "label": "Fromage",
-    "effect": "food",
-    "icon": "items/cheese.png",
-    "cat": "objet",
-    "size": "1x1"
-  },
-  "flour": {
-    "label": "Farine",
-    "icon": "items/flour.png",
-    "cat": "objet",
-    "size": "1x1"
-  },
-  "potion-mana": {
-    "label": "Potion de mana",
-    "effect": "potions",
-    "icon": "items/potion-mana.png",
-    "cat": "objet",
-    "size": "1x1"
-  },
-  "gold-one": {
-    "label": "1 pièce d'or",
-    "icon": "items/gold-one.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 1
-  },
-  "gold-two": {
-    "label": "2 pièces d'or",
-    "icon": "items/gold-two.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 2
-  },
-  "gold-three": {
-    "label": "3 pièces d'or",
-    "icon": "items/gold-three.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 3
-  },
-  "gold-four": {
-    "label": "4 pièces d'or",
-    "icon": "items/gold-four.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 4
-  },
-  "gold-nine": {
-    "label": "9 pièces d'or",
-    "icon": "items/gold-nine.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 9
-  },
-  "gold-twenty": {
-    "label": "20 pièces d'or",
-    "icon": "items/gold-twenty.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 20
-  },
-  "gold-fifty": {
-    "label": "50 pièces d'or",
-    "icon": "items/gold-fifty.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 50
-  },
-  "gold-5": {
-    "label": "5 pièces d'or",
-    "icon": "items/gold-four.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 5
-  },
-  "gold-6": {
-    "label": "6 pièces d'or",
-    "icon": "items/gold-four.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 6
-  },
-  "gold-7": {
-    "label": "7 pièces d'or",
-    "icon": "items/gold-four.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 7
-  },
-  "gold-8": {
-    "label": "8 pièces d'or",
-    "icon": "items/gold-four.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 8
-  },
-  "gold-10": {
-    "label": "10 pièces d'or",
-    "icon": "items/gold-nine.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 10
-  },
-  "gold-11": {
-    "label": "11 pièces d'or",
-    "icon": "items/gold-nine.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 11
-  },
-  "gold-12": {
-    "label": "12 pièces d'or",
-    "icon": "items/gold-nine.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 12
-  },
-  "gold-13": {
-    "label": "13 pièces d'or",
-    "icon": "items/gold-nine.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 13
-  },
-  "gold-14": {
-    "label": "14 pièces d'or",
-    "icon": "items/gold-nine.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 14
-  },
-  "gold-15": {
-    "label": "15 pièces d'or",
-    "icon": "items/gold-nine.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 15
-  },
-  "gold-16": {
-    "label": "16 pièces d'or",
-    "icon": "items/gold-nine.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 16
-  },
-  "gold-17": {
-    "label": "17 pièces d'or",
-    "icon": "items/gold-nine.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 17
-  },
-  "gold-18": {
-    "label": "18 pièces d'or",
-    "icon": "items/gold-nine.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 18
-  },
-  "gold-19": {
-    "label": "19 pièces d'or",
-    "icon": "items/gold-nine.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 19
-  },
-  "gold-21": {
-    "label": "21 pièces d'or",
-    "icon": "items/gold-twenty.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 21
-  },
-  "gold-22": {
-    "label": "22 pièces d'or",
-    "icon": "items/gold-twenty.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 22
-  },
-  "gold-23": {
-    "label": "23 pièces d'or",
-    "icon": "items/gold-twenty.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 23
-  },
-  "gold-24": {
-    "label": "24 pièces d'or",
-    "icon": "items/gold-twenty.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 24
-  },
-  "gold-25": {
-    "label": "25 pièces d'or",
-    "icon": "items/gold-twenty.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 25
-  },
-  "gold-26": {
-    "label": "26 pièces d'or",
-    "icon": "items/gold-twenty.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 26
-  },
-  "gold-27": {
-    "label": "27 pièces d'or",
-    "icon": "items/gold-twenty.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 27
-  },
-  "gold-28": {
-    "label": "28 pièces d'or",
-    "icon": "items/gold-twenty.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 28
-  },
-  "gold-29": {
-    "label": "29 pièces d'or",
-    "icon": "items/gold-twenty.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 29
-  },
-  "gold-30": {
-    "label": "30 pièces d'or",
-    "icon": "items/gold-twenty.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 30
-  },
-  "gold-31": {
-    "label": "31 pièces d'or",
-    "icon": "items/gold-twenty.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 31
-  },
-  "gold-32": {
-    "label": "32 pièces d'or",
-    "icon": "items/gold-twenty.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 32
-  },
-  "gold-33": {
-    "label": "33 pièces d'or",
-    "icon": "items/gold-twenty.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 33
-  },
-  "gold-34": {
-    "label": "34 pièces d'or",
-    "icon": "items/gold-twenty.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 34
-  },
-  "gold-35": {
-    "label": "35 pièces d'or",
-    "icon": "items/gold-twenty.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 35
-  },
-  "gold-36": {
-    "label": "36 pièces d'or",
-    "icon": "items/gold-twenty.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 36
-  },
-  "gold-37": {
-    "label": "37 pièces d'or",
-    "icon": "items/gold-twenty.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 37
-  },
-  "gold-38": {
-    "label": "38 pièces d'or",
-    "icon": "items/gold-twenty.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 38
-  },
-  "gold-39": {
-    "label": "39 pièces d'or",
-    "icon": "items/gold-twenty.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 39
-  },
-  "gold-40": {
-    "label": "40 pièces d'or",
-    "icon": "items/gold-twenty.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 40
-  },
-  "gold-41": {
-    "label": "41 pièces d'or",
-    "icon": "items/gold-twenty.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 41
-  },
-  "gold-42": {
-    "label": "42 pièces d'or",
-    "icon": "items/gold-twenty.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 42
-  },
-  "gold-43": {
-    "label": "43 pièces d'or",
-    "icon": "items/gold-twenty.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 43
-  },
-  "gold-44": {
-    "label": "44 pièces d'or",
-    "icon": "items/gold-twenty.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 44
-  },
-  "gold-45": {
-    "label": "45 pièces d'or",
-    "icon": "items/gold-twenty.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 45
-  },
-  "gold-46": {
-    "label": "46 pièces d'or",
-    "icon": "items/gold-twenty.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 46
-  },
-  "gold-47": {
-    "label": "47 pièces d'or",
-    "icon": "items/gold-twenty.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 47
-  },
-  "gold-48": {
-    "label": "48 pièces d'or",
-    "icon": "items/gold-twenty.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 48
-  },
-  "gold-49": {
-    "label": "49 pièces d'or",
-    "icon": "items/gold-twenty.png",
-    "cat": "objet",
-    "size": "1x1",
-    "effect": "currency",
-    "value": 49
-  },
-  "golden-bar": {
-    "label": "Lingot d'or",
-    "icon": "items/golden-bar.png",
-    "cat": "objet",
-    "size": "1x1"
-  },
-  "golden-cup": {
-    "label": "Coupe dorée",
-    "icon": "items/golden-cup.png",
-    "cat": "objet",
-    "size": "1x1"
-  },
-  "keyring": {
-    "label": "Trousseau de clés",
-    "icon": "items/keyring.png",
-    "cat": "objet",
-    "size": "1x1"
-  },
-  "keyringfull": {
-    "label": "Trousseau de clés complet",
-    "icon": "items/keyringfull.png",
-    "cat": "objet",
-    "size": "1x1"
-  },
-  "compass": {
-    "label": "Boussole",
-    "icon": "items/compass.png",
-    "cat": "objet",
-    "size": "1x1"
-  },
-  "powerstone": {
-    "label": "Pierre de pouvoir",
-    "icon": "items/powerstone.png",
-    "cat": "objet",
-    "size": "1x1"
-  },
-  "dragonbone": {
-    "label": "Os de dragon",
-    "icon": "items/dragonbone.png",
-    "cat": "objet",
-    "size": "1x2",
-    "legendary": true
-  },
+
+
+
   "rune-aam": {
     "label": "Rune : Aam (Créer)",
     "icon": "runes/aam.png",
@@ -923,92 +450,11 @@
     "size": "1x1",
     "effect": "rune"
   },
-  "apple": {
-    "label": "Pomme",
-    "effect": "food",
-    "icon": "items/apple.png",
-    "cat": "objet",
-    "size": "1x1"
-  },
-  "cooked-bread": {
-    "label": "Pain",
-    "effect": "food",
-    "icon": "items/cooked-bread.png",
-    "cat": "objet",
-    "size": "1x1"
-  },
-  "cooked-chicken": {
-    "label": "Poulet rôti",
-    "effect": "food",
-    "icon": "items/cooked-chicken.png",
-    "cat": "objet",
-    "size": "1x1"
-  },
-  "cooked-fish": {
-    "label": "Poisson cuit",
-    "effect": "food",
-    "icon": "items/cooked-fish.png",
-    "cat": "objet",
-    "size": "1x1"
-  },
-  "mushroom": {
-    "label": "Champignon",
-    "effect": "food",
-    "icon": "items/mushroom.png",
-    "cat": "objet",
-    "size": "1x1"
-  },
-  "water": {
-    "label": "Eau",
-    "effect": "drinks",
-    "icon": "items/water.png",
-    "cat": "objet",
-    "size": "1x1"
-  },
-  "health-potion": {
-    "label": "Potion de vie",
-    "effect": "potions",
-    "icon": "items/health-potion.png",
-    "cat": "objet",
-    "size": "1x1"
-  },
-  "key-1": {
-    "label": "Clé",
-    "icon": "items/key-1.png",
-    "cat": "objet",
-    "size": "1x1"
-  },
-  "key-2": {
-    "label": "Clé ouvragée",
-    "icon": "items/key-2.png",
-    "cat": "objet",
-    "size": "1x1"
-  },
-  "lockpick": {
-    "label": "Crochet",
-    "icon": "items/lockpick.png",
-    "cat": "objet",
-    "size": "2x1"
-  },
-  "moulinette": {
-    "label": "Moulinette",
-    "icon": "items/moulinette.png",
-    "cat": "objet",
-    "size": "1x1"
-  },
-  "action": {
-    "label": "Action",
-    "icon": "items/action.png",
-    "cat": "objet",
-    "size": "1x1"
-  },
-  "extra-backpack": {
-    "label": "Sac supplémentaire",
-    "icon": "items/extra-backpack.png",
-    "cat": "objet",
-    "size": "2x2",
-    "effect": "extra_bag"
-  },
+
+
+
+
+
   "scroll-nyctalopie": {
     "label": "Parchemin : Vision nocturne",
     "icon": "book/scroll_generic-1.png",
@@ -1529,6 +975,539 @@
     "spell_casting": 85,
     "caster_level": 85
   },
+
+
+
+
+
+  "potion-mana": {
+    "label": "Potion de mana",
+    "effect": "potions",
+    "icon": "items/potion-mana.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "health-potion": {
+    "label": "Potion de vie",
+    "effect": "potions",
+    "icon": "items/health-potion.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+
+  "applepie": {
+    "label": "Tarte aux pommes",
+    "effect": "food",
+    "icon": "items/applepie.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "applepie-raw": {
+    "label": "Tarte aux pommes crue",
+    "effect": "food",
+    "icon": "items/applepie-raw.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "applepie-wine": {
+    "label": "Tarte aux pommes au vin",
+    "effect": "food",
+    "icon": "items/applepie-wine.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "applepie-raw-wine": {
+    "label": "Tarte aux pommes crue au vin",
+    "effect": "food",
+    "icon": "items/applepie-raw-wine.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "bread": {
+    "label": "Miche de pain",
+    "effect": "food",
+    "icon": "items/bread.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "bread-half": {
+    "label": "Demi-miche de pain",
+    "effect": "food",
+    "icon": "items/bread-half.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "cheese": {
+    "label": "Fromage",
+    "effect": "food",
+    "icon": "items/cheese.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "apple": {
+    "label": "Pomme",
+    "effect": "food",
+    "icon": "items/apple.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "cooked-bread": {
+    "label": "Pain",
+    "effect": "food",
+    "icon": "items/cooked-bread.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "cooked-chicken": {
+    "label": "Poulet rôti",
+    "effect": "food",
+    "icon": "items/cooked-chicken.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "cooked-fish": {
+    "label": "Poisson cuit",
+    "effect": "food",
+    "icon": "items/cooked-fish.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "mushroom": {
+    "label": "Champignon",
+    "effect": "food",
+    "icon": "items/mushroom.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+
+
+
+
+
+  "bottle-wine": {
+    "label": "Bouteille de vin",
+    "effect": "drinks",
+    "icon": "items/bottle-wine.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "water": {
+    "label": "Eau",
+    "effect": "drinks",
+    "icon": "items/water.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+
+
+
+
+
+  "gold-one": {
+    "label": "1 pièce d'or",
+    "icon": "items/gold-one.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 1
+  },
+  "gold-two": {
+    "label": "2 pièces d'or",
+    "icon": "items/gold-two.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 2
+  },
+  "gold-three": {
+    "label": "3 pièces d'or",
+    "icon": "items/gold-three.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 3
+  },
+  "gold-four": {
+    "label": "4 pièces d'or",
+    "icon": "items/gold-four.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 4
+  },
+  "gold-nine": {
+    "label": "9 pièces d'or",
+    "icon": "items/gold-nine.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 9
+  },
+  "gold-twenty": {
+    "label": "20 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 20
+  },
+  "gold-fifty": {
+    "label": "50 pièces d'or",
+    "icon": "items/gold-fifty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 50
+  },
+  "gold-5": {
+    "label": "5 pièces d'or",
+    "icon": "items/gold-four.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 5
+  },
+  "gold-6": {
+    "label": "6 pièces d'or",
+    "icon": "items/gold-four.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 6
+  },
+  "gold-7": {
+    "label": "7 pièces d'or",
+    "icon": "items/gold-four.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 7
+  },
+  "gold-8": {
+    "label": "8 pièces d'or",
+    "icon": "items/gold-four.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 8
+  },
+  "gold-10": {
+    "label": "10 pièces d'or",
+    "icon": "items/gold-nine.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 10
+  },
+  "gold-11": {
+    "label": "11 pièces d'or",
+    "icon": "items/gold-nine.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 11
+  },
+  "gold-12": {
+    "label": "12 pièces d'or",
+    "icon": "items/gold-nine.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 12
+  },
+  "gold-13": {
+    "label": "13 pièces d'or",
+    "icon": "items/gold-nine.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 13
+  },
+  "gold-14": {
+    "label": "14 pièces d'or",
+    "icon": "items/gold-nine.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 14
+  },
+  "gold-15": {
+    "label": "15 pièces d'or",
+    "icon": "items/gold-nine.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 15
+  },
+  "gold-16": {
+    "label": "16 pièces d'or",
+    "icon": "items/gold-nine.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 16
+  },
+  "gold-17": {
+    "label": "17 pièces d'or",
+    "icon": "items/gold-nine.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 17
+  },
+  "gold-18": {
+    "label": "18 pièces d'or",
+    "icon": "items/gold-nine.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 18
+  },
+  "gold-19": {
+    "label": "19 pièces d'or",
+    "icon": "items/gold-nine.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 19
+  },
+  "gold-21": {
+    "label": "21 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 21
+  },
+  "gold-22": {
+    "label": "22 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 22
+  },
+  "gold-23": {
+    "label": "23 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 23
+  },
+  "gold-24": {
+    "label": "24 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 24
+  },
+  "gold-25": {
+    "label": "25 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 25
+  },
+  "gold-26": {
+    "label": "26 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 26
+  },
+  "gold-27": {
+    "label": "27 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 27
+  },
+  "gold-28": {
+    "label": "28 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 28
+  },
+  "gold-29": {
+    "label": "29 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 29
+  },
+  "gold-30": {
+    "label": "30 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 30
+  },
+  "gold-31": {
+    "label": "31 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 31
+  },
+  "gold-32": {
+    "label": "32 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 32
+  },
+  "gold-33": {
+    "label": "33 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 33
+  },
+  "gold-34": {
+    "label": "34 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 34
+  },
+  "gold-35": {
+    "label": "35 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 35
+  },
+  "gold-36": {
+    "label": "36 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 36
+  },
+  "gold-37": {
+    "label": "37 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 37
+  },
+  "gold-38": {
+    "label": "38 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 38
+  },
+  "gold-39": {
+    "label": "39 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 39
+  },
+  "gold-40": {
+    "label": "40 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 40
+  },
+  "gold-41": {
+    "label": "41 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 41
+  },
+  "gold-42": {
+    "label": "42 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 42
+  },
+  "gold-43": {
+    "label": "43 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 43
+  },
+  "gold-44": {
+    "label": "44 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 44
+  },
+  "gold-45": {
+    "label": "45 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 45
+  },
+  "gold-46": {
+    "label": "46 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 46
+  },
+  "gold-47": {
+    "label": "47 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 47
+  },
+  "gold-48": {
+    "label": "48 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 48
+  },
+  "gold-49": {
+    "label": "49 pièces d'or",
+    "icon": "items/gold-twenty.png",
+    "cat": "objet",
+    "size": "1x1",
+    "effect": "currency",
+    "value": 49
+  },
+
+
+
+
+
   "carte-niveau-1": {
     "label": "Carte du niveau 1",
     "icon": "items/sheet.png",
@@ -1593,25 +1572,113 @@
     "effect": "map_card",
     "level": 8
   },
-  "bow": {
-    "label": "Arc",
-    "weap_dmg": "1d8",
-    "icon": "items/bow.png",
-    "cat": "main_principale",
-    "size": "3x2"
+
+
+
+
+
+  "extra-backpack": {
+    "label": "Sac supplémentaire",
+    "icon": "items/extra-backpack.png",
+    "cat": "objet",
+    "size": "2x2",
+    "effect": "extra_bag"
   },
-  "sam-sword": {
-    "label": "L'épée de Samuel",
-    "icon": "items/sam-sword.png",
-    "cat": "main_principale",
-    "size": "3x3",
-    "legendary": true,
-    "weap_dmg": "2d20",
-    "strength": 10,
-    "stealth": -20,
-    "special": "Paralyse temporairement l'ennemi",
-    "min_strength": 20,
-    "min_dexterity": 15
+
+
+
+
+
+  "bottle-empty": {
+    "label": "Bouteille vide",
+    "icon": "items/bottle-empty.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "uncooked-bread": {
+    "label": "Pâte à pain",
+    "icon": "items/uncooked-bread.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "flour": {
+    "label": "Farine",
+    "icon": "items/flour.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "golden-bar": {
+    "label": "Lingot d'or",
+    "icon": "items/golden-bar.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "golden-cup": {
+    "label": "Coupe dorée",
+    "icon": "items/golden-cup.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "keyring": {
+    "label": "Trousseau de clés",
+    "icon": "items/keyring.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "keyringfull": {
+    "label": "Trousseau de clés complet",
+    "icon": "items/keyringfull.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "compass": {
+    "label": "Boussole",
+    "icon": "items/compass.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "powerstone": {
+    "label": "Pierre de pouvoir",
+    "icon": "items/powerstone.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "dragonbone": {
+    "label": "Os de dragon",
+    "icon": "items/dragonbone.png",
+    "cat": "objet",
+    "size": "1x2",
+    "legendary": true
+  },
+  "key-1": {
+    "label": "Clé",
+    "icon": "items/key-1.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "key-2": {
+    "label": "Clé ouvragée",
+    "icon": "items/key-2.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "lockpick": {
+    "label": "Crochet",
+    "icon": "items/lockpick.png",
+    "cat": "objet",
+    "size": "2x1"
+  },
+  "moulinette": {
+    "label": "Moulinette",
+    "icon": "items/moulinette.png",
+    "cat": "objet",
+    "size": "1x1"
+  },
+  "action": {
+    "label": "Action",
+    "icon": "items/action.png",
+    "cat": "objet",
+    "size": "1x1"
   },
   "bedroll": {
     "label": "Sac de couchage",

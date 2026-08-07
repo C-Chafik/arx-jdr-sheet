@@ -8,9 +8,6 @@
   {# "1" while the held item's min_strength exceeds attr_strength — turns the
      equip-slot glow red (see inventory-slots.css.j2). #}
   <input type="hidden" class="sheet-hand-mirror" name="attr_hand_too_heavy" value="" />
-  {# "1" while the held ambidextrous weapon is beyond attr_dexterity for the
-     WEAK hand — reddens the off-hand slot only (see inventory-slots.css.j2). #}
-  <input type="hidden" class="sheet-hand-mirror" name="attr_hand_no_offhand" value="" />
   <input type="hidden" class="sheet-hand-mirror" name="attr_fit" value="" />
   {# Bag levels: count = unlocked, level = currently displayed. DOM order matters:
      bag_count BEFORE bag_level (nav visibility selectors chain them with ~). #}
@@ -115,10 +112,13 @@
        weapon   Label - [dice | bonuses | special | (requirements) | hand]
        armour   Label - [CA - CAM - CAP | bonuses | special | (requirements)]
        jewel    Label - [bonuses | special | (requirements)]
-     A shield is armour that occupies a hand, so it gets the defensive block
-     AND the hand code — the two halves of the spec meeting in one item.
-     A jewel has neither: it only ever grants stats, so CA/CAM/CAP stay in
-     the bonus list with everything else rather than being pulled out front.
+     The CATEGORY decides only whether the defensive block is pulled out
+     front; the dice come from weap_dmg alone, whatever the item is. So the
+     two halves stack rather than exclude each other, and a shield that also
+     hits reads "[1d4 | 3 CA | ADD]" — its dice really are rolled (see
+     rollHandDamage in inventory.js, which reads whatever the hand holds).
+     A jewel has neither block nor dice: it only ever grants stats, so
+     CA/CAM/CAP stay in the bonus list with everything else.
      Anything with no section at all (a plain "objet") keeps a bare label.
 
      ABBR is also the display ORDER of the bonus list (Jinja keeps insertion
@@ -133,19 +133,19 @@
 {% set defence_stats = ["armor_class", "magic_resistance", "poison_resistance"] %}
 {% set hand_code = {"main_principale": "1H", "main_secondaire": "ADD",
                     "deux_mains": "2H", "ambidextrie": "AMB"} %}
-{% set weapon_cats = ["main_principale", "ambidextrie", "deux_mains"] %}
 {#- Only these lead with a defensive block; a jewel's CA/CAM/CAP is a bonus
     like any other, and a weapon's too. -#}
 {% set armour_cats = ["casque", "armure_haute", "armure_basse", "main_secondaire"] %}
 {% macro item_specs(item) %}
-{%- set is_weapon = item.cat in weapon_cats -%}
 {%- set has_defence_block = item.cat in armour_cats -%}
 {%- set sections = [] -%}
-{#- 1. what the item does: dice for a weapon, a defensive block for armour,
-       nothing of its own for a jewel -#}
-{%- if is_weapon -%}
+{#- 1. what the item does. The two halves STACK, they do not exclude each
+       other: weap_dmg alone decides the dice — no category gate, matching
+       rollHandDamage, which rolls whatever a hand holds — and the defensive
+       block is pulled out front for armour. A shield carrying dice gets
+       both; a jewel gets neither. -#}
 {%- if item.weap_dmg is defined %}{% set _ = sections.append(item.weap_dmg) %}{% endif -%}
-{%- elif has_defence_block -%}
+{%- if has_defence_block -%}
 {%- set defence = [] -%}
 {%- for name in defence_stats if item[name] is defined -%}
 {%- set _ = defence.append(item[name] ~ " " ~ abbr[name]) -%}
@@ -169,10 +169,7 @@
 {%- set _ = reqs.append(item["min_" ~ name] ~ " " ~ code) -%}
 {%- endfor -%}
 {%- if reqs %}{% set _ = sections.append("(" ~ reqs | join("; ") ~ ")") %}{% endif -%}
-{#- 5. which hand it takes up. Nothing here for the off-hand Dexterity rule:
-       it applies to every ambidextrous weapon for every character, so
-       printing it on each of them was noise — the player meets it as a red
-       off-hand slot instead (OFFHAND_MIN_DEXTERITY in inventory.js). -#}
+{#- 5. which hand it takes up. -#}
 {%- if item.cat in hand_code %}{% set _ = sections.append(hand_code[item.cat]) %}{% endif -%}
 {%- if sections %}<span class="sheet-item-specs"> - [{{ sections | join(" | ") }}]</span>{% endif -%}
 {% endmacro %}
