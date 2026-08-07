@@ -562,31 +562,24 @@ def test_loot_strip_stays_inside_the_sheet_and_clear_of_the_search_bar():
             assert start >= end, (top, spans)  # no overlap inside a row
 
 
-def test_gm_character_is_forced_to_level_200_and_600_everywhere():
+def test_gm_panel_does_not_touch_stats():
+    """Removed on request: unlocking the panel only opens the admin catalog."""
     html = build.render_html()
-    assert "const GM_LEVEL = 200;" in html
-    assert "const GM_ATTR = 600;" in html
-    assert 'on("sheet:opened change:gm_panel_unlocked"' in html
-    # the attribute and level caps must stand down, or they clamp it straight back
-    assert 'getAttrs([attr, "gm_panel_unlocked"]' in html
-    assert 'getAttrs(["level", "gm_panel_unlocked"]' in html
-    assert html.count('if (v.gm_panel_unlocked === "1") { return; }') == 2
-    # ...but the skill cap stays for everyone: skills keep their normal formula
+    assert "GM_LEVEL" not in html
+    assert "GM_ATTR" not in html
+    assert "GM_GAUGE_MAX" not in html
+    assert "forceGmStats" not in html
+    # no stat listener reads the flag any more — the CSS gate is its only use
+    for block in ("function recomputeGaugeMax(v) {", 'on("change:" + attr, function () {'):
+        assert "gm_panel_unlocked" not in html.split(block)[1].split("\n}")[0]
+    # the caps stand for everyone, GM sheet included
     skill_cap = html.split('on("change:" + skill, function () {')[1].split("});")[0]
     assert "gm_panel_unlocked" not in skill_cap
     assert "125" in skill_cap
-    # both gauge maxes are pinned flat: their formula would read 121200 off the
-    # forced attributes, which does not fit the gauge box
-    assert "const GM_GAUGE_MAX = 500;" in html
-    gauge = html.split("function recomputeGaugeMax(v) {")[1].split("\nconst")[0]
-    assert 'if (v.gm_panel_unlocked === "1") {' in gauge
-    assert "update[name] = GM_GAUGE_MAX;" in gauge
-    # ...and the pin is declared before the formula block that reads it
-    assert html.index("const GM_GAUGE_MAX") > html.index("const GAUGE_MAX_NAMES")
 
 
 def test_gauges_have_no_auto_shrink():
-    """Removed on request: the GM max is pinned to a 4-digit number instead."""
+    """Removed on request: the gauge maxes follow their plain formula."""
     html = build.render_html()
     css = build.build_css("x")
     assert "max_size" not in html
