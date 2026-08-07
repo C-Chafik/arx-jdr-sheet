@@ -1,84 +1,470 @@
 {
-  "wooden-club": {
-    "label": "Gourdin en bois",
-    "weap_dmg": "1d6",
-    "icon": "items/wooden-club.png",
+  "axe": {
+    "label": "Hache",
+    "icon": "items/axe.png",
     "cat": "main_principale",
-    "size": "1x2"
+    "size": "1x2",
+    "weap_dmg": "2d5",
+    "damages": 3,
+    "min_strength": 10
   },
-  "bow": {
-    "label": "Arc",
+  "club": {
+    "label": "Massue",
+    "icon": "items/club.png",
+    "cat": "main_principale",
+    "size": "1x2",
     "weap_dmg": "1d8",
-    "icon": "items/bow.png",
-    "cat": "main_principale",
-    "size": "3x2"
+    "dexterity": -1,
+    "min_strength": 10
   },
-  "sam-sword": {
-    "label": "L'épée de Samuel",
-    "icon": "items/sam-sword.png",
+  "long-sword": {
+    "label": "Epée longue",
+    "icon": "items/long-sword.png",
+    "cat": "main_principale",
+    "size": "1x3",
+    "weap_dmg": "2d16",
+    "damages": 8,
+    "min_strength": 12
+  },
+  "long-sword-feather": {
+    "label": "Fine lame",
+    "icon": "items/long-sword-feather.png",
+    "cat": "main_principale",
+    "size": "1x3",
+    "weap_dmg": "3d14",
+    "close_combat": 20,
+    "min_strength": 11,
+    "min_dexterity": 14
+  },
+  "long-sword-jeweld": {
+    "label": "Epée ornée",
+    "icon": "items/long-sword-jeweld.png",
+    "cat": "main_principale",
+    "size": "1x3",
+    "weap_dmg": "2d18",
+    "damages": 10,
+    "min_strength": 12
+  },
+  "long-sword-recovery": {
+    "label": "Lame d'Achanta",
+    "icon": "items/long-sword-recovery.png",
+    "cat": "main_principale",
+    "size": "3x1",
+    "weap_dmg": "3d16",
+    "strength": 3,
+    "dexterity": 1,
+    "damages": 15,
+    "min_strength": 13,
+    "min_dexterity": 10,
+    "special": "Vole de vie : 15% des degats finaux > PV",
+    "legendary": true
+  },
+  "sabre": {
+    "label": "Sabre",
+    "icon": "items/sabre.png",
+    "cat": "main_principale",
+    "size": "1x3",
+    "weap_dmg": "2d25",
+    "damages": 20,
+    "min_strength": 16,
+    "min_dexterity": 9
+  },
+  "sabre-meteor": {
+    "label": "Sabre du guardien",
+    "icon": "items/sabre-meteor.png",
+    "cat": "main_principale",
+    "size": "1x3",
+    "weap_dmg": "3d35",
+    "strength": 5,
+    "dexterity": 2,
+    "mental": 2,
+    "min_strength": 18,
+    "min_dexterity": 12,
+    "special": "Drain de mana : 10% DMG > MP + Bannissement des morts et démons superieurs + Ignore les immunités magiques",
+    "legendary": true
+  },
+  "sabre-mythril": {
+    "label": "Sabre en mythril",
+    "icon": "items/sabre-mythril.png",
+    "cat": "main_principale",
+    "size": "1x3",
+    "weap_dmg": "2d37",
+    "dexterity": 1,
+    "mental": 1,
+    "damages": 15,
+    "casting": 5,
+    "min_strength": 16,
+    "min_dexterity": 10
+  },
+  "sword-mx": {
+    "label": "Epée de Samuel",
+    "icon": "items/sword-mx.png",
     "cat": "main_principale",
     "size": "3x3",
-    "legendary": true,
-    "weap_dmg": "2d20",
-    "strength": 10,
-    "stealth": -20,
-    "special": "Paralyse temporairement l'ennemi",
-    "min_strength": 20,
-    "min_dexterity": 15
-  },
-
-
-
-  
-
-  "one-handed-sword": {
-    "label": "Épée à une main en acier",
-    "icon": "items/one-handed-sword.png",
-    "cat": "ambidextrie",
-    "size": "1x3",
-    "weap_dmg": "1d8"
-  },
-  "one-handed-sword-light": {
-    "label": "Dague légère en bronze",
-    "weap_dmg": "1d4",
-    "icon": "items/one-handed-sword-light.png",
-    "cat": "ambidextrie",
-    "size": "1x2"
-  },
-
-
-
-
-
-  "wooden-shield": {
-    "label": "Bouclier en bois",
-    "icon": "items/wooden-shield.png",
-    "cat": "main_secondaire",
-    "size": "2x2"
-  },
-  "metal-shield": {
-    "label": "Bouclier en acier",
-    "icon": "items/metal-shield.png",
-    "cat": "main_secondaire",
-    "size": "2x2"
-  },
-  "tower-shield-metal": {
-    "label": "Pavois en acier",
-    "icon": "items/tower-shield-metal.png",
-    "cat": "main_secondaire",
-    "size": "2x3"
-  },
-  "shield-of-elders": {
-    "label": "Bouclier des Anciens",
-    "icon": "items/shield-of-elders.png",
-    "cat": "main_secondaire",
-    "size": "2x3",
+    "weap_dmg": "2d80",
+    "strength": 3,
+    "dexterity": 2,
+    "defense": -5,
+    "min_strength": 19,
+    "min_dexterity": 12,
+    "min_mental": 10,
+    "special": "Paralysie temporaire 40% de chance de triger et dure 1 tour complet",
     "legendary": true
   },
 
+  "bone-weap": {
+    "label": "Os (Femur)",
+    "icon": "items/bone-weap.png",
+    "cat": "ambidextrie",
+    "size": "1x1",
+    "weap_dmg": "2d2"
+  },
+  "dagger": {
+    "label": "Dague",
+    "icon": "items/dagger.png",
+    "cat": "ambidextrie",
+    "size": "1x1",
+    "weap_dmg": "2d4",
+    "close_combat": 5,
+    "technical": 10,
+    "object_knowledge": 5
+  },
+  "dagger-assassin": {
+    "label": "Dague d'assassin",
+    "icon": "items/dagger-assassin.png",
+    "cat": "ambidextrie",
+    "size": "1x2",
+    "weap_dmg": "2d13",
+    "dexterity": 1,
+    "close_combat": 10,
+    "stealth": 5,
+    "min_dexterity": 15
+  },
+  "dagger-jeweld": {
+    "label": "Dague ornée",
+    "icon": "items/dagger-jeweld.png",
+    "cat": "ambidextrie",
+    "size": "1x1",
+    "weap_dmg": "2d5",
+    "dexterity": 1,
+    "close_combat": 5
+  },
+  "dagger-mythril": {
+    "label": "Dague de mythril",
+    "icon": "items/dagger-mythril.png",
+    "cat": "ambidextrie",
+    "size": "1x1"
+  },
+  "dragon-bone": {
+    "label": "Os de dragon",
+    "icon": "items/dragon-bone.png",
+    "cat": "ambidextrie",
+    "size": "1x2",
+    "weap_dmg": "2d4",
+    "strength": 1,
+    "dexterity": 1,
+    "mental": 1,
+    "constitution": 1
+  },
+  "flute": {
+    "label": "Flute",
+    "icon": "items/flute.png",
+    "cat": "ambidextrie",
+    "size": "1x1",
+    "weap_dmg": "1d1"
+  },
+  "hammer": {
+    "label": "Massette",
+    "icon": "items/hammer.png",
+    "cat": "ambidextrie",
+    "size": "1x1",
+    "weap_dmg": "3d2",
+    "technical": 5
+  },
+  "hammer-2": {
+    "label": "Marteau",
+    "icon": "items/hammer-2.png",
+    "cat": "ambidextrie",
+    "size": "1x1",
+    "weap_dmg": "3d1",
+    "object_knowledge": 5
+  },
+  "long-sword-ciprian": {
+    "label": "Epée courte",
+    "icon": "items/long-sword-ciprian.png",
+    "cat": "ambidextrie",
+    "size": "1x2",
+    "weap_dmg": "3d8",
+    "defense": 10,
+    "constitution": 1,
+    "min_strength": 10
+  },
+  "piece-wood": {
+    "label": "Baton",
+    "icon": "items/piece-wood.png",
+    "cat": "ambidextrie",
+    "size": "1x2",
+    "weap_dmg": "1d2"
+  },
+  "ritual-blooding-device": {
+    "label": "Outil sacrificiel",
+    "icon": "items/ritual-blooding-device.png",
+    "cat": "ambidextrie",
+    "size": "1x1",
+    "weap_dmg": "2d6",
+    "min_dexterity": 7
+  },
+  "rolling-pin": {
+    "label": "Roulleau à patisserie",
+    "icon": "items/rolling-pin.png",
+    "cat": "ambidextrie",
+    "size": "2x1",
+    "weap_dmg": "1d4"
+  },
+  "sabre-ylside": {
+    "label": "Lame du culte",
+    "icon": "items/sabre-ylside.png",
+    "cat": "ambidextrie",
+    "size": "1x2",
+    "weap_dmg": "1d22"
+  },
+  "short-sword": {
+    "label": "Epée courte vulgaire",
+    "icon": "items/short-sword.png",
+    "cat": "ambidextrie",
+    "size": "1x2",
+    "weap_dmg": "3d4",
+    "min_strength": 7
+  },
+  "stake": {
+    "label": "Pieu",
+    "icon": "items/stake.png",
+    "cat": "ambidextrie",
+    "size": "1x1",
+    "weap_dmg": "1d5",
+    "special": "Empeche les morts de revenir à la vie"
+  },
+  "stake-blessed": {
+    "label": "Pieu bénit",
+    "icon": "items/stake-blessed.png",
+    "cat": "ambidextrie",
+    "size": "1x1",
+    "weap_dmg": "1d8",
+    "special": "Bannit les morts et démons mineurs"
+  },
+  "wall-block": {
+    "label": "Pavé de roche",
+    "icon": "items/wall-block.png",
+    "cat": "ambidextrie",
+    "size": "1x1",
+    "weap_dmg": "1d10",
+    "dexterity": -1,
+    "special": "Lancé"
+  },
 
+  "axe-2handed": {
+    "label": "Hache a deux mains",
+    "icon": "items/axe-2handed.png",
+    "cat": "deux_mains",
+    "size": "1x3",
+    "weap_dmg": "1d20",
+    "damages": 8,
+    "min_strength": 16
+  },
+  "bow": {
+    "label": "Arc",
+    "icon": "items/bow.png",
+    "cat": "deux_mains",
+    "size": "1x3",
+    "weap_dmg": "1d20",
+    "projectile": 15,
+    "min_dexterity": 12
+  },
+  "bow-mx": {
+    "label": "Arc de Claire",
+    "icon": "items/bow-mx.png",
+    "cat": "deux_mains",
+    "size": "3x1",
+    "weap_dmg": "3d30",
+    "dexterity": 4,
+    "projectile": 30,
+    "min_dexterity": 20,
+    "min_strength": 14,
+    "min_constitution": 10,
+    "special": "Shoot 3 fleches enflamées et empoisonée",
+    "legendary": true
+  },
+  "fishing-pole": {
+    "label": "Canne à Peche",
+    "icon": "items/fishing-pole.png",
+    "cat": "deux_mains",
+    "size": "1x3",
+    "weap_dmg": "1d5"
+  },
+  "giant-slayer": {
+    "label": "Trancheuse de geant",
+    "icon": "items/giant-slayer.png",
+    "cat": "deux_mains",
+    "size": "1x3",
+    "weap_dmg": "1d120",
+    "strength": 4,
+    "dexterity": -2,
+    "stealth": -20,
+    "min_strength": 19,
+    "special": "Degat bonus sur les grandes creatures"
+  },
+  "hammer-club": {
+    "label": "Masse",
+    "icon": "items/hammer-club.png",
+    "cat": "deux_mains",
+    "size": "1x3",
+    "weap_dmg": "1d35",
+    "strength": 2,
+    "dexterity": -1,
+    "stealth": -20,
+    "min_strength": 15
+  },
+  "ederneum-scepter": {
+    "label": "Sceptre d'Ederneum",
+    "icon": "items/ederneum-scepter.png",
+    "cat": "deux_mains",
+    "size": "2x3",
+    "weap_dmg": "1d70",
+    "ethereal_link": 25,
+    "casting": 25,
+    "mental": 4,
+    "min_mental": 20,
+    "special": "Autorise l'utilisation du sort: Invocation de Krahoz et Zohark (Krahoz and Zohark équipés, 2t Cooldown)",
+    "legendary": true
+  },
+  "pick-axe": {
+    "label": "Pioche",
+    "icon": "items/pick-axe.png",
+    "cat": "deux_mains",
+    "size": "1x2",
+    "weap_dmg": "1d16",
+    "object_knowledge": 5,
+    "min_strength": 12,
+    "special": "+25 DMG Contre les Golems"
+  },
+  "pole": {
+    "label": "Perche",
+    "icon": "items/pole.png",
+    "cat": "deux_mains",
+    "size": "1x3",
+    "weap_dmg": "1d7"
+  },
+  "shovel": {
+    "label": "Pelle",
+    "icon": "items/shovel.png",
+    "cat": "deux_mains",
+    "size": "1x3",
+    "weap_dmg": "1d10",
+    "object_knowledge": 5
+  },
+  "sword-2handed": {
+    "label": "Epée à deux mains",
+    "icon": "items/sword-2handed.png",
+    "cat": "deux_mains",
+    "size": "1x3",
+    "weap_dmg": "1d80",
+    "damages": 30,
+    "close_combat": 10,
+    "dexterity": -1,
+    "min_strength": 17
+  },
+  "sword-2handed-meteor": {
+    "label": "Epée du Gardien",
+    "icon": "items/sword-2handed-meteor.png",
+    "cat": "deux_mains",
+    "size": "1x3",
+    "weap_dmg": "1d175",
+    "strength": 2,
+    "mental": 2,
+    "min_strength": 22,
+    "special": "Drain de mana  10% DMG  MP + Bannissement des morts et démons superieurs + Ignore les immunités magiques",
+    "legendary": true
+  },
+  "sword-2handed-mythril": {
+    "label": "Epée à deux mains en mythril",
+    "icon": "items/sword-2handed-mythril.png",
+    "cat": "deux_mains",
+    "size": "1x3",
+    "weap_dmg": "1d100",
+    "mental": 1,
+    "damages": 20,
+    "casting": 5,
+    "min_strength": 19
+  },
 
-
+  "lamp": {
+    "label": "Lanterne",
+    "icon": "items/lamp.png",
+    "cat": "main_secondaire",
+    "size": "1x2",
+    "weap_dmg": "2d4",
+    "intuition": 20,
+    "special": "35% de chance d'enflamer une cible inflamable (+ - selon cible )"
+  },
+  "shield": {
+    "label": "Targe",
+    "icon": "items/shield.png",
+    "cat": "main_secondaire",
+    "size": "2x2",
+    "weap_dmg": "1d8",
+    "constitution": 2,
+    "stealth": -10,
+    "armor_class": 10,
+    "min_strength": 13
+  },
+  "shield-elder": {
+    "label": "Bouclier des anciens",
+    "icon": "items/shield-elder.png",
+    "cat": "main_secondaire",
+    "size": "2x3",
+    "weap_dmg": "1d19",
+    "constitution": 6,
+    "stealth": -40,
+    "armor_class": 50,
+    "magic_resistance": 35,
+    "poison_resistance": 10,
+    "min_strength": 18,
+    "min_constitution": 12,
+    "special": "Repousse les morts et démons mineurs + Immunise contre la foudre",
+    "legendary": true
+  },
+  "shield-metal": {
+    "label": "Bokler",
+    "icon": "items/shield-metal.png",
+    "cat": "main_secondaire",
+    "size": "2x2",
+    "weap_dmg": "1d12",
+    "constitution": 3,
+    "stealth": -20,
+    "armor_class": 20,
+    "min_strength": 16
+  },
+  "shield-tower-metal": {
+    "label": "Ecu",
+    "icon": "items/shield-tower-metal.png",
+    "cat": "main_secondaire",
+    "size": "2x3",
+    "weap_dmg": "1d20",
+    "constitution": 4,
+    "stealth": -30,
+    "armor_class": 40,
+    "min_strength": 18,
+    "min_constitution": 12
+  },
+  "torch": {
+    "label": "Torche",
+    "icon": "items/torch.png",
+    "cat": "main_secondaire",
+    "size": "1x2",
+    "weap_dmg": "1d4",
+    "intuition": 10,
+    "special": "10% de chance d'enflammer la cible"
+  },
 
   "chain-helmet": {
     "label": "Casque de mailles",
@@ -131,10 +517,6 @@
     "min_mental": 8,
     "min_constitution": 10
   },
-
-
-
-
 
   "ylside-chest": {
     "label": "Plastron ylsides",
@@ -200,8 +582,6 @@
     "legendary": true
   },
 
-
-
   "ylside-bottoms": {
     "label": "Jambières ylsides",
     "icon": "items/ylside-bottoms.png",
@@ -265,10 +645,6 @@
     "size": "2x3"
   },
 
-
-
-
-
   "krahoz": {
     "label": "Krahoz",
     "icon": "items/krahoz.png",
@@ -307,8 +683,6 @@
     "cat": "bijoux",
     "size": "1x1"
   },
-
-
 
   "rune-aam": {
     "label": "Rune : Aam (Créer)",
@@ -450,10 +824,6 @@
     "size": "1x1",
     "effect": "rune"
   },
-
-
-
-
 
   "scroll-nyctalopie": {
     "label": "Parchemin : Vision nocturne",
@@ -976,10 +1346,6 @@
     "caster_level": 85
   },
 
-
-
-
-
   "potion-mana": {
     "label": "Potion de mana",
     "effect": "potions",
@@ -1080,10 +1446,6 @@
     "size": "1x1"
   },
 
-
-
-
-
   "bottle-wine": {
     "label": "Bouteille de vin",
     "effect": "drinks",
@@ -1098,10 +1460,6 @@
     "cat": "objet",
     "size": "1x1"
   },
-
-
-
-
 
   "gold-one": {
     "label": "1 pièce d'or",
@@ -1504,10 +1862,6 @@
     "value": 49
   },
 
-
-
-
-
   "carte-niveau-1": {
     "label": "Carte du niveau 1",
     "icon": "items/sheet.png",
@@ -1573,10 +1927,6 @@
     "level": 8
   },
 
-
-
-
-
   "extra-backpack": {
     "label": "Sac supplémentaire",
     "icon": "items/extra-backpack.png",
@@ -1584,10 +1934,6 @@
     "size": "2x2",
     "effect": "extra_bag"
   },
-
-
-
-
 
   "bottle-empty": {
     "label": "Bouteille vide",

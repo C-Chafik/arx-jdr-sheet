@@ -35,7 +35,13 @@ button.sheet-hover-zone:active {
   position: absolute;
   top: 0;
   left: 2%;
-  width: 96%;
+  /* Past the book's own right edge on purpose: .sheet-book is 1100px but
+     .sheet-arx is 1500px, and the strip above the book is empty. An item's
+     spec line runs long (the longest in items.json is 186 characters), so
+     96% of the book — 1056px — broke it onto a second line far too early.
+     1450px from left:2% (22px) ends at 1472px, still inside the sheet.
+     .sheet-book sets no overflow, so the extra width simply shows. */
+  width: 1450px;
   text-align: left;
   color: #fff;
   font-size: 22px;

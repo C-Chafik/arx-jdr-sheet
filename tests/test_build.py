@@ -709,8 +709,11 @@ def test_consume_verbs_cover_exactly_the_effects_used():
     assert "scroll" in in_items
 
 
-WEAPON_DICE = {"one-handed-sword-light": "1d4", "wooden-club": "1d6",
-               "one-handed-sword": "1d8", "bow": "1d8", "sam-sword": "2d20"}
+WEAPON_DICE = {"dagger": "2d4", "club": "1d8", "long-sword": "2d16",
+               "bow": "1d20", "sword-mx": "2d80",
+               # a shield's dice are rolled like any other hand's (see
+               # rollHandDamage), which is why they may carry weap_dmg at all
+               "shield": "1d8", "shield-elder": "1d19"}
 
 
 def test_weapon_dice_are_well_formed_and_reachable():
