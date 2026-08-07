@@ -139,14 +139,12 @@
   {# Roll buttons: skills roll 1d100 (roll-under against their own live
      value, shown alongside for comparison — see "On tente l'incantation"
      decisions). Attributes/armor_class/magic_resistance/poison_resistance
-     stay inert for now ("on touche pas" — not yet designed). Damages is a
-     type="action" button instead (see below): it needs to look up the
-     equipped weapon's own label, which a static roll value can't do. #}
+     stay inert for now ("on touche pas" — not yet designed). Damages is
+     inert too: the attack roll moved onto its own per-hand buttons below,
+     so this one keeps its hover tooltip and nothing else. #}
 {% for name, label, text in stats.stat_infos %}
-{% if name in stats.no_roll %}
+{% if name in stats.no_roll or name == "damages" %}
   <div class="sheet-hover-zone sheet-hover--{{ name }}"></div>
-{% elif name == "damages" %}
-  <button type="action" class="sheet-hover-zone sheet-hover--{{ name }}" name="act_roll_damages"></button>
 {% elif name in skills %}
   {# Two roll buttons, swapped via CSS on attr_posture=focus (see
      base.css.j2) — same spot, only one ever visible/clickable at a time.
@@ -191,5 +189,20 @@
     <button type="action" name="act_slot_{{ slot }}"></button>
   </div>
   <div class="sheet-statbar sheet-statbar--{{ slot }}">{{ equip_labels[slot] }}</div>
+{% endfor %}
+  {# Attack roll, one button per hand, sitting just under its own slot. The
+     two hands are fully independent: each button only ever looks at its own
+     equip_<hand> attribute (see rollHandDamage in inventory.js), so a
+     two-handed weapon — which mirrors itself into both slots — is rollable
+     from either one. Whatever sits in the slot is rolled, shield or torch
+     included; only its own weap_dmg decides whether dice are added on top
+     of the Dégâts base, and an empty hand rolls the base alone (bare fists).
+     type="action" rather than type="roll": the roll is computed in the
+     worker (Roll20 fires no clicked: event for a roll button), which also
+     means Roll20 draws no d20 badge on it — hence a real background image
+     rather than an invisible click zone. #}
+{% for slot in ["equip_main_hand", "equip_off_hand"] %}
+  <button type="action" class="sheet-attack-btn sheet-attack-btn--{{ slot }}" name="act_attack_{{ slot }}"></button>
+  <div class="sheet-statbar sheet-statbar--attack-{{ slot }}">Attaque &mdash; {{ equip_labels[slot] }}</div>
 {% endfor %}
 </div>

@@ -645,12 +645,12 @@ Object.keys(SPELLS).forEach(function (spellId) {
   });
 });
 
-/* Optional "weap_dmg": "2d6" on a weapon — the dice it adds on top of the
-   Dégâts stat. Absent (or malformed) means the weapon adds nothing and hits
-   like bare hands.
-   NOTE: "ambidextrie" also covers non-weapon utility items (torch, grimoire)
-   by design — none exist in items.json yet, and the weap_dmg key is what
-   actually decides whether something contributes, not the category. */
+/* Optional "weap_dmg": "2d6" on an item — the dice it adds on top of the
+   Dégâts stat. Absent (or malformed) means it adds nothing and hits like
+   bare hands.
+   The CATEGORY never decides anything here: whatever a hand holds is rolled,
+   shield or torch included, and weap_dmg alone says whether dice come with
+   it. So a shield carrying dice really does roll them. */
 function weaponDice(itemId) {
   const item = ITEMS[itemId];
   const spec = item && typeof item.weap_dmg === "string" ? item.weap_dmg.match(/^(\d+)d(\d+)$/) : null;
@@ -677,24 +677,25 @@ function weaponDice(itemId) {
    makes the result more legible than the old single opaque number, but a
    player could in principle tamper with their own client.
 
-   Both hands add their own dice; a "deux_mains" weapon sits in BOTH hand
-   slots (it mirrors itself so the off-hand shows a dimmed icon), so it is
-   counted once — the same guard as recomputeModifiers. */
+   ONE HAND PER ROLL: each button reads its own equip_<hand> and nothing
+   else, so the two hands are entirely independent. A "deux_mains" weapon
+   sits in BOTH slots (it mirrors itself so the off hand shows a dimmed
+   icon) and is therefore rollable from either button — no de-duplication
+   here, unlike recomputeModifiers: two clicks are two deliberate rolls, and
+   the player knows a two-handed weapon strikes once. */
 function rollDie(faces) { return 1 + Math.floor(Math.random() * faces); }
 
-on("clicked:roll_damages", function () {
-  getAttrs(["equip_main_hand", "equip_off_hand", "posture", "damages"], function (v) {
-    const mainItem = ITEMS[v.equip_main_hand];
-    const mirroredTwoHanded = mainItem && mainItem.cat === "deux_mains"
-                              && v.equip_off_hand === v.equip_main_hand;
+const HAND_LABELS = { equip_main_hand: "Main principale", equip_off_hand: "Main secondaire" };
+
+function rollHandDamage(slot) {
+  getAttrs([slot, "posture", "damages"], function (v) {
     const offensive = v.posture === "offensive";
     const damages = parseInt(v.damages, 10) || 0;
 
-    const weapons = [];
-    [v.equip_main_hand, mirroredTwoHanded ? "" : v.equip_off_hand].forEach(function (id) {
-      const dice = weaponDice(id);
-      if (dice) { weapons.push({ label: ITEMS[id].label, dice: dice }); }
-    });
+    /* Zero or one row. An empty hand, or one holding something without
+       weap_dmg, simply has none: Base and Total alone, which is a fist. */
+    const itemId = v[slot];
+    const dice = weaponDice(itemId);
 
     /* 0, 0.1 … 1.0 — eleven steps, not a continuous draw. */
     const rng = Math.floor(Math.random() * 11) / 10;
@@ -702,19 +703,24 @@ on("clicked:roll_damages", function () {
 
     let total = base;
     let rows = "";
-    weapons.forEach(function (weapon) {
+    if (dice) {
       const values = [];
-      for (let i = 0; i < weapon.dice.count; i++) {
-        values.push(offensive ? weapon.dice.faces : rollDie(weapon.dice.faces));
+      for (let i = 0; i < dice.count; i++) {
+        values.push(offensive ? dice.faces : rollDie(dice.faces));
       }
       values.forEach(function (value) { total += value; });
-      rows += " {{" + weapon.label + "=" + values.join(" + ") + "}}";
-    });
+      rows = " {{" + ITEMS[itemId].label + "=" + values.join(" + ") + "}}";
+    }
 
-    startRoll("&{template:default} {{name=Dégâts" + (offensive ? " (Offensive)" : "") + "}}"
+    startRoll("&{template:default} {{name=Dégâts — " + HAND_LABELS[slot]
+      + (offensive ? " (Offensive)" : "") + "}}"
       + " {{Base=[[" + base + "]]}}" + rows + " {{Total=[[" + total + "]]}}",
       function (results) { finishRoll(results.rollId, {}); });
   });
+}
+
+Object.keys(HAND_LABELS).forEach(function (slot) {
+  on("clicked:attack_" + slot, function () { rollHandDamage(slot); });
 });
 
 on("sheet:opened", function () { setAttrs({ recipe_spell: "" }); });

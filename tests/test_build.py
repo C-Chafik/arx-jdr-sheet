@@ -75,13 +75,10 @@ def test_every_icon_has_hover_zone_statbar_and_css():
         # Substring, not an exact class= match: skills carry an extra
         # sheet-roll--no-focus/sheet-roll--focus class (see below).
         assert f'sheet-hover-zone sheet-hover--{name}' in html, name
-        if name in NO_ROLL:
+        if name in NO_ROLL or name == "damages":
+            # damages is inert too: the attack roll lives on the two per-hand
+            # buttons instead (see test_attack_buttons_are_one_per_hand).
             assert f'name="roll_{name}"' not in html, name
-        elif name == "damages":
-            # Needs an item lookup (equipped weapon's label) a static roll
-            # value can't do — type="action" + startRoll instead, see
-            # clicked:roll_damages in inventory.js.
-            assert 'name="act_roll_damages"' in html, name
         else:
             # Skills: two roll buttons (plain + Focus variant), swapped via
             # CSS on attr_posture=focus — see base.css.j2's sheet-roll--focus
@@ -641,49 +638,79 @@ WEAPON_DICE = {"one-handed-sword-light": "1d4", "wooden-club": "1d6",
                "one-handed-sword": "1d8", "bow": "1d8", "sam-sword": "2d20"}
 
 
-def test_weapon_dice_are_well_formed_and_only_on_weapons():
+def test_weapon_dice_are_well_formed_and_reachable():
     import re
     items = build.load_items()
     for item_id, item in items.items():
         if "weap_dmg" not in item:
             continue
         assert re.fullmatch(r"[1-9]\d*d[1-9]\d*", item["weap_dmg"]), item_id
-        # dice on a shield or a loaf of bread would silently never be rolled
-        assert item["cat"] in ("main_principale", "ambidextrie", "deux_mains"), \
-            f"{item_id}: {item['cat']} never reaches the damage roll"
+        # a hand category is all it takes now — a shield's dice DO get rolled
+        # (see rollHandDamage) — but dice on a helmet or a loaf of bread still
+        # could never reach a hand slot, so they would be silently dead
+        assert item["cat"] in ("main_principale", "main_secondaire",
+                               "ambidextrie", "deux_mains"), \
+            f"{item_id}: {item['cat']} never reaches a hand slot"
     for item_id, dice in WEAPON_DICE.items():
         assert items[item_id]["weap_dmg"] == dice, item_id
 
 
+def _damage_handler(html):
+    return html.split("function rollHandDamage(slot) {")[1].split("\n}")[0]
+
+
+def test_attack_buttons_are_one_per_hand():
+    html = build.render_html()
+    css = build.build_css("x")
+    # the sword's own button is gone: the damages stat is a hover zone now
+    assert "act_roll_damages" not in html
+    assert "roll_damages" not in html
+    for slot, asset in (("equip_main_hand", "attack_left"),
+                        ("equip_off_hand", "attack_right")):
+        assert f'name="act_attack_{slot}"' in html, slot
+        assert f'on("clicked:attack_" + slot' in html
+        assert f".sheet-attack-btn--{slot} {{" in css, slot
+        assert f"ui/{asset}.png" in css, slot
+        # each button gets its own hover billboard
+        assert f'class="sheet-statbar sheet-statbar--attack-{slot}"' in html, slot
+        assert f".sheet-attack-btn--{slot}:hover) .sheet-statbar--attack-{slot}" in css, slot
+    # the hand a click reads is the button's own slot and nothing else
+    handler = _damage_handler(html)
+    assert "getAttrs([slot, \"posture\", \"damages\"]" in handler
+    assert "const itemId = v[slot];" in handler
+    # ...so no de-duplication of a mirrored two-handed weapon survives
+    for gone in ("mirroredTwoHanded", "mainItem", "equip_off_hand", "equip_main_hand"):
+        assert gone not in handler, gone
+
+
 def test_damage_roll_is_computed_in_the_worker():
     html = build.render_html()
-    handler = html.split('on("clicked:roll_damages"')[1].split("\n});")[0]
+    handler = _damage_handler(html)
     # RNG is the eleven-step ladder 0, 0.1 … 1.0, not a continuous draw
     assert "Math.floor(Math.random() * 11) / 10" in handler
     assert "const base = offensive ? damages : Math.round(damages * (0.8 + 0.2 * rng));" in handler
     # Offensive takes each die at its maximum instead of rolling it
-    assert "values.push(offensive ? weapon.dice.faces : rollDie(weapon.dice.faces));" in handler
-    # one row per weapon, keyed by its own label, every die spelled out
-    assert 'rows += " {{" + weapon.label + "=" + values.join(" + ") + "}}"' in handler
+    assert "values.push(offensive ? dice.faces : rollDie(dice.faces));" in handler
     # the total is accumulated here, never rebuilt by finishRoll
     assert "values.forEach(function (value) { total += value; });" in handler
     assert "finishRoll(results.rollId, {})" in handler
     # nothing left of the version whose Total displayed 0
     for gone in ("Hasard", "{{Stat=", "{{Arme=", "[[1d100]]", "{{Total=[[0]]}}", "diceMax"):
         assert gone not in handler, gone
-    # a two-handed weapon mirrors itself into the off hand: count it once
-    assert 'mainItem.cat === "deux_mains"' in handler
-    assert '[v.equip_main_hand, mirroredTwoHanded ? "" : v.equip_off_hand]' in handler
 
 
 def test_damage_rows_use_the_weapon_label_and_the_base_row():
     html = build.render_html()
-    handler = html.split('on("clicked:roll_damages"')[1].split("\n});")[0]
+    handler = _damage_handler(html)
     assert '{{Base=[[" + base + "]]}}' in handler
     assert '{{Total=[[" + total + "]]}}' in handler
     assert '(offensive ? " (Offensive)" : "")' in handler
-    # the weapon row is keyed by the label, so a nameless item cannot appear
-    assert "label: ITEMS[id].label" in handler
+    # the chat window names the hand, so two rolls never look alike
+    assert '{{name=Dégâts — " + HAND_LABELS[slot]' in handler
+    # the single row is keyed by the item's label, so a nameless one can't show
+    assert 'rows = " {{" + ITEMS[itemId].label + "=" + values.join(" + ") + "}}"' in handler
+    # ...and there is no row at all without dice: bare fists roll the base alone
+    assert "if (dice) {" in handler
 
 
 def test_ambidextrous_weapons_need_dexterity_for_the_off_hand():

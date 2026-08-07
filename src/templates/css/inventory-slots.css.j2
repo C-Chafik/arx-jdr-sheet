@@ -285,6 +285,42 @@ input[name="attr_hand_effect"][value="{{ effect }}"] ~ .sheet-inventory .sheet-c
 .sheet-slot--equip_jewel_1   { left: 13.5%; top: 77.7%; width: 6.6%; height: 10.7%; }
 .sheet-slot--equip_jewel_2   { left: 41.7%; top: 77.7%; width: 6.6%; height: 10.7%; }
 
+/* ---- Attack roll, one button per hand, centered just under its own slot
+   (both slots end around 20.5%). A gloved hand facing the way that hand
+   does — hence two assets rather than one mirrored in CSS. Always visible,
+   whether or not the hand holds anything: an empty hand rolls bare fists
+   (see rollHandDamage in inventory.js). Sized in px, not %, so the 32×32
+   source draws 1:1 and stays crisp — the only px box among the slots, which
+   are all cut from the book artwork and must scale with it. ---- */
+.sheet-attack-btn {
+  position: absolute;
+  top: 22%;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: url('{{ "{{ASSET_BASE}}" }}/ui/cursor-hover.png') 6 4, pointer;
+  transition: filter 0.2s ease-out;
+}
+.sheet-attack-btn:hover { filter: brightness(1.35) drop-shadow(0 0 6px rgba(255, 220, 130, 0.8)); }
+{# Centered under each slot: the slot's own center, minus half the button's
+   32px. .sheet-book is 1100px wide (base.css), so 16px is 1.45% of it. #}
+.sheet-attack-btn--equip_main_hand {
+  left: 19.2%; /* .sheet-slot--equip_main_hand center 20.65% (17.2 + 6.9/2) − 1.45% */
+  background-image: url('{{ "{{ASSET_BASE}}" }}/ui/attack_left.png');
+}
+.sheet-attack-btn--equip_off_hand {
+  left: 40.65%; /* .sheet-slot--equip_off_hand center 42.1% (38.8 + 6.6/2) − 1.45% */
+  background-image: url('{{ "{{ASSET_BASE}}" }}/ui/attack_right.png');
+}
+{% for slot in ["equip_main_hand", "equip_off_hand"] %}
+.sheet-arx:has(.sheet-attack-btn--{{ slot }}:hover) .sheet-statbar--attack-{{ slot }} { display: block; }
+{% endfor %}
+
 /* Equipment slot tooltips — same top-banner billboard as everything else.
    Only while the slot is EMPTY: once something is equipped, its own item
    name tooltip (see .sheet-statbar--item-* above) takes over instead, so
