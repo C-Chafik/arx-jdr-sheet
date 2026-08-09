@@ -159,7 +159,20 @@
 {% else %}
   <button type="roll" class="sheet-hover-zone sheet-hover--{{ name }}" name="roll_{{ name }}" value=""></button>
 {% endif %}
-  <div class="sheet-statbar sheet-statbar--{{ name }}">{{ label }} &mdash; {{ text }}</div>
+  {# Where the number actually comes from, appended to the description in the
+     very same billboard — same treatment as an item's spec line (see
+     item_specs in sheet.html.j2), since it answers the same question about a
+     different object. Live values: <span name="attr_X"> is refreshed by
+     Roll20 itself, and attr_<name>_own is maintained by recomputeOwnShares
+     in inventory.js.
+     "base" is the share the player assigned by hand — the one the field
+     never shows on its own, and the one a level-up lands in when the cap is
+     already reached. Attributes have no attribute-derived share, so they
+     read with two terms instead of three. #}
+  <div class="sheet-statbar sheet-statbar--{{ name }}">{{ label }} &mdash; {{ text }}
+{%- if name in attributes %}<span class="sheet-stat-breakdown"> - [base <span name="attr_{{ name }}_own">{{ defaults[name] }}</span> | équipement <span name="attr_{{ name }}_applied_mod">0</span>]</span>
+{%- elif name in skills or name in singles %}<span class="sheet-stat-breakdown"> - [base <span name="attr_{{ name }}_own">0</span> | bonus <span name="attr_{{ name }}_applied_stat_mod">{{ defaults[name] }}</span> | équipement <span name="attr_{{ name }}_applied_mod">0</span>]</span>
+{%- endif %}</div>
 {% endfor %}
   {# Equipment slots on the left page (categories enforced by the worker). #}
 {% set equip_labels = {

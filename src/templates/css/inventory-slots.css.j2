@@ -91,8 +91,12 @@
 
 /* The equipment spec line appended to an item's hover name (see the
    item_specs macro in sheet.html.j2) — dimmer and smaller than the label, so
-   the name still reads first. */
-.sheet-item-specs {
+   the name still reads first. Shared with the stat billboards' own breakdown
+   (base | bonus | équipement, see base.html.j2): same question about a
+   different object, so deliberately the same treatment rather than a
+   look-alike that would drift. */
+.sheet-item-specs,
+.sheet-stat-breakdown {
   margin-left: 0.4em;
   color: #d8a24a;
   font-size: 0.8em;

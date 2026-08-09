@@ -860,14 +860,28 @@ on("sheet:opened", function () { getAttrs(STAT_MOD_GETATTRS, recomputeStatMods);
    max" rule above — it runs AFTER whatever just wrote the value (manual
    edit, equipment mod, or attribute-derived skill bonus), so it always
    sees the latest total. They apply to every character, GM sheet included. */
+/* Clamping alone used to cost the character real points. attr_<name>_
+   applied_mod is recomputeModifiers' memory of "this much of the value comes
+   from gear", and it works purely in deltas — so when the cap quietly shaved
+   the total, the tracker still claimed the full bonus and handed all of it
+   back at unequip: 22 Force + a 5 Force weapon capped to 24, unequipped,
+   left 19.
+   So the clamp writes off exactly what it refused. The bonus stops at the
+   ceiling, no roll ever goes past 24, and taking the item off restores the
+   value the character had before wearing it. Floored at 0 because the
+   overflow can also come from a manual edit, which owes the tracker nothing. */
+const ATTR_CAP = 24;
+
 ATTR_NAMES.forEach(function (attr) {
   on("change:" + attr, function () {
-    getAttrs([attr], function (v) {
-      if ((parseInt(v[attr], 10) || 0) > 24) {
-        const update = {};
-        update[attr] = 24;
-        setAttrs(update);
-      }
+    getAttrs([attr, attr + "_applied_mod"], function (v) {
+      const total = parseInt(v[attr], 10) || 0;
+      if (total <= ATTR_CAP) { return; }
+      const applied = parseInt(v[attr + "_applied_mod"], 10) || 0;
+      const update = {};
+      update[attr] = ATTR_CAP;
+      update[attr + "_applied_mod"] = Math.max(0, applied - (total - ATTR_CAP));
+      setAttrs(update);
     });
   });
 });
@@ -878,14 +892,30 @@ on("change:level", function () {
   });
 });
 
+/* Same write-off as the attribute cap above, but a skill answers to TWO
+   trackers: attr_<skill>_applied_mod for the gear share and
+   attr_<skill>_applied_stat_mod for the attribute-derived one. The refused
+   points come off the gear tracker first — gear is what gets taken off
+   again, and in practice what causes the overflow (Projectile tops out at
+   102 from attributes alone; it takes the +30 of a bow on top of
+   hand-assigned points to pass 125) — then off the derived one for whatever
+   is left, so an overflow caused by raising an attribute is written off too. */
+const SKILL_CAP = 125;
+
 SKILL_NAMES.forEach(function (skill) {
   on("change:" + skill, function () {
-    getAttrs([skill], function (v) {
-      if ((parseInt(v[skill], 10) || 0) > 125) {
-        const update = {};
-        update[skill] = 125;
-        setAttrs(update);
-      }
+    getAttrs([skill, skill + "_applied_mod", skill + "_applied_stat_mod"], function (v) {
+      const total = parseInt(v[skill], 10) || 0;
+      if (total <= SKILL_CAP) { return; }
+      const gear = parseInt(v[skill + "_applied_mod"], 10) || 0;
+      const derived = parseInt(v[skill + "_applied_stat_mod"], 10) || 0;
+      const refused = total - SKILL_CAP;
+      const offGear = Math.min(gear, refused);
+      const update = {};
+      update[skill] = SKILL_CAP;
+      update[skill + "_applied_mod"] = gear - offGear;
+      update[skill + "_applied_stat_mod"] = Math.max(0, derived - (refused - offGear));
+      setAttrs(update);
     });
   });
 });
@@ -961,6 +991,42 @@ on("change:strength change:mental change:dexterity change:constitution change:de
 
 on("sheet:opened", function () { getAttrs(SINGLE_STAT_MOD_GETATTRS, recomputeSingleStatMods); });
 /* ========================================================================= */
+
+/* Breakdown shown in each stat's hover billboard (see base.html.j2). A stat
+   holds ONE number that three sources feed into, and the field shows only
+   their sum — so the share the player assigned by hand is the one piece
+   never displayed anywhere. That is exactly what goes missing when the cap
+   is in play: at 24 Force with a weapon on, a level-up point lands in this
+   share and nothing on screen moves (see the write-off in the attribute cap
+   above). attr_<name>_own makes it visible.
+   Derived from the two trackers rather than stored on its own: they are
+   already the authority on what came from where, and a second stored copy
+   would be one more thing to keep in sync. Attributes have no
+   _applied_stat_mod, which reads as 0 here — they have no derived share. */
+const BREAKDOWN_STATS = ATTR_NAMES.concat(SKILL_NAMES).concat(SINGLE_STAT_NAMES);
+
+function recomputeOwnShares(v) {
+  const update = {};
+  BREAKDOWN_STATS.forEach(function (name) {
+    const total = parseInt(v[name], 10) || 0;
+    const gear = parseInt(v[name + "_applied_mod"], 10) || 0;
+    const derived = parseInt(v[name + "_applied_stat_mod"], 10) || 0;
+    update[name + "_own"] = total - gear - derived;
+  });
+  setAttrs(update);
+}
+
+const BREAKDOWN_GETATTRS = BREAKDOWN_STATS
+  .concat(BREAKDOWN_STATS.map(function (s) { return s + "_applied_mod"; }))
+  .concat(BREAKDOWN_STATS.map(function (s) { return s + "_applied_stat_mod"; }));
+
+/* Every source: the stat itself (manual edits) and both trackers — the cap
+   rewrites a tracker without touching the total, so watching the stat alone
+   would miss it. */
+on(BREAKDOWN_GETATTRS.map(function (a) { return "change:" + a; }).join(" "),
+  function () { getAttrs(BREAKDOWN_GETATTRS, recomputeOwnShares); });
+
+on("sheet:opened", function () { getAttrs(BREAKDOWN_GETATTRS, recomputeOwnShares); });
 
 /* Caster level: hidden (never shown to the player), wiki.arx-libertatis.org/
    Caster_level — "(full_casting + full_mind) / 10", clamped 1-10 ("full_mind"

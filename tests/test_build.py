@@ -647,7 +647,89 @@ def test_gm_panel_does_not_touch_stats():
     # the caps stand for everyone, GM sheet included
     skill_cap = html.split('on("change:" + skill, function () {')[1].split("});")[0]
     assert "gm_panel_unlocked" not in skill_cap
-    assert "125" in skill_cap
+    assert "SKILL_CAP" in skill_cap
+    assert "const SKILL_CAP = 125;" in html
+
+
+def _cap_write_off(base, gear_steps, cap=24):
+    """Replay the attribute cap against recomputeModifiers, the way the sheet
+    runs them: gear change first, clamp second. Mirrors inventory.js — if that
+    logic moves, this drifts and the assertions below stop meaning anything,
+    which is why test_attribute_cap_writes_off_what_it_refuses also pins the
+    source lines it is modelled on."""
+    value, applied = base, 0
+    for gear in gear_steps:
+        value += gear - applied            # recomputeModifiers: delta only
+        applied = gear
+        if value > cap:                    # the cap, writing off what it refused
+            applied = max(0, applied - (value - cap))
+            value = cap
+    value += 0 - applied                   # everything unequipped
+    return value
+
+
+def test_attribute_cap_writes_off_what_it_refuses():
+    """A capped bonus must not be handed back at unequip.
+
+    22 Force + a 5 Force weapon used to clamp to 24 and drop to 19 once the
+    weapon came off, because attr_<name>_applied_mod still claimed the whole
+    +5. The clamp now writes off the refused points."""
+    assert _cap_write_off(22, [5]) == 22
+    assert _cap_write_off(22, [10]) == 22
+    assert _cap_write_off(20, [5, 8]) == 20          # swapping items
+    assert _cap_write_off(24, [6]) == 24             # already at the ceiling
+    assert _cap_write_off(6, [5]) == 6               # never reaches the cap
+    # a malus eats into the refused overflow instead of biting the character:
+    # 23 + 5 sits at 24 with 4 written off, so a -2 leaves the total untouched
+    assert _cap_write_off(23, [5, 3]) == 23
+    assert _cap_write_off(23, [5, -3]) == 23         # malus beyond the overflow
+    assert _cap_write_off(23, [-2, 3]) == 23         # malus equipped first
+
+    html = build.render_html()
+    body = html.split('on("change:" + attr, function () {')[1].split("\n  });")[0]
+    assert 'getAttrs([attr, attr + "_applied_mod"]' in body
+    assert 'update[attr + "_applied_mod"] = Math.max(0, applied - (total - ATTR_CAP));' in body
+    assert "const ATTR_CAP = 24;" in html
+    # the skill cap does the same across its two trackers, gear first
+    skill = html.split('on("change:" + skill, function () {')[1].split("\n  });")[0]
+    assert "const offGear = Math.min(gear, refused);" in skill
+    assert 'update[skill + "_applied_mod"] = gear - offGear;' in skill
+    assert 'update[skill + "_applied_stat_mod"] = Math.max(0, derived - (refused - offGear));' in skill
+
+
+BREAKDOWN_STATS = (["strength", "mental", "dexterity", "constitution"]
+                   + ["stealth", "technical", "intuition", "ethereal_link",
+                      "object_knowledge", "casting", "close_combat", "projectile", "defense"]
+                   + ["damages", "armor_class", "magic_resistance", "poison_resistance"])
+
+
+def test_stat_billboards_show_where_the_number_comes_from():
+    """Each stat's hover billboard carries the same spec line an item does.
+
+    The field shows only the sum; the share assigned by hand is invisible,
+    which is what makes a level-up at the cap look like it did nothing."""
+    html = build.render_html()
+    css = build.build_css("x")
+    # identical treatment to an item's spec line, one rule for both
+    assert ".sheet-item-specs,\n.sheet-stat-breakdown {" in css
+    for name in BREAKDOWN_STATS:
+        bar = html.split(f'sheet-statbar--{name}">')[1].split("</div>")[0]
+        assert 'class="sheet-stat-breakdown"' in bar, name
+        # live values, not build-time constants
+        assert f'<span name="attr_{name}_own">' in bar, name
+        assert f'<span name="attr_{name}_applied_mod">' in bar, name
+        # attributes have no attribute-derived share; everything else does
+        derived = f'<span name="attr_{name}_applied_stat_mod">' in bar
+        assert derived is (name not in ("strength", "mental", "dexterity", "constitution")), name
+    # the hand-assigned share is derived from the two trackers, never stored twice
+    assert 'update[name + "_own"] = total - gear - derived;' in html
+    # ...and recomputed when a TRACKER moves, not just the stat: the cap
+    # rewrites a tracker while leaving the total alone. The event string is
+    # built from BREAKDOWN_GETATTRS, which is the stats plus both trackers.
+    assert ('on(BREAKDOWN_GETATTRS.map(function (a) { return "change:" + a; }).join(" "),'
+            in html)
+    getattrs = html.split("const BREAKDOWN_GETATTRS =")[1].split("\n\n")[0]
+    assert '"_applied_mod"' in getattrs and '"_applied_stat_mod"' in getattrs
 
 
 def test_gauges_have_no_auto_shrink():
