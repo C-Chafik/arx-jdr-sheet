@@ -884,3 +884,47 @@ def test_the_off_hand_dexterity_rule_is_gone():
     assert "function tooHeavy(v, itemId)" in html
     assert 'if (tooHeavy(v, hand)) { return; }' in html
     assert 'input[name="attr_hand_too_heavy"][value="1"]' in css
+
+
+def test_fate_status_is_displayed_and_gm_only():
+    """Faveur du Noden / Coups du sort: a GM-set status (attr_fate), shown as
+    an icon on the posture row — the player can see it but never change it."""
+    html = build.render_html()
+    css = build.build_css("x")
+    # One hidden attribute, no player-facing control writes to it
+    assert 'name="attr_fate"' in html
+    assert 'name="act_fate' not in html
+    # Two icons (plain divs, not buttons), one per status
+    assert 'class="sheet-fate-icon sheet-fate-icon--favor"' in html
+    assert 'class="sheet-fate-icon sheet-fate-icon--twist"' in html
+    # Hover labels: rainbow spans for the favor, plain red text for the twist
+    assert 'sheet-statbar--fate-favor' in html
+    assert 'sheet-statbar--fate-twist' in html
+    assert '<span class="sheet-rainbow-0">F</span>' in html
+    # Only the active status shows
+    assert '.sheet-fate-icon {\n  display: none;' in css
+    assert '.sheet-arx:has(input[name="attr_fate"][value="favor"]) .sheet-fate-icon--favor' in css
+    assert '.sheet-arx:has(input[name="attr_fate"][value="twist"]) .sheet-fate-icon--twist' in css
+    assert "ui/noden-favor.png" in css
+    assert "ui/twist-of-fate.png" in css
+    assert '.sheet-arx:has(.sheet-fate-icon--favor:hover) .sheet-statbar--fate-favor' in css
+    assert '.sheet-arx:has(.sheet-fate-icon--twist:hover) .sheet-statbar--fate-twist' in css
+    assert '.sheet-statbar--fate-twist { color: #ff2b2b; }' in css
+
+
+def test_fate_gm_buttons_and_mod_commands():
+    """The GM sets/clears the status via !arxfavor/!arxtwist/!arxfateclear —
+    selected token, same flow as the loot commands — with shortcut buttons on
+    the GM utility sheet, shown only while the GM panel is open."""
+    build.build()
+    html = build.render_html()
+    css = build.build_css("x")
+    mod = (build.BUILD / "arx-mod.js").read_text(encoding="utf-8")
+    for name, command in (("favor", "!arxfavor"), ("twist", "!arxtwist"),
+                          ("clear", "!arxfateclear")):
+        assert f'name="act_gm_fate_{name}" value="{command}"' in html, name
+        assert command in mod, command
+        assert f".sheet-gm-fate-btn--{name}" in css, name
+    assert '.sheet-arx:has(input[name="attr_gm_panel_open"][value="1"]) .sheet-gm-fate-btn' in css
+    # The full character reset clears the status too
+    assert 'arxSetAttr(charId, "fate", "");' in mod

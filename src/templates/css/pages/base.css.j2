@@ -89,6 +89,35 @@
 .sheet-arx:has(.sheet-posture-btn--focus:hover) .sheet-statbar--posture-focus { display: block; }
 .sheet-arx:has(.sheet-posture-btn--guardian:hover) .sheet-statbar--posture-guardian { display: block; }
 
+/* Fate status: same visual block as the postures, one slot right of the
+   Guardian. GM-set only (attr_fate, see arx-mod.js) — a status display, not
+   a control, so no cursor/opacity states: whichever is active shows at full
+   opacity with its own glow (golden for the favor, red for the twist). */
+.sheet-fate-icon {
+  display: none;
+  position: absolute;
+  top: 7.3%;
+  left: 88%;
+  width: 32px;
+  height: 32px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.sheet-fate-icon--favor {
+  background-image: url('{{ "{{ASSET_BASE}}" }}/ui/noden-favor.png');
+  filter: drop-shadow(0 0 6px rgba(255, 220, 130, 0.95)) drop-shadow(0 0 3px rgba(255, 220, 130, 0.95));
+}
+.sheet-fate-icon--twist {
+  background-image: url('{{ "{{ASSET_BASE}}" }}/ui/twist-of-fate.png');
+  filter: drop-shadow(0 0 6px rgba(255, 43, 43, 0.85)) drop-shadow(0 0 3px rgba(255, 43, 43, 0.85));
+}
+.sheet-arx:has(input[name="attr_fate"][value="favor"]) .sheet-fate-icon--favor { display: block; }
+.sheet-arx:has(input[name="attr_fate"][value="twist"]) .sheet-fate-icon--twist { display: block; }
+.sheet-arx:has(.sheet-fate-icon--favor:hover) .sheet-statbar--fate-favor { display: block; }
+.sheet-arx:has(.sheet-fate-icon--twist:hover) .sheet-statbar--fate-twist { display: block; }
+.sheet-statbar--fate-twist { color: #ff2b2b; }
+
 /* Skill rolls: two stacked buttons per skill (base.html.j2), only one ever
    shown — the Focus one reads "12 + Dextérité (Focus)" in the chat, the
    other just "12". Swapping which is visible/clickable via attr_posture,

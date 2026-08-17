@@ -204,6 +204,49 @@
   display: block;
 }
 
+/* ---- Fate shortcuts (Faveur du Noden / Coups du sort / retirer): stacked
+   in the free column under the LOOT panel (it stops at y 677, the inventory
+   band stops at x 1000, the search bar starts at x 1255 — x 1105→1250,
+   y 685→787 is unclaimed), same "only while the panel is open" rule as the
+   loot strip. The faces reuse .sheet-gm-loot-face wholesale; only the flat
+   gradient differs, one color per verdict (gold / red / neutral). ---- */
+.sheet-gm-fate-btn {
+  display: none;
+  position: absolute;
+  left: 1105px;
+  width: 145px;
+  height: 32px;
+}
+.sheet-gm-fate-btn--favor { top: 685px; }
+.sheet-gm-fate-btn--twist { top: 720px; }
+.sheet-gm-fate-btn--clear { top: 755px; }
+.sheet-gm-fate-btn--favor .sheet-gm-loot-face {
+  background-image: linear-gradient(rgba(115, 90, 20, 0.75), rgba(55, 42, 8, 0.85));
+}
+.sheet-gm-fate-btn--twist .sheet-gm-loot-face {
+  background-image: linear-gradient(rgba(90, 20, 15, 0.75), rgba(40, 10, 8, 0.85));
+}
+.sheet-gm-fate-btn--clear .sheet-gm-loot-face {
+  background-image: linear-gradient(rgba(55, 55, 55, 0.75), rgba(22, 22, 22, 0.85));
+}
+.sheet-gm-fate-btn:hover .sheet-gm-loot-face {
+  filter: brightness(1.4) drop-shadow(0 0 6px rgba(255, 220, 130, 0.9));
+}
+.sheet-gm-fate-btn button {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: url('{{ "{{ASSET_BASE}}" }}/ui/cursor-hover.png') 6 4, pointer;
+}
+.sheet-arx:has(input[name="attr_gm_panel_open"][value="1"]) .sheet-gm-fate-btn {
+  display: block;
+}
+
 {# Search filter: same substring-list trick as fitMask/craft_runes. While a
    search is active (attr_gm_panel_filter non-empty), every item dims by
    default — the second loop below then re-lights the ones that actually

@@ -95,6 +95,18 @@
     <span class="sheet-gm-loot-face">Fermer le butin</span>
     <button type="roll" name="act_gm_loot_close" value="!arxlootclose"></button>
   </div>
+  {# Fate shortcuts: same literal type="roll" pattern as the loot buttons —
+     the GM selects the player's token then clicks, arx-mod.js does the rest
+     (playerIsGM gate included). Stacked in the free column under the loot
+     panel, shown only while the GM panel is open (see gm-panel.css.j2). #}
+{% for name, command, label in [("favor", "!arxfavor", "Faveur du Noden"),
+                                ("twist", "!arxtwist", "Coups du sort"),
+                                ("clear", "!arxfateclear", "Retirer le sort")] %}
+  <div class="sheet-gm-fate-btn sheet-gm-fate-btn--{{ name }}">
+    <span class="sheet-gm-loot-face">{{ label }}</span>
+    <button type="roll" name="act_gm_fate_{{ name }}" value="{{ command }}"></button>
+  </div>
+{% endfor %}
 {% include "partials/loot-panel.html.j2" %}
   <div class="sheet-book">
 {% include "partials/tabs.html.j2" %}

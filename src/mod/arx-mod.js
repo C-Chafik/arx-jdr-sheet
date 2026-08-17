@@ -8,6 +8,9 @@
      !arxlockallmaps             re-lock every map level except level 1
      !arxunlockguardian          unlock the Guardian posture
      !arxlockguardian            re-lock the Guardian posture
+     !arxfavor                   grant the Faveur du Noden status
+     !arxtwist                   inflict the Coups du sort status
+     !arxfateclear               clear the fate status (favor or twist)
      !arxunlockpanel             unlock the GM admin panel on this character
      !arxlockpanel               re-lock the GM admin panel on this character
      !arxlootopen bag|body|chest|place|secured-chest
@@ -234,6 +237,41 @@ on("chat:message", function (msg) {
   if (!charId) { whisper("Sélectionne d'abord un token."); return; }
   arxSetAttr(charId, "posture_guardian_unlocked", "");
   whisper("Posture du Gardien re-verrouillée.");
+});
+
+/* Fate status (attr_fate, one at a time): shown to the player on the posture
+   row of their sheet, but only ever written from here — the sheet has no
+   control wired to it. !arxfateclear checked before !arxfavor/!arxtwist
+   would be unnecessary (distinct prefixes), kept in the same one-command-
+   per-handler style as everything else. */
+on("chat:message", function (msg) {
+  if (msg.type !== "api" || msg.content.indexOf("!arxfavor") !== 0) { return; }
+  if (!playerIsGM(msg.playerid)) { return; }
+  const whisper = function (text) { sendChat("ARX", "/w gm " + text); };
+  const charId = arxCharIdFromMsg(msg);
+  if (!charId) { whisper("Sélectionne d'abord un token."); return; }
+  arxSetAttr(charId, "fate", "favor");
+  whisper("Faveur du Noden accordée.");
+});
+
+on("chat:message", function (msg) {
+  if (msg.type !== "api" || msg.content.indexOf("!arxtwist") !== 0) { return; }
+  if (!playerIsGM(msg.playerid)) { return; }
+  const whisper = function (text) { sendChat("ARX", "/w gm " + text); };
+  const charId = arxCharIdFromMsg(msg);
+  if (!charId) { whisper("Sélectionne d'abord un token."); return; }
+  arxSetAttr(charId, "fate", "twist");
+  whisper("Coups du sort infligé.");
+});
+
+on("chat:message", function (msg) {
+  if (msg.type !== "api" || msg.content.indexOf("!arxfateclear") !== 0) { return; }
+  if (!playerIsGM(msg.playerid)) { return; }
+  const whisper = function (text) { sendChat("ARX", "/w gm " + text); };
+  const charId = arxCharIdFromMsg(msg);
+  if (!charId) { whisper("Sélectionne d'abord un token."); return; }
+  arxSetAttr(charId, "fate", "");
+  whisper("Sort du personnage retiré.");
 });
 
 /* Unlocks the GM admin panel (gear icon + full-catalog "give" grid, see
@@ -478,6 +516,7 @@ on("chat:message", function (msg) {
   arxSetAttr(charId, "posture", "");
   arxSetAttr(charId, "posture_guardian_unlocked", "");
   arxSetAttr(charId, "focus_active", "0");
+  arxSetAttr(charId, "fate", "");
 
   arxSetAttr(charId, "level", "0");
   ARX_STATS.forEach(function (name) {
@@ -593,6 +632,9 @@ on("chat:message", function (msg) {
     "!arxlockallmaps — reverrouille tous les niveaux sauf le 1",
     "!arxunlockguardian — débloque la posture du Gardien",
     "!arxlockguardian — reverrouille la posture du Gardien",
+    "!arxfavor — accorde la Faveur du Noden",
+    "!arxtwist — inflige un Coups du sort",
+    "!arxfateclear — retire le sort (faveur ou coup) du personnage",
     "!arxunlockpanel — débloque le panel MJ sur ce personnage",
     "!arxlockpanel — reverrouille le panel MJ sur ce personnage",
     "!arxlootopen bag|body|chest|place|secured-chest — ouvre un butin partagé pour les tokens sélectionnés",

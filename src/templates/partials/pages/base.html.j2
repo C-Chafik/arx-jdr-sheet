@@ -71,6 +71,16 @@
 {% for name in ["defensive", "offensive", "focus", "guardian"] %}
   <button type="action" class="sheet-posture-btn sheet-posture-btn--{{ name }}" name="act_posture_{{ name }}"></button>
 {% endfor %}
+  {# Fate status (Faveur du Noden / Coups du sort): GM-set only, via the
+     !arxfavor/!arxtwist/!arxfateclear API commands (see arx-mod.js) — the
+     sheet never writes it, so the icons are plain divs, not buttons. One
+     status at a time, same exclusivity as attr_posture. #}
+  <input type="hidden" class="sheet-hand-mirror" name="attr_fate" value="" />
+  <div class="sheet-fate-icon sheet-fate-icon--favor"></div>
+  <div class="sheet-fate-icon sheet-fate-icon--twist"></div>
+  {# Same per-character rainbow treatment as the "Pannel MJ" statbar. #}
+  <div class="sheet-statbar sheet-statbar--fate-favor">{% for char in "Faveur du Noden" %}<span class="sheet-rainbow-{{ loop.index0 % 6 }}">{{ char }}</span>{% endfor %}</div>
+  <div class="sheet-statbar sheet-statbar--fate-twist">Coups du sort</div>
   <div class="sheet-statbar sheet-statbar--posture-defensive">Posture Défensive — Parade et Esquive autorisé</div>
   <div class="sheet-statbar sheet-statbar--posture-offensive">Posture Offensive — Dégâts maximum, seuil critique doublé</div>
   <div class="sheet-statbar sheet-statbar--posture-focus">Focus — Bonus de stats sur les jets, réduction du coût en mana</div>
