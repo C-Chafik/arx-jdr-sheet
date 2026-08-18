@@ -13,6 +13,12 @@
      !arxfateclear               clear the fate status (favor or twist)
      !arxmod <stat> <valeur>     set a GM bonus/malus badge on every selected token (0 removes it)
      !arxclearmods               remove every GM bonus/malus on every selected token
+     !arxrandstats <0-10> <guerrier|mage|voleur|equilibre> [char_id]
+                                  factory-reset the character (same wipe as !arxresetall)
+                                  then apply random full stats; with char_id targets that
+                                  character (the sheet button passes its own
+                                  @{character_id}), without it every selected token gets
+                                  its own draw
      !arxunlockpanel             unlock the GM admin panel on this character
      !arxlockpanel               re-lock the GM admin panel on this character
      !arxlootopen bag|body|chest|place|secured-chest
@@ -330,6 +336,192 @@ on("chat:message", function (msg) {
   whisper("Tous les bonus/malus retirés pour " + charIds.length + " personnage(s).");
 });
 
+/* !arxrandstats <niveau 0-10> <guerrier|mage|voleur|equilibre> — random NPC
+   stats for a GM-made character, one independent draw per selected token.
+   Writes the FULL coherent set: API writes never run the sheet workers, so
+   the derived shares (skills from attributes, CA/damages from skills,
+   health/mana from constitution/mental×level) are recomputed here with the
+   same Arx formulas — the three ARX_*_FORMULAS objects below are copied
+   BYTE-FOR-BYTE from inventory.js (SKILL_FORMULAS / SINGLE_STAT_FORMULAS /
+   GAUGE_MAX_FORMULAS) and a build test keeps the copies identical.
+   Bookkeeping mirrors !arxresetall: _applied_stat_mod = the derived share
+   just computed, _applied_mod = 0 (fresh, naked character — equipment given
+   afterwards re-bakes its own delta), so later recomputes stay exact.
+   caster_level and the _own breakdown shares refresh on sheet open, same
+   as after a reset. */
+const ARX_SKILL_FORMULAS = {
+  stealth: function (a) { return a.dexterity * 2; },
+  technical: function (a) { return a.dexterity + a.mental; },
+  intuition: function (a) { return a.mental * 2; },
+  ethereal_link: function (a) { return a.mental * 2; },
+  object_knowledge: function (a) { return Math.round(a.strength * 0.5 + a.dexterity * 0.5 + a.mental * 1.5); },
+  casting: function (a) { return a.mental * 2; },
+  close_combat: function (a) { return a.strength * 2 + a.dexterity; },
+  projectile: function (a) { return a.dexterity * 2 + a.strength; },
+  defense: function (a) { return a.constitution * 3; }
+};
+const ARX_SINGLE_STAT_FORMULAS = {
+  damages: function (a) { return Math.round(Math.max(1, a.strength / 2 - 5) + a.close_combat / 10); },
+  armor_class: function (a) { return Math.max(1, Math.floor(a.defense / 10 - 1)); },
+  magic_resistance: function (a) { return Math.floor(a.mental * (2 + a.casting / 100)); },
+  poison_resistance: function (a) { return Math.floor(a.constitution * 2 + a.defense / 4); }
+};
+const ARX_GAUGE_MAX_FORMULAS = {
+  health_max: function (a) { return a.constitution * (a.level + 2); },
+  mana_max: function (a) { return a.mental * (a.level + 1); }
+};
+/* Archetype shares, straight from the GM's own rules (relative weights —
+   what matters is each weight against the line's total; 0 means that stat
+   NEVER receives a point, e.g. no Magie at all on a guerrier):
+   - mage:     Mental; Magie + Lien psychique; the rest even
+   - guerrier: Force, then half Dex / half Constitution, no Magie;
+               Corps à corps + Défense; the rest even
+   - voleur:   Dextérité, a bit of Force; Furtivité, Mécanique,
+               Corps à corps; the rest even
+   - equilibre: everything even */
+const ARX_ARCHETYPES = {
+  guerrier: {
+    attrs: { strength: 2, mental: 0, dexterity: 1, constitution: 1 },
+    skills: { stealth: 1, technical: 1, intuition: 1, ethereal_link: 1, object_knowledge: 1,
+              casting: 0, close_combat: 3, projectile: 1, defense: 3 }
+  },
+  mage: {
+    attrs: { strength: 1, mental: 3, dexterity: 1, constitution: 1 },
+    skills: { stealth: 1, technical: 1, intuition: 1, ethereal_link: 3, object_knowledge: 1,
+              casting: 4, close_combat: 1, projectile: 1, defense: 1 }
+  },
+  voleur: {
+    attrs: { strength: 2, mental: 1, dexterity: 4, constitution: 1 },
+    skills: { stealth: 3, technical: 3, intuition: 1, ethereal_link: 1, object_knowledge: 1,
+              casting: 1, close_combat: 3, projectile: 1, defense: 1 }
+  },
+  equilibre: {
+    attrs: { strength: 1, mental: 1, dexterity: 1, constitution: 1 },
+    skills: { stealth: 1, technical: 1, intuition: 1, ethereal_link: 1, object_knowledge: 1,
+              casting: 1, close_combat: 1, projectile: 1, defense: 1 }
+  }
+};
+const ARX_ATTRS = ["strength", "mental", "dexterity", "constitution"];
+
+/* Share out `total` points by fixed proportions (weight / line total): every
+   stat gets its guaranteed floor + its exact share rounded down, the integer
+   leftovers are drawn by the same weights, then ~10% of the budget is moved
+   point by point between weighted stats — so the accents always hold (no
+   more CON-heavy "mage": the shares are guaranteed, only the margin moves)
+   while two draws never come out identical. Zero-weight stats can never
+   receive a point, floor is what a stat can never drop below (1 for
+   attributes — the health/mana/CA formulas need every attribute alive). */
+function arxDistribute(total, weights, floorValue) {
+  const names = Object.keys(weights);
+  let weightSum = 0;
+  names.forEach(function (n) { weightSum += weights[n]; });
+  const spread = total - names.length * floorValue;
+  const out = {};
+  let used = 0;
+  names.forEach(function (n) {
+    out[n] = floorValue + Math.floor(spread * weights[n] / weightSum);
+    used += out[n];
+  });
+  const pool = [];
+  names.forEach(function (n) {
+    for (let i = 0; i < weights[n]; i++) { pool.push(n); }
+  });
+  for (let i = used; i < total; i++) {
+    out[pool[Math.floor(Math.random() * pool.length)]] += 1;
+  }
+  const moves = Math.max(1, Math.round(total / 10));
+  for (let i = 0; i < moves; i++) {
+    const from = names[Math.floor(Math.random() * names.length)];
+    const to = pool[Math.floor(Math.random() * pool.length)];
+    if (from !== to && out[from] > floorValue) { out[from] -= 1; out[to] += 1; }
+  }
+  return out;
+}
+
+/* The wiki's own budget (wiki.arx-libertatis.org/Stats): 16 attribute points
+   + 18 skill points at level 0, then 1 + 15 per level — added ON TOP of the
+   base values, exactly like a real player: every attribute starts at 6 (the
+   fresh sheet's own defaults, also the floor the jitter can never go below —
+   a 0-weight attribute like the guerrier's Mental just stays there), and the
+   skills' bases need nothing here since their sheet defaults ARE the Arx
+   formulas at 6/6/6/6 — raw budget points + formula lands on top of them. */
+function arxDrawRandomStats(level, archetype) {
+  const spec = ARX_ARCHETYPES[archetype];
+  return {
+    attrs: arxDistribute(4 * 6 + 16 + level, spec.attrs, 6),
+    raw: arxDistribute(18 + 15 * level, spec.skills, 0)
+  };
+}
+
+function arxApplyRandomStats(charId, level, archetype) {
+  /* Clean slate first (same wipe as !arxresetall): without it, a rerun on a
+     character who acquired gear/runes/mods since the last draw would keep
+     that state — and the worker would re-bake the still-equipped gear's
+     bonuses on top of the fresh stats at the next sheet opening. */
+  arxResetCharacter(charId);
+  const draw = arxDrawRandomStats(level, archetype);
+  const a = {};
+  ARX_ATTRS.forEach(function (attr) {
+    a[attr] = draw.attrs[attr];
+    arxSetAttr(charId, attr, String(a[attr]));
+    arxSetAttr(charId, attr + "_applied_mod", "0");
+  });
+  ARX_SKILLS.forEach(function (skill) {
+    const derived = ARX_SKILL_FORMULAS[skill](a);
+    a[skill] = draw.raw[skill] + derived;
+    arxSetAttr(charId, skill, String(a[skill]));
+    arxSetAttr(charId, skill + "_applied_mod", "0");
+    arxSetAttr(charId, skill + "_applied_stat_mod", String(derived));
+  });
+  Object.keys(ARX_SINGLE_STAT_FORMULAS).forEach(function (name) {
+    const value = ARX_SINGLE_STAT_FORMULAS[name](a);
+    arxSetAttr(charId, name, String(value));
+    arxSetAttr(charId, name + "_applied_mod", "0");
+    arxSetAttr(charId, name + "_applied_stat_mod", String(value));
+  });
+  a.level = level;
+  ["health", "mana"].forEach(function (name) {
+    const max = ARX_GAUGE_MAX_FORMULAS[name + "_max"](a);
+    arxSetAttr(charId, name, String(max));
+    arxSetAttrMax(charId, name, String(max));
+    arxSetAttr(charId, name + "_max_applied_mod", "0");
+    arxSetAttr(charId, name + "_max_applied_stat_mod", String(max));
+  });
+  arxSetAttr(charId, "level", String(level));
+  return "FOR " + a.strength + " / MEN " + a.mental + " / DEX " + a.dexterity + " / CON " + a.constitution;
+}
+
+on("chat:message", function (msg) {
+  if (msg.type !== "api" || msg.content.indexOf("!arxrandstats") !== 0) { return; }
+  if (!playerIsGM(msg.playerid)) { return; }
+  const whisper = function (text) { sendChat("ARX", "/w gm " + text); };
+  const parts = msg.content.trim().split(/\s+/);
+  const level = parseInt(parts[1], 10);
+  const archetype = parts[2];
+  if (!(level >= 0 && level <= 10) || !ARX_ARCHETYPES[archetype]) {
+    whisper("Usage : !arxrandstats <niveau 0-10> <" + Object.keys(ARX_ARCHETYPES).join("|") + "> [char_id]");
+    return;
+  }
+  /* Safety: the sheet button appends its own @{character_id} (resolved by
+     Roll20 at click time), so clicking it ALWAYS regenerates the character
+     whose sheet it sits on — never whatever token happens to be selected.
+     Typed by hand without an id, it falls back to the selected tokens. */
+  let charIds;
+  if (parts[3]) {
+    if (!getObj("character", parts[3])) { whisper("Personnage introuvable : " + parts[3]); return; }
+    charIds = [parts[3]];
+  } else {
+    charIds = arxCharIdsFromMsg(msg);
+    if (!charIds.length) { whisper("Sélectionne d'abord un ou plusieurs tokens."); return; }
+  }
+  const lines = charIds.map(function (charId) {
+    const summary = arxApplyRandomStats(charId, level, archetype);
+    const character = getObj("character", charId);
+    return (character ? character.get("name") : charId) + " — " + summary;
+  });
+  whisper("Stats aléatoires (niveau " + level + ", " + archetype + ") :<br>" + lines.join("<br>"));
+});
+
 /* Unlocks the GM admin panel (gear icon + full-catalog "give" grid, see
    base.css.j2/sheet.html.j2) on the SELECTED character's own sheet — meant
    for the GM's own utility character, never a player's. Only this command
@@ -537,15 +729,12 @@ on("chat:message", function (msg) {
   whisper("Inventaire vidé (" + total + " cases) et main relâchée.");
 });
 
-/* Factory reset for a fresh test run: everything but the character's own
-   name goes back to a brand-new-character state. */
-on("chat:message", function (msg) {
-  if (msg.type !== "api" || msg.content.indexOf("!arxresetall") !== 0) { return; }
-  if (!playerIsGM(msg.playerid)) { return; }
-  const whisper = function (text) { sendChat("ARX", "/w gm " + text); };
-  const charId = arxCharIdFromMsg(msg);
-  if (!charId) { whisper("Sélectionne d'abord un token."); return; }
-
+/* Factory reset: everything but the character's own name goes back to a
+   brand-new-character state. Shared by !arxresetall and !arxrandstats (which
+   wipes first, then applies its draw on the clean slate — so regenerating a
+   character never inherits leftover inventory, gear bonuses, runes, mods or
+   fate from the previous life). */
+function arxResetCharacter(charId) {
   const total = ARX_PER_LEVEL * ARX_BAGS;
   for (let i = 1; i <= total; i++) { arxSetAttr(charId, "bag_" + i, ""); }
   ["hand", "hand_from", "hand_cat", "hand_effect", "fit"].forEach(function (n) { arxSetAttr(charId, n, ""); });
@@ -594,6 +783,15 @@ on("chat:message", function (msg) {
   });
 
   arxSetAttr(charId, "sheet_tab", "base");
+}
+
+on("chat:message", function (msg) {
+  if (msg.type !== "api" || msg.content.indexOf("!arxresetall") !== 0) { return; }
+  if (!playerIsGM(msg.playerid)) { return; }
+  const whisper = function (text) { sendChat("ARX", "/w gm " + text); };
+  const charId = arxCharIdFromMsg(msg);
+  if (!charId) { whisper("Sélectionne d'abord un token."); return; }
+  arxResetCharacter(charId);
   whisper("Personnage entièrement réinitialisé.");
 });
 
@@ -697,6 +895,7 @@ on("chat:message", function (msg) {
     "!arxfateclear — retire le sort (faveur ou coup) du personnage",
     "!arxmod <stat> <valeur> — fixe un bonus/malus MJ sur les tokens sélectionnés (0 le retire)",
     "!arxclearmods — retire tous les bonus/malus MJ des tokens sélectionnés",
+    "!arxrandstats <niveau 0-10> <guerrier|mage|voleur|equilibre> — RÉINITIALISE le perso puis génère des stats aléatoires complètes",
     "!arxunlockpanel — débloque le panel MJ sur ce personnage",
     "!arxlockpanel — reverrouille le panel MJ sur ce personnage",
     "!arxlootopen bag|body|chest|place|secured-chest — ouvre un butin partagé pour les tokens sélectionnés",

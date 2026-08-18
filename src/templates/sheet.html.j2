@@ -99,10 +99,13 @@
      the GM selects the player's token then clicks, arx-mod.js does the rest
      (playerIsGM gate included). Stacked in the free column under the loot
      panel, shown only while the GM panel is open (see gm-panel.css.j2). #}
+  {# The 5-row GM command column under the loot panel: every button shares
+     .sheet-gm-cmd-btn (geometry, hover, hitbox, panel-open gate — see
+     gm-panel.css.j2), the per-button class only carries its row + face. #}
 {% for name, command, label in [("favor", "!arxfavor", "Faveur du Noden"),
                                 ("twist", "!arxtwist", "Coups du sort"),
                                 ("clear", "!arxfateclear", "Retirer le sort")] %}
-  <div class="sheet-gm-fate-btn sheet-gm-fate-btn--{{ name }}">
+  <div class="sheet-gm-cmd-btn sheet-gm-fate-btn--{{ name }}">
     <span class="sheet-gm-loot-face">{{ label }}</span>
     <button type="roll" name="act_gm_fate_{{ name }}" value="{{ command }}"></button>
   </div>
@@ -112,9 +115,18 @@
      gauges — !arxmod doesn't take them) + a value prompt, then sends !arxmod
      — applied to every selected token (see arx-mod.js). #}
 {% import "data/stats.j2" as stats_data %}
-  <div class="sheet-gm-mod-btn">
+  <div class="sheet-gm-cmd-btn sheet-gm-mod-btn">
     <span class="sheet-gm-loot-face">Bonus / Malus</span>
     <button type="roll" name="act_gm_mod" value="!arxmod ?{Stat{% for name, label, _ in stats_data.stat_infos if name not in ['health', 'mana'] %}|{{ label }},{{ name }}{% endfor %}} ?{Valeur (0 pour retirer)|0}"></button>
+  </div>
+  {# Random NPC stats: same popup principle — level + archetype. The
+     trailing @{character_id} (resolved by Roll20 at click time) pins the
+     command to THE SHEET THE BUTTON IS ON: no token selection involved, so
+     a stray selected player token can never get its stats regenerated (see
+     !arxrandstats in arx-mod.js; the random distribution is provisional). #}
+  <div class="sheet-gm-cmd-btn sheet-gm-rand-btn">
+    <span class="sheet-gm-loot-face">Perso aléatoire</span>
+    <button type="roll" name="act_gm_rand" value="!arxrandstats ?{Niveau (0-10)|3} ?{Archétype|Guerrier,guerrier|Mage,mage|Voleur,voleur|Équilibré,equilibre} @{character_id}"></button>
   </div>
 {% include "partials/loot-panel.html.j2" %}
   <div class="sheet-book">

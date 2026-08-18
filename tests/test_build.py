@@ -929,7 +929,7 @@ def test_fate_gm_buttons_and_mod_commands():
         assert f'name="act_gm_fate_{name}" value="{command}"' in html, name
         assert command in mod, command
         assert f".sheet-gm-fate-btn--{name}" in css, name
-    assert '.sheet-arx:has(input[name="attr_gm_panel_open"][value="1"]) .sheet-gm-fate-btn' in css
+    assert '.sheet-arx:has(input[name="attr_gm_panel_open"][value="1"]) .sheet-gm-cmd-btn' in css
     # The full character reset clears the status too
     assert 'arxSetAttr(charId, "fate", "");' in mod
 
@@ -1006,3 +1006,48 @@ def test_gm_mods_count_in_every_roll_target():
     assert '(parseInt(v.damages, 10) || 0) + (parseInt(v.damages_gm_mod, 10) || 0)' in handler
     # No cascade: the recompute machinery never reads a _gm_mod
     assert "_gm_mod_applied" not in html
+
+
+def _object_literal(source, marker):
+    return source.split(marker)[1].split("\n};")[0]
+
+
+def test_randstats_formulas_match_the_worker_and_button_is_wired():
+    """!arxrandstats writes a full coherent stat block: since API writes never
+    run the sheet workers, the mod carries byte-for-byte copies of the
+    worker's Arx formulas — this is the test the copies point at."""
+    build.build()
+    html = build.render_html()
+    css = build.build_css("x")
+    mod = (build.BUILD / "arx-mod.js").read_text(encoding="utf-8")
+    for worker_marker, mod_marker in (
+        ("const SKILL_FORMULAS = {", "const ARX_SKILL_FORMULAS = {"),
+        ("const SINGLE_STAT_FORMULAS = {", "const ARX_SINGLE_STAT_FORMULAS = {"),
+        ("const GAUGE_MAX_FORMULAS = {", "const ARX_GAUGE_MAX_FORMULAS = {"),
+    ):
+        assert _object_literal(html, worker_marker) == \
+            _object_literal(mod, mod_marker), worker_marker
+    # GM button: level + archetype popup, same principle as Bonus/Malus. The
+    # trailing @{character_id} pins the command to the button's own sheet —
+    # a stray selected token can never get its stats regenerated.
+    assert ('name="act_gm_rand" value="!arxrandstats ?{Niveau (0-10)|3} '
+            '?{Archétype|Guerrier,guerrier|Mage,mage|Voleur,voleur|Équilibré,equilibre} '
+            '@{character_id}"') in html
+    assert 'if (!getObj("character", parts[3]))' in mod  # explicit-id branch
+    assert ".sheet-gm-rand-btn" in css
+    assert '.sheet-arx:has(input[name="attr_gm_panel_open"][value="1"]) .sheet-gm-cmd-btn' in css
+    # the wiki's budget ON TOP of the base values: attributes start at 6 each
+    # (4×6), then 16 + 1/level points; skills get 18 + 15/level raw points
+    # (their base is already the formulas at 6/6/6/6)
+    assert "arxDistribute(4 * 6 + 16 + level, spec.attrs, 6)" in mod
+    assert "arxDistribute(18 + 15 * level, spec.skills, 0)" in mod
+    # a guerrier never puts a point in Magie (weight 0 = never drawn)
+    assert "casting: 0, close_combat: 3" in mod
+    # a rerun overwrites the WHOLE character: the shared factory reset runs
+    # before the draw (called by both !arxresetall and arxApplyRandomStats)
+    assert mod.count("arxResetCharacter(charId);") == 2
+    # bookkeeping mirrors !arxresetall: derived shares tracked, gear mods zeroed
+    assert "!arxrandstats" in mod
+    assert 'arxSetAttr(charId, skill + "_applied_stat_mod", String(derived));' in mod
+    assert 'arxSetAttr(charId, name + "_max_applied_stat_mod", String(max));' in mod
+    assert "!arxrandstats <niveau 0-10>" in mod  # listed in !arxhelp
