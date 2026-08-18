@@ -836,7 +836,7 @@ def test_attack_buttons_are_one_per_hand():
         assert f".sheet-attack-btn--{slot}:hover) .sheet-statbar--attack-{slot}" in css, slot
     # the hand a click reads is the button's own slot and nothing else
     handler = _damage_handler(html)
-    assert "getAttrs([slot, \"posture\", \"damages\"]" in handler
+    assert "getAttrs([slot, \"posture\", \"damages\", \"damages_gm_mod\"]" in handler
     assert "const itemId = v[slot];" in handler
     # ...so no de-duplication of a mirrored two-handed weapon survives
     for gone in ("mirroredTwoHanded", "mainItem", "equip_off_hand", "equip_main_hand"):
@@ -928,3 +928,77 @@ def test_fate_gm_buttons_and_mod_commands():
     assert '.sheet-arx:has(input[name="attr_gm_panel_open"][value="1"]) .sheet-gm-fate-btn' in css
     # The full character reset clears the status too
     assert 'arxSetAttr(charId, "fate", "");' in mod
+
+
+MOD_BADGE_FIELDS = [
+    "strength", "mental", "dexterity", "constitution",
+    "stealth", "technical", "intuition",
+    "ethereal_link", "object_knowledge", "casting",
+    "close_combat", "projectile", "defense",
+    "armor_class", "magic_resistance", "poison_resistance", "damages",
+]
+
+
+def test_every_stat_has_its_own_mod_badge():
+    """GM item bonus/malus badges: one standalone absolute element per stat,
+    NEVER nested inside the stat's own .sheet-field (the base number must
+    never move because of it)."""
+    html = build.render_html()
+    css = build.build_css("x")
+    for name in MOD_BADGE_FIELDS:
+        assert f'class="sheet-mod-badge sheet-mod-badge--{name}"' in html, name
+        assert f".sheet-mod-badge--{name}" in css, name
+        # Standalone: the badge is not inside the field's div (one line each)
+        assert f'sheet-field--{name}"><span class="sheet-mod-badge' not in html, name
+    assert "pointer-events: none;" in css.split(".sheet-mod-badge {")[1].split("}")[0]
+
+
+def test_gm_mod_values_are_dynamic_and_gm_only():
+    """!arxmod/!arxclearmods (multi-token, GM only) write attr_<stat>_gm_mod;
+    the badge shows it blue when positive, red when negative, nothing at 0.
+    The sheet itself never writes these attributes."""
+    build.build()
+    html = build.render_html()
+    css = build.build_css("x")
+    mod = (build.BUILD / "arx-mod.js").read_text(encoding="utf-8")
+    for name in MOD_BADGE_FIELDS:
+        assert f'name="attr_{name}_gm_mod"' in html, name
+        assert (f'.sheet-arx:has(input[name="attr_{name}_gm_mod"]'
+                f':not([value=""]):not([value="0"]):not([value^="-"])) '
+                f'.sheet-mod-badge--{name}') in css, name
+        assert (f'.sheet-arx:has(input[name="attr_{name}_gm_mod"][value^="-"]) '
+                f'.sheet-mod-badge--{name}') in css, name
+    assert 'name="act_gm_mod' not in html.replace('name="act_gm_mod"', "")  # only the GM button
+    assert "!arxmod" in mod and "!arxclearmods" in mod
+    # The GM button pops the native stat/value query, French labels included
+    assert 'name="act_gm_mod" value="!arxmod ?{Stat' in html
+    assert ",strength|" in html and ",damages}" in html
+    # The mod's whitelist is the exact badge list — kept honest like the loot skins
+    import re
+    js_list = re.search(r"const ARX_GM_MOD_STATS = \[(.*?)\];", mod, re.S).group(1)
+    assert re.findall(r'"([^"]+)"', js_list) == MOD_BADGE_FIELDS
+    # !arxclearmods and !arxresetall both wipe every mod
+    assert mod.count('ARX_GM_MOD_STATS.forEach(function (stat) { arxSetAttr(charId, stat + "_gm_mod", "0"); });') == 2
+
+
+def test_gm_mods_count_in_every_roll_target():
+    """Each GM mod feeds its own stat's roll target and nothing else — no
+    derived-stat cascade (a strength mod never recomputes close_combat: the
+    GM mods close_combat directly instead)."""
+    html = build.render_html()
+    # Skill rolls, plain and Focus (skill mod + governing attribute's own mod)
+    assert '{{Valeur=[[@{stealth}+@{stealth_gm_mod}]]}}' in html
+    # Focus's displayed equation must keep adding up under a skill mod: the
+    # lead term is the same [[skill+mod]] as the total's first two terms
+    assert ('{{Valeur=[[@{stealth}+@{stealth_gm_mod}]] + Dextérité (Focus) = '
+            '[[@{stealth}+@{stealth_gm_mod}+@{dexterity}+@{dexterity_gm_mod}]]}}') in html
+    # Spellcasting (crafted + memorized — the caster_level row tells them
+    # apart from the Magie skill button's own roll), but NOT scrolls: a
+    # scroll rolls its own fixed spell_casting, never the caster's live stat
+    assert html.count('{{Valeur=[[@{casting}+@{casting_gm_mod}]]}} {{Niveau Magique=@{caster_level}}}') == 2
+    assert '{{Valeur=" + item.spell_casting + "}}' in html
+    # Damages: the mod joins the stat before the 0.8-1.0 scaling
+    handler = _damage_handler(html)
+    assert '(parseInt(v.damages, 10) || 0) + (parseInt(v.damages_gm_mod, 10) || 0)' in handler
+    # No cascade: the recompute machinery never reads a _gm_mod
+    assert "_gm_mod_applied" not in html

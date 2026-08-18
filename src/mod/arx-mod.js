@@ -11,6 +11,8 @@
      !arxfavor                   grant the Faveur du Noden status
      !arxtwist                   inflict the Coups du sort status
      !arxfateclear               clear the fate status (favor or twist)
+     !arxmod <stat> <valeur>     set a GM bonus/malus badge on every selected token (0 removes it)
+     !arxclearmods               remove every GM bonus/malus on every selected token
      !arxunlockpanel             unlock the GM admin panel on this character
      !arxlockpanel               re-lock the GM admin panel on this character
      !arxlootopen bag|body|chest|place|secured-chest
@@ -274,6 +276,59 @@ on("chat:message", function (msg) {
   whisper("Sort du personnage retiré.");
 });
 
+/* GM bonus/malus (attr_<stat>_gm_mod, shown as the colored badge beside each
+   value — see base.html.j2/base.css.j2): SET semantics (the value replaces
+   the current mod, 0 removes it), applied to EVERY selected token at once —
+   same multi-token loop as !arxlootopen. Each mod counts in its OWN stat's
+   roll targets (skill/Focus/casting rolls in base.html.j2, hand damage in
+   inventory.js) but never cascades into derived recomputes — a strength mod
+   does not recompute close_combat; the GM mods close_combat directly. */
+const ARX_GM_MOD_STATS = ["strength", "mental", "dexterity", "constitution",
+  "stealth", "technical", "intuition", "ethereal_link", "object_knowledge",
+  "casting", "close_combat", "projectile", "defense", "armor_class",
+  "magic_resistance", "poison_resistance", "damages"];
+
+function arxCharIdsFromMsg(msg) {
+  const charIds = [];
+  (msg.selected || []).forEach(function (sel) {
+    const token = getObj("graphic", sel._id);
+    const charId = token && token.get("represents");
+    if (charId && charIds.indexOf(charId) === -1) { charIds.push(charId); }
+  });
+  return charIds;
+}
+
+on("chat:message", function (msg) {
+  if (msg.type !== "api" || msg.content.indexOf("!arxmod") !== 0) { return; }
+  if (!playerIsGM(msg.playerid)) { return; }
+  const whisper = function (text) { sendChat("ARX", "/w gm " + text); };
+  const parts = msg.content.trim().split(/\s+/);
+  const stat = parts[1];
+  const value = parseInt(parts[2], 10);
+  if (ARX_GM_MOD_STATS.indexOf(stat) === -1 || isNaN(value)) {
+    whisper("Usage : !arxmod <stat> <valeur> (0 retire le mod) — stats : " + ARX_GM_MOD_STATS.join(", "));
+    return;
+  }
+  const charIds = arxCharIdsFromMsg(msg);
+  if (!charIds.length) { whisper("Sélectionne d'abord un ou plusieurs tokens."); return; }
+  charIds.forEach(function (charId) { arxSetAttr(charId, stat + "_gm_mod", String(value)); });
+  whisper(value === 0
+    ? "Mod " + stat + " retiré pour " + charIds.length + " personnage(s)."
+    : "Mod " + stat + " fixé à " + (value > 0 ? "+" : "") + value + " pour " + charIds.length + " personnage(s).");
+});
+
+on("chat:message", function (msg) {
+  if (msg.type !== "api" || msg.content.indexOf("!arxclearmods") !== 0) { return; }
+  if (!playerIsGM(msg.playerid)) { return; }
+  const whisper = function (text) { sendChat("ARX", "/w gm " + text); };
+  const charIds = arxCharIdsFromMsg(msg);
+  if (!charIds.length) { whisper("Sélectionne d'abord un ou plusieurs tokens."); return; }
+  charIds.forEach(function (charId) {
+    ARX_GM_MOD_STATS.forEach(function (stat) { arxSetAttr(charId, stat + "_gm_mod", "0"); });
+  });
+  whisper("Tous les bonus/malus retirés pour " + charIds.length + " personnage(s).");
+});
+
 /* Unlocks the GM admin panel (gear icon + full-catalog "give" grid, see
    base.css.j2/sheet.html.j2) on the SELECTED character's own sheet — meant
    for the GM's own utility character, never a player's. Only this command
@@ -517,6 +572,7 @@ on("chat:message", function (msg) {
   arxSetAttr(charId, "posture_guardian_unlocked", "");
   arxSetAttr(charId, "focus_active", "0");
   arxSetAttr(charId, "fate", "");
+  ARX_GM_MOD_STATS.forEach(function (stat) { arxSetAttr(charId, stat + "_gm_mod", "0"); });
 
   arxSetAttr(charId, "level", "0");
   ARX_STATS.forEach(function (name) {
@@ -635,6 +691,8 @@ on("chat:message", function (msg) {
     "!arxfavor — accorde la Faveur du Noden",
     "!arxtwist — inflige un Coups du sort",
     "!arxfateclear — retire le sort (faveur ou coup) du personnage",
+    "!arxmod <stat> <valeur> — fixe un bonus/malus MJ sur les tokens sélectionnés (0 le retire)",
+    "!arxclearmods — retire tous les bonus/malus MJ des tokens sélectionnés",
     "!arxunlockpanel — débloque le panel MJ sur ce personnage",
     "!arxlockpanel — reverrouille le panel MJ sur ce personnage",
     "!arxlootopen bag|body|chest|place|secured-chest — ouvre un butin partagé pour les tokens sélectionnés",

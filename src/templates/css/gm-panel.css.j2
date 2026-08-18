@@ -210,16 +210,20 @@
    y 685→787 is unclaimed), same "only while the panel is open" rule as the
    loot strip. The faces reuse .sheet-gm-loot-face wholesale; only the flat
    gradient differs, one color per verdict (gold / red / neutral). ---- */
-.sheet-gm-fate-btn {
+.sheet-gm-fate-btn,
+.sheet-gm-mod-btn {
   display: none;
   position: absolute;
   left: 1105px;
   width: 145px;
-  height: 32px;
+  /* 24px rows: four of them (3 fate + bonus/malus) have to fit between the
+     loot panel's bottom edge (677) and .sheet-arx's 801px floor. */
+  height: 24px;
 }
 .sheet-gm-fate-btn--favor { top: 685px; }
-.sheet-gm-fate-btn--twist { top: 720px; }
-.sheet-gm-fate-btn--clear { top: 755px; }
+.sheet-gm-fate-btn--twist { top: 712px; }
+.sheet-gm-fate-btn--clear { top: 739px; }
+.sheet-gm-mod-btn         { top: 766px; }
 .sheet-gm-fate-btn--favor .sheet-gm-loot-face {
   background-image: linear-gradient(rgba(115, 90, 20, 0.75), rgba(55, 42, 8, 0.85));
 }
@@ -229,10 +233,15 @@
 .sheet-gm-fate-btn--clear .sheet-gm-loot-face {
   background-image: linear-gradient(rgba(55, 55, 55, 0.75), rgba(22, 22, 22, 0.85));
 }
-.sheet-gm-fate-btn:hover .sheet-gm-loot-face {
+.sheet-gm-mod-btn .sheet-gm-loot-face {
+  background-image: linear-gradient(rgba(25, 35, 90, 0.75), rgba(10, 15, 45, 0.85));
+}
+.sheet-gm-fate-btn:hover .sheet-gm-loot-face,
+.sheet-gm-mod-btn:hover .sheet-gm-loot-face {
   filter: brightness(1.4) drop-shadow(0 0 6px rgba(255, 220, 130, 0.9));
 }
-.sheet-gm-fate-btn button {
+.sheet-gm-fate-btn button,
+.sheet-gm-mod-btn button {
   position: absolute;
   left: 0;
   top: 0;
@@ -243,7 +252,8 @@
   background: transparent;
   cursor: url('{{ "{{ASSET_BASE}}" }}/ui/cursor-hover.png') 6 4, pointer;
 }
-.sheet-arx:has(input[name="attr_gm_panel_open"][value="1"]) .sheet-gm-fate-btn {
+.sheet-arx:has(input[name="attr_gm_panel_open"][value="1"]) .sheet-gm-fate-btn,
+.sheet-arx:has(input[name="attr_gm_panel_open"][value="1"]) .sheet-gm-mod-btn {
   display: block;
 }
 

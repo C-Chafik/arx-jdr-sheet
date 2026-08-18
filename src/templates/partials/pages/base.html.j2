@@ -124,6 +124,18 @@
   <input type="hidden" name="attr_{{ name }}_applied_stat_mod" value="{{ single_stat_mod_seeds[name] }}" />
 {% endif %}
 {% endfor %}
+{# GM bonus/malus badges: one per stat, in their OWN absolutely-positioned
+   element beside the value — deliberately NOT inside .sheet-field--X, so the
+   base number can never shift. GM-set only via !arxmod/!arxclearmods (see
+   arx-mod.js) — the sheet never writes these, exactly like attr_fate. The
+   hidden input carries the value for the CSS :has() rules (blue positive,
+   red negative, hidden at 0 — see base.css.j2), the inner span displays it
+   (Roll20 refreshes named spans reliably, same reasoning as the read-only
+   stats above). #}
+{% for name in attributes + skills + singles %}
+  <input type="hidden" name="attr_{{ name }}_gm_mod" value="0" />
+  <span class="sheet-mod-badge sheet-mod-badge--{{ name }}"><span name="attr_{{ name }}_gm_mod">0</span></span>
+{% endfor %}
 {% for name in gauges %}
   <div class="sheet-field sheet-gauge sheet-field--{{ name }}">
     <input type="number" name="attr_{{ name }}" value="{{ defaults[name] }}" />
@@ -162,9 +174,17 @@
      not a raw "12+(6*1)" formula nor a hidden-behind-hover total, so it
      can't be a single formula-driven button: the attribute's own French
      label is static text, only the skill value itself is live. #}
-{% set roll_value = "&{template:default} {{" ~ "name=" ~ label ~ "}} {{" ~ "Valeur=@{" ~ name ~ "}}} {{" ~ "Jet=[[1d100]]}}" %}
+  {# The GM mod (attr_<stat>_gm_mod, the colored badge) counts in the roll
+     target: skill + its own mod (+ attribute + ITS own mod under Focus).
+     Each mod touches only its own stat — never a derived recompute. An
+     inline [[...]] rather than the old plain @{X}: the total has to be
+     computed live, and at mod 0 it displays the same number as before.
+     The Focus lead term is the same [[skill+mod]] so the displayed
+     equation still adds up under a skill mod; the attribute term stays a
+     label, its own mod (rare) is only visible in the total's breakdown. #}
+{% set roll_value = "&{template:default} {{" ~ "name=" ~ label ~ "}} {{" ~ "Valeur=[[@{" ~ name ~ "}+@{" ~ name ~ "_gm_mod}]]}} {{" ~ "Jet=[[1d100]]}}" %}
   <button type="roll" class="sheet-hover-zone sheet-hover--{{ name }} sheet-roll--no-focus" name="roll_{{ name }}" value="{{ roll_value }}"></button>
-{% set roll_value_focus = "&{template:default} {{" ~ "name=" ~ label ~ "}} {{" ~ "Valeur=@{" ~ name ~ "} + " ~ attr_labels[skill_primary_attr[name]] ~ " (Focus) = [[@{" ~ name ~ "}+@{" ~ skill_primary_attr[name] ~ "}]]}} {{" ~ "Jet=[[1d100]]}}" %}
+{% set roll_value_focus = "&{template:default} {{" ~ "name=" ~ label ~ "}} {{" ~ "Valeur=[[@{" ~ name ~ "}+@{" ~ name ~ "_gm_mod}]] + " ~ attr_labels[skill_primary_attr[name]] ~ " (Focus) = [[@{" ~ name ~ "}+@{" ~ name ~ "_gm_mod}+@{" ~ skill_primary_attr[name] ~ "}+@{" ~ skill_primary_attr[name] ~ "_gm_mod}]]}} {{" ~ "Jet=[[1d100]]}}" %}
   <button type="roll" class="sheet-hover-zone sheet-hover--{{ name }} sheet-roll--focus" name="roll_{{ name }}_focus" value="{{ roll_value_focus }}"></button>
 {% else %}
   <button type="roll" class="sheet-hover-zone sheet-hover--{{ name }}" name="roll_{{ name }}" value=""></button>

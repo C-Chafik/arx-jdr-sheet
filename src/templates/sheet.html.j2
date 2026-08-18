@@ -107,6 +107,15 @@
     <button type="roll" name="act_gm_fate_{{ name }}" value="{{ command }}"></button>
   </div>
 {% endfor %}
+  {# GM bonus/malus: one button, Roll20's native roll query (?{...}) pops a
+     stat dropdown (French labels straight from data/stats.j2, minus the two
+     gauges — !arxmod doesn't take them) + a value prompt, then sends !arxmod
+     — applied to every selected token (see arx-mod.js). #}
+{% import "data/stats.j2" as stats_data %}
+  <div class="sheet-gm-mod-btn">
+    <span class="sheet-gm-loot-face">Bonus / Malus</span>
+    <button type="roll" name="act_gm_mod" value="!arxmod ?{Stat{% for name, label, _ in stats_data.stat_infos if name not in ['health', 'mana'] %}|{{ label }},{{ name }}{% endfor %}} ?{Valeur (0 pour retirer)|0}"></button>
+  </div>
 {% include "partials/loot-panel.html.j2" %}
   <div class="sheet-book">
 {% include "partials/tabs.html.j2" %}

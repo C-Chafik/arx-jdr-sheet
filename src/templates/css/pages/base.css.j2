@@ -202,3 +202,60 @@
   color: #ff2b2b;
 }
 {% endfor %}
+
+/* ---- GM bonus/malus badges (see base.html.j2): each one its own absolute
+   element flush against the RIGHT edge of its value box (.sheet-field is
+   5.8% wide — badge left = field left + 5.9%), never nested in it, so the
+   base number can never move. Value lives in attr_<stat>_gm_mod, written
+   only by !arxmod/!arxclearmods (see arx-mod.js). Hidden at 0 (a mod is
+   never "worth 0"), red base color for a negative value, flipped to the
+   equipment-tint blue when positive — same palette as the rules above. ---- */
+.sheet-mod-badge {
+  position: absolute;
+  width: 40px;
+  height: 30px;
+  display: none;
+  align-items: center;
+  font-size: 15px;
+  font-weight: bold;
+  color: #ff2b2b;
+  /* Same parchment halo trick as the level field: keeps the small digit
+     readable over the busy book art. */
+  text-shadow: 0 0 4px rgba(246, 233, 198, 0.9), 0 0 2px rgba(246, 233, 198, 0.9);
+  /* The stat hover zones sweep over this same strip — the badge is pure
+     display and must never eat their :hover. */
+  pointer-events: none;
+}
+{% for name in ["strength", "mental", "dexterity", "constitution",
+                "stealth", "technical", "intuition", "ethereal_link",
+                "object_knowledge", "casting", "close_combat", "projectile",
+                "defense", "armor_class", "magic_resistance",
+                "poison_resistance", "damages"] %}
+.sheet-arx:has(input[name="attr_{{ name }}_gm_mod"]:not([value=""]):not([value="0"]):not([value^="-"])) .sheet-mod-badge--{{ name }} {
+  display: flex;
+  color: #2323e6;
+}
+.sheet-arx:has(input[name="attr_{{ name }}_gm_mod"][value^="-"]) .sheet-mod-badge--{{ name }} {
+  display: flex;
+}
+{% endfor %}
+/* Right page — attributes */
+.sheet-mod-badge--strength     { left: 61.3%; top: 23.6%; }
+.sheet-mod-badge--mental       { left: 70.2%; top: 23.6%; }
+.sheet-mod-badge--dexterity    { left: 79.0%; top: 23.6%; }
+.sheet-mod-badge--constitution { left: 87.9%; top: 23.6%; }
+/* Right page — skills 3×3 */
+.sheet-mod-badge--stealth          { left: 63.1%; top: 48.2%; }
+.sheet-mod-badge--technical        { left: 74.7%; top: 48.2%; }
+.sheet-mod-badge--intuition        { left: 86.1%; top: 48.2%; }
+.sheet-mod-badge--ethereal_link    { left: 63.1%; top: 64.1%; }
+.sheet-mod-badge--object_knowledge { left: 74.7%; top: 64.1%; }
+.sheet-mod-badge--casting          { left: 86.1%; top: 64.1%; }
+.sheet-mod-badge--close_combat     { left: 63.1%; top: 80.6%; }
+.sheet-mod-badge--projectile       { left: 74.7%; top: 80.6%; }
+.sheet-mod-badge--defense          { left: 86.1%; top: 80.6%; }
+/* Left page — the three armor classes + damages */
+.sheet-mod-badge--armor_class       { left: 17.6%; top: 32.6%; }
+.sheet-mod-badge--magic_resistance  { left: 17.4%; top: 50.6%; }
+.sheet-mod-badge--poison_resistance { left: 17.3%; top: 67.9%; }
+.sheet-mod-badge--damages           { left: 50.1%; top: 67.4%; }

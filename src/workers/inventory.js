@@ -564,7 +564,7 @@ on("clicked:craft_confirm", function () {
     });
     if (matchId) {
       const label = SPELLS[matchId].label;
-      startRoll("&{template:default} {{name=" + label + "}} {{Valeur=@{casting}}} {{Niveau Magique=@{caster_level}}} {{Jet=[[1d100]]}}",
+      startRoll("&{template:default} {{name=" + label + "}} {{Valeur=[[@{casting}+@{casting_gm_mod}]]}} {{Niveau Magique=@{caster_level}}} {{Jet=[[1d100]]}}",
         function (results) { finishRoll(results.rollId, {}); });
     }
     const update = craftPositions([]);
@@ -607,7 +607,7 @@ on("clicked:craft_reset", function () {
       const presetId = v["preset_slot_" + n];
       if (!presetId || !PRESETS[presetId]) { return; }
       const label = PRESETS[presetId].label;
-      startRoll("&{template:default} {{name=Sort mémorisé : " + label + "}} {{Valeur=@{casting}}} {{Niveau Magique=@{caster_level}}} {{Jet=[[1d100]]}}",
+      startRoll("&{template:default} {{name=Sort mémorisé : " + label + "}} {{Valeur=[[@{casting}+@{casting_gm_mod}]]}} {{Niveau Magique=@{caster_level}}} {{Jet=[[1d100]]}}",
         function (results) { finishRoll(results.rollId, {}); });
       const update = {};
       update["preset_slot_" + n] = "";
@@ -671,9 +671,12 @@ function rollDie(faces) { return 1 + Math.floor(Math.random() * faces); }
 const HAND_LABELS = { equip_main_hand: "Main principale", equip_off_hand: "Main secondaire" };
 
 function rollHandDamage(slot) {
-  getAttrs([slot, "posture", "damages"], function (v) {
+  getAttrs([slot, "posture", "damages", "damages_gm_mod"], function (v) {
     const offensive = v.posture === "offensive";
-    const damages = parseInt(v.damages, 10) || 0;
+    /* The GM mod counts as part of the damages STAT (it feeds the 0.8–1.0
+       scaling below like any other point of damage), not as a flat rider
+       on the total. */
+    const damages = (parseInt(v.damages, 10) || 0) + (parseInt(v.damages_gm_mod, 10) || 0);
 
     /* Zero or one row. An empty hand, or one holding something without
        weap_dmg, simply has none: Base and Total alone, which is a fist. */
