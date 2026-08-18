@@ -711,6 +711,16 @@ Object.keys(HAND_LABELS).forEach(function (slot) {
 
 on("sheet:opened", function () { setAttrs({ recipe_spell: "" }); });
 
+/* Sheet zoom cycle: 100 → 90 → 80 → 70 → 100 (see .sheet-zoom-toggle in
+   base.css) — saved on the character like every other toggle, so each
+   player's preferred scale survives reopening the sheet. */
+on("clicked:sheet_zoom", function () {
+  getAttrs(["sheet_zoom"], function (v) {
+    const next = { "100": "90", "90": "80", "80": "70", "70": "100" }[v.sheet_zoom] || "100";
+    setAttrs({ sheet_zoom: next });
+  });
+});
+
 /* Memorize: matches the crafted rune combination against presets.json (which
    covers both book spells and secret-only ones) and fills the first empty
    preset slot on an exact match — consumes the combo either way. */

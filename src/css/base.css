@@ -23,6 +23,11 @@
   background-image: url('{{ASSET_BASE}}/book/background.png');
   background-size: cover;
   background-position: center;
+  /* Dark mode for the WINDOW around the sheet: a full 100vmax box-shadow
+     paints everything beyond .sheet-arx's own box in warm black — shadows
+     don't affect layout or the scrollable area, and unlike the .charsheet
+     rule below this works whatever Roll20's CSS sanitization mode is. */
+  box-shadow: 0 0 0 100vmax #14100c;
   /* Default cursor everywhere on the sheet; overridden on skill hovers
      (points-hover) and while holding an item (selected-hover). */
   cursor: url('{{ASSET_BASE}}/ui/cursor-default.png') 6 4, auto;
@@ -138,4 +143,49 @@
 .sheet-arx button[type="roll"] {
   background-image: none !important;
   font-size: 0 !important;
+}
+
+/* ---- Sheet zoom: per-character display scale, cycled 100 → 90 → 80 → 70 by
+   the toggle (see clicked:sheet_zoom in inventory.js). The `zoom` property
+   (not transform: scale) shrinks the LAYOUT box along with the rendering, so
+   the sheet really stops needing a 1500px-wide window instead of leaving a
+   ghost scroll area. 100 is the default and gets no rule at all: the sheet
+   renders exactly as before. The button's face shows the current value. ---- */
+.sheet-zoom-toggle {
+  position: absolute;
+  left: 1010px; /* the toggle column: inventory at 660, GM gear at 702 */
+  top: 618px;
+  width: 34px;
+  height: 34px;
+  /* Same stacking as the neighboring toggles: .sheet-book (a LATER sibling)
+     carries z-index:1 and paints over anything unstacked declared before it. */
+  z-index: 10;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  background-image: url('{{ASSET_BASE}}/ui/zoom-button.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  /* The glyph is plain black: a parchment halo lifts it off the dark book
+     art, same trick as the level field's text-shadow. */
+  filter: drop-shadow(0 0 3px rgba(246, 233, 198, 0.95)) drop-shadow(0 0 1px rgba(246, 233, 198, 0.95));
+  cursor: url('{{ASSET_BASE}}/ui/cursor-hover.png') 6 4, pointer;
+  transition: filter 0.2s ease-out;
+}
+.sheet-zoom-toggle:hover {
+  filter: drop-shadow(0 0 3px rgba(246, 233, 198, 0.95)) drop-shadow(0 0 6px rgba(255, 220, 130, 0.9));
+}
+.sheet-arx:has(input[name="attr_sheet_zoom"][value="90"]) { zoom: 0.9; }
+.sheet-arx:has(input[name="attr_sheet_zoom"][value="80"]) { zoom: 0.8; }
+.sheet-arx:has(input[name="attr_sheet_zoom"][value="70"]) { zoom: 0.7; }
+.sheet-arx:has(.sheet-zoom-toggle:hover) .sheet-statbar--zoom { display: block; }
+
+/* ---- Belt & suspenders for the dark surround: paint Roll20's own sheet
+   container too. Works when the custom sheet runs with modern sanitization
+   (the rule targets .charsheet directly); under "legacy sanitization" Roll20
+   rewrites it into a dead selector and the box-shadow above covers alone.
+   Kept color-identical to that shadow. ---- */
+.charsheet {
+  background-color: #14100c;
 }

@@ -32,6 +32,13 @@
      on the sheet. #}
   <input type="hidden" class="sheet-hand-mirror" name="attr_inventory_open" value="0" />
   <button type="action" class="sheet-inventory-toggle" name="act_inventory_toggle"></button>
+  {# Sheet zoom: per-character display scale, cycled 100→90→80→70 by this
+     toggle (see clicked:sheet_zoom in inventory.js) and applied as `zoom`
+     on .sheet-arx itself (see base.css) — so players on small screens stop
+     having to stretch the sheet window across the whole map. #}
+  <input type="hidden" class="sheet-hand-mirror" name="attr_sheet_zoom" value="100" />
+  <button type="action" class="sheet-zoom-toggle" name="act_sheet_zoom"></button>
+  <div class="sheet-statbar sheet-statbar--zoom">Zoom de la fiche — cliquer pour réduire (100 → 90 → 80 → 70 %)</div>
   {# The money purse: top-level control next to the inventory toggle (not
      inside the band), same size, sitting just above it — see inventory.css.
      Drop a currency item here to add its value to attr_gold. #}

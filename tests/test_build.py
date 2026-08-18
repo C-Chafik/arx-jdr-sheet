@@ -1051,3 +1051,35 @@ def test_randstats_formulas_match_the_worker_and_button_is_wired():
     assert 'arxSetAttr(charId, skill + "_applied_stat_mod", String(derived));' in mod
     assert 'arxSetAttr(charId, name + "_max_applied_stat_mod", String(max));' in mod
     assert "!arxrandstats <niveau 0-10>" in mod  # listed in !arxhelp
+
+
+def test_sheet_zoom_toggle_cycles_and_scales():
+    """Per-character sheet zoom: a toggle cycles 100→90→80→70, `zoom` on
+    .sheet-arx shrinks rendering AND layout (no ghost scroll area). 100 is
+    the default and gets no rule: the sheet renders exactly as before."""
+    html = build.render_html()
+    css = build.build_css("x")
+    assert '<input type="hidden" class="sheet-hand-mirror" name="attr_sheet_zoom" value="100" />' in html
+    assert 'name="act_sheet_zoom"' in html
+    assert '"100": "90", "90": "80", "80": "70", "70": "100"' in html
+    for value, factor in (("90", "0.9"), ("80", "0.8"), ("70", "0.7")):
+        assert (f'.sheet-arx:has(input[name="attr_sheet_zoom"][value="{value}"]) '
+                f'{{ zoom: {factor}; }}') in css, value
+    assert 'value="100"]) { zoom' not in css
+    assert "ui/zoom-button.png" in css
+    # hover label, same statbar mechanism as everything else
+    assert 'class="sheet-statbar sheet-statbar--zoom"' in html
+    assert '.sheet-arx:has(.sheet-zoom-toggle:hover) .sheet-statbar--zoom { display: block; }' in css
+    # stacked like the other toggles — .sheet-book (z-index:1, later sibling)
+    # paints over any unstacked element declared before it
+    zoom_block = css.split(".sheet-zoom-toggle {")[1].split("}")[0]
+    assert "z-index: 10;" in zoom_block
+
+
+def test_dark_surround_covers_the_sheet_window():
+    """The white Roll20 window around the sheet is painted warm black two
+    ways: a 100vmax box-shadow on .sheet-arx (layout-neutral, survives any
+    CSS sanitization mode) and a .charsheet background (modern mode only)."""
+    css = build.build_css("x")
+    assert "box-shadow: 0 0 0 100vmax #14100c;" in css
+    assert ".charsheet {\n  background-color: #14100c;\n}" in css
