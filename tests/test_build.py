@@ -778,8 +778,12 @@ def test_consume_verbs_cover_exactly_the_effects_used():
     verbs = mod.split("const ARX_CONSUME_VERBS = {")[1].split("}")[0]
     in_worker = sorted(re.findall(r"(\w+):", verbs))
     assert in_worker == sorted(CONSUMABLE_EFFECTS), in_worker
-    # the command must be listed in !arxhelp like every other one
-    assert "!arxconsume — pas pour le MJ" in mod
+    # player-fired: documented in the file header, deliberately NOT in the
+    # in-game !arxhelp whisper (filtered to GM-useful commands on request)
+    assert "!arxconsume                 (not for GM use" in mod
+    help_block = (mod.split('indexOf("!arxhelp")')[1]
+                     .split('sendChat("ARX", "/w gm " + [')[1].split('].join')[0])
+    assert "!arxconsume" not in help_block
     css = build.build_css("x")
     in_css = sorted(set(re.findall(r'attr_hand_effect"\]\[value="(\w+)"\] ~ '
                                    r'.sheet-inventory .sheet-consume', css)))

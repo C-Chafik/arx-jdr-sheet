@@ -26,7 +26,8 @@
      !arxpreset <1-3> <spell_id> set a memorized-spell slot
      !arxpage <1-10>             switch the magic book to that spell page
      !arxtab base|magic          switch the active sheet page
-     !arxhelp                    list every command in a GM whisper          */
+     !arxhelp                    list the commands a GM actually uses in play
+                                  (this header stays the full reference)     */
 const ARX_ITEMS = {{ITEMS_JSON}};
 const ARX_COLS = {{GRID_COLS}};
 const ARX_ROWS = {{GRID_ROWS}};
@@ -678,11 +679,14 @@ on("chat:message", function (msg) {
 on("chat:message", function (msg) {
   if (msg.type !== "api" || msg.content.indexOf("!arxhelp") !== 0) { return; }
   if (!playerIsGM(msg.playerid)) { return; }
+  /* GM-facing commands only, on request: the player-fired ones (!arxloottake,
+     !arxconsume), the finer rune/preset debug tools (!arxforgetrune,
+     !arxpreset) and the sheet-navigation helpers (!arxpage, !arxtab) still
+     exist but are documented in this file's header alone. */
   sendChat("ARX", "/w gm " + [
     "Commandes disponibles (sélectionne d'abord le token du perso) :",
     "!arxgive <item_id> — donne un objet (première case libre)",
     "!arxlearnall — apprend toutes les runes + remplit le grimoire",
-    "!arxforgetrune <rune_id> — désapprend une rune (ex: rune-aam)",
     "!arxforgetallrunes — désapprend toutes les runes",
     "!arxlockmap <1-8> — reverrouille un niveau de carte (le 1 reste libre)",
     "!arxlockallmaps — reverrouille tous les niveaux sauf le 1",
@@ -698,12 +702,7 @@ on("chat:message", function (msg) {
     "!arxlootopen bag|body|chest|place|secured-chest — ouvre un butin partagé pour les tokens sélectionnés",
     "!arxlootadd <item_id> — ajoute un objet au butin ouvert",
     "!arxlootclose — ferme le butin partagé",
-    "!arxloottake <case> — pas pour le MJ, déclenché par le bouton \"Prendre\" du joueur",
-    "!arxconsume — pas pour le MJ, déclenché par le bouton \"Consommer\" du joueur",
     "!arxresetinventory — vide toutes les cases de sac + relâche la main",
-    "!arxresetall — réinitialise tout le personnage (stats, inventaire, magie, carte, postures, or)",
-    "!arxpreset <1-3> <spell_id> — définit un emplacement de sort mémorisé",
-    "!arxpage <1-10> — change la page de sorts affichée",
-    "!arxtab base|magic — change la page active de la fiche"
+    "!arxresetall — réinitialise tout le personnage (stats, inventaire, magie, carte, postures, or)"
   ].join("<br>"));
 });
