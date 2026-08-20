@@ -153,10 +153,12 @@
    renders exactly as before. The button's face shows the current value. ---- */
 .sheet-zoom-toggle {
   position: absolute;
-  left: 1010px; /* the toggle column: inventory at 660, GM gear at 702 */
-  top: 618px;
-  width: 34px;
-  height: 34px;
+  /* Bottom-left corner of the BOOK (1100×677), on its leather border —
+     away from the toggle column on the right. */
+  left: 12px;
+  top: 636px;
+  width: 28px;
+  height: 28px;
   /* Same stacking as the neighboring toggles: .sheet-book (a LATER sibling)
      carries z-index:1 and paints over anything unstacked declared before it. */
   z-index: 10;
