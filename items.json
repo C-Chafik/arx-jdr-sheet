@@ -466,184 +466,257 @@
     "special": "10% de chance d'enflammer la cible"
   },
 
+
+
   "chain-helmet": {
-    "label": "Casque de mailles",
+    "label": "Casque renforcé en maille",
     "icon": "items/chain-helmet.png",
     "cat": "casque",
-    "size": "1x1"
+    "size": "1x1",
+    "armor_class": 10,
+    "min_strength": 9
   },
   "helmet-leather-stealth": {
-    "label": "Capuche de cuir",
+    "label": "Cagoule de cuir de discrétion",
     "icon": "items/helmet-leather-stealth.png",
     "cat": "casque",
-    "size": "1x1"
+    "size": "1x1",
+    "dexterity": 1,
+    "armor_class": 5,
+    "stealth": 15
   },
   "mythril-helmet": {
-    "label": "Casque de mythril",
+    "label": "Casque renforcé en maille de mythril",
     "icon": "items/mythril-helmet.png",
     "cat": "casque",
     "size": "1x1",
-    "legendary": true
+    "mental": 1,
+    "armor_class": 15,
+    "magic_resistance": 20,
+    "casting": 5,
+    "min_strength": 8,
+    "min_mental": 10
   },
   "plate-helmet": {
-    "label": "Casque de plaques d'acier",
+    "label": "Casque de plate",
     "icon": "items/plate-helmet.png",
     "cat": "casque",
-    "size": "1x1"
-  },
-  "plate-helmet-ac": {
-    "label": "Casque de plaques d'acier renforcé",
-    "icon": "items/plate-helmet-ac.png",
-    "cat": "casque",
-    "size": "1x1"
-  },
-  "golden-plate-helmet": {
-    "label": "Casque doré",
-    "icon": "items/golden-plate-helmet.png",
-    "cat": "casque",
-    "size": "1x1"
-  },
-  "poxelis-helmet": {
-    "label": "Casque de Poxelis",
-    "icon": "items/poxelis-helmet.png",
-    "cat": "casque",
-    "size": "2x2",
-    "legendary": true,
-    "mental": 5,
-    "dexterity": -2,
-    "armor_class": 5,
-    "magic_resistance": 10,
-    "special": "Conjure les illusions",
-    "min_mental": 8,
-    "min_constitution": 10
-  },
-
-  "ylside-chest": {
-    "label": "Plastron ylsides",
-    "icon": "items/ylside-chest.png",
-    "cat": "armure_haute",
-    "size": "2x3",
-    "legendary": true
-  },
-  "chest-leather": {
-    "label": "Veste en cuir",
-    "icon": "items/chest-leather.png",
-    "cat": "armure_haute",
-    "size": "2x2"
-  },
-  "chest-leather-ac": {
-    "label": "Veste en cuir renforcé",
-    "icon": "items/chest-leather-ac.png",
-    "cat": "armure_haute",
-    "size": "2x2"
-  },
-  "chest-leather-stealth": {
-    "label": "Veste en cuir souple",
-    "icon": "items/chest-leather-stealth.png",
-    "cat": "armure_haute",
-    "size": "2x2"
-  },
-  "chest-chain": {
-    "label": "Cotte de mailles",
-    "icon": "items/chest-chain.png",
-    "cat": "armure_haute",
-    "size": "2x3"
-  },
-  "chest-chain-rebel": {
-    "label": "Cotte de mailles rebelle",
-    "icon": "items/chest-chain-rebel.png",
-    "cat": "armure_haute",
-    "size": "2x3"
-  },
-  "chestplate": {
-    "label": "Plastron en acier",
-    "icon": "items/chestplate.png",
-    "cat": "armure_haute",
-    "size": "2x3",
+    "size": "1x1",
+    "armor_class": 20,
+    "stealth": -15,
+    "intuition": -15,
     "min_strength": 12
   },
-  "chestplate-ac": {
-    "label": "Plastron en acier renforcé",
-    "icon": "items/chestplate-ac.png",
+  "golden-plate-helmet": {
+    "label": "Casque de plate doré",
+    "icon": "items/golden-plate-helmet.png",
+    "cat": "casque",
+    "size": "1x1",
+    "armor_class": 20,
+    "stealth": -25,
+    "intuition": -15,
+    "min_strength": 12
+  },
+  "poxelis-helmet": {
+    "label": "Casque de Poxéllis",
+    "icon": "items/poxelis-helmet.png",
+    "cat": "casque",
+    "size": "1x1",
+    "legendary": true,
+    "mental": 1,
+    "constitution": 1,
+    "armor_class": 35,
+    "magic_resistance": 35,
+    "special": "Immunité aux altérations de perception",
+    "min_strength": 12,
+    "min_mental": 10
+  },
+
+
+
+  "ylside-chest": {
+    "label": "Plastron ylside",
+    "icon": "items/ylside-chest.png",
     "cat": "armure_haute",
-    "size": "2x3"
+    "size": "2x2",
+    "constitution": 1,
+    "armor_class": 60,
+    "magic_resistance": 35,
+    "stealth": -30,
+    "min_strength": 19,
+    "min_constitution": 14
+  },
+  "chest-leather": {
+    "label": "Armure de cuir légère",
+    "icon": "items/chest-leather.png",
+    "cat": "armure_haute",
+    "size": "2x2",
+    "dexterity": 1,
+    "armor_class": 20,
+    "stealth": 5
+  },
+  "chest-leather-stealth": {
+    "label": "Armure cloutée de discrétion",
+    "icon": "items/chest-leather-stealth.png",
+    "cat": "armure_haute",
+    "size": "2x2",
+    "dexterity": 1,
+    "armor_class": 25,
+    "stealth": 10
+  },
+  "chest-chain": {
+    "label": "Cotte de maille",
+    "icon": "items/chest-chain.png",
+    "cat": "armure_haute",
+    "size": "2x3",
+    "armor_class": 40,
+    "stealth": -15,
+    "min_strength": 12
+  },
+  "chest-chain-rebel": {
+    "label": "Uniforme de l'ordre",
+    "icon": "items/chest-chain-rebel.png",
+    "cat": "armure_haute",
+    "size": "2x3",
+    "armor_class": 35,
+    "stealth": -10,
+    "damages": 4,
+    "min_strength": 12
+  },
+  "chestplate": {
+    "label": "Plastron de plate",
+    "icon": "items/chestplate.png",
+    "cat": "armure_haute",
+    "size": "2x2",
+    "dexterity": -2,
+    "constitution": 1,
+    "armor_class": 55,
+    "stealth": -25,
+    "min_strength": 13,
+    "min_constitution": 13
   },
   "golden-chestplate": {
-    "label": "Plastron doré",
+    "label": "Plastron de plate doré",
     "icon": "items/golden-chestplate.png",
     "cat": "armure_haute",
-    "size": "2x3"
+    "size": "2x2",
+    "dexterity": -2,
+    "constitution": 1,
+    "armor_class": 55,
+    "stealth": -35,
+    "special": "Bonus conséquent en charisme",
+    "min_strength": 12,
+    "min_constitution": 12
   },
   "mythril-chest": {
-    "label": "Cotte de mythril",
+    "label": "Cotte de maille en mythril",
     "icon": "items/mythril-chest.png",
     "cat": "armure_haute",
     "size": "2x3",
-    "legendary": true
+    "armor_class": 45,
+    "magic_resistance": 30,
+    "stealth": -15,
+    "casting": 5,
+    "min_strength": 10,
+    "min_mental": 9
   },
 
+
+
   "ylside-bottoms": {
-    "label": "Jambières ylsides",
+    "label": "Jambière ylside",
     "icon": "items/ylside-bottoms.png",
     "cat": "armure_basse",
     "size": "2x3",
-    "legendary": true
+    "constitution": 1,
+    "armor_class": 60,
+    "magic_resistance": 35,
+    "stealth": -30,
+    "min_strength": 19,
+    "min_constitution": 14
   },
   "legging-chain": {
-    "label": "Jambières de mailles",
+    "label": "Jambière de maille",
     "icon": "items/legging-chain.png",
     "cat": "armure_basse",
-    "size": "2x3"
+    "size": "2x3",
+    "armor_class": 30,
+    "stealth": -15
   },
   "legging-chain-rebel": {
-    "label": "Jambières de mailles rebelles",
+    "label": "Jambière Uniforme de l'ordre",
     "icon": "items/legging-chain-rebel.png",
     "cat": "armure_basse",
-    "size": "2x3"
+    "size": "2x3",
+    "armor_class": 25,
+    "stealth": -10,
+    "damages": 4
   },
   "legging-leather": {
-    "label": "Pantalon en cuir",
+    "label": "Pantalon de cuir léger",
     "icon": "items/legging-leather.png",
     "cat": "armure_basse",
-    "size": "2x3"
+    "size": "2x3",
+    "armor_class": 20,
+    "stealth": 5
   },
   "legging-leather-ac": {
-    "label": "Pantalon en cuir renforcé",
+    "label": "Pantalon de cuir bouilli",
     "icon": "items/legging-leather-ac.png",
     "cat": "armure_basse",
-    "size": "2x3"
+    "size": "2x3",
+    "armor_class": 20,
+    "magic_resistance": 5,
+    "poison_resistance": 5,
+    "stealth": 5
   },
   "legging-leather-stealth": {
-    "label": "Pantalon en cuir souple",
+    "label": "Pantalon de cuir clouté de discrétion",
     "icon": "items/legging-leather-stealth.png",
     "cat": "armure_basse",
-    "size": "2x3"
+    "size": "2x3",
+    "armor_class": 25,
+    "poison_resistance": 5,
+    "stealth": 10
   },
   "legging-mythril": {
-    "label": "Jambières de mythril",
+    "label": "Jambière de maille en mythril",
     "icon": "items/legging-mythril.png",
     "cat": "armure_basse",
     "size": "2x3",
-    "legendary": true
+    "armor_class": 35,
+    "magic_resistance": 30,
+    "stealth": -15,
+    "casting": 5,
+    "min_strength": 10,
+    "min_mental": 9
   },
   "legging-plate": {
-    "label": "Jambières en plaque d'acier",
+    "label": "Jambière de plate",
     "icon": "items/legging-plate.png",
     "cat": "armure_basse",
-    "size": "2x3"
-  },
-  "legging-plate-ac": {
-    "label": "Jambières en plaque d'acier renforcées",
-    "icon": "items/legging-plate-ac.png",
-    "cat": "armure_basse",
-    "size": "2x3"
+    "size": "2x3",
+    "dexterity": -1,
+    "constitution": 1,
+    "armor_class": 45,
+    "stealth": -25,
+    "min_strength": 14,
+    "min_constitution": 13
   },
   "golden-legging-plate": {
-    "label": "Jambières dorées",
+    "label": "Jambière de plate doré",
     "icon": "items/golden-legging-plate.png",
     "cat": "armure_basse",
-    "size": "2x3"
+    "size": "2x3",
+    "dexterity": -1,
+    "constitution": 1,
+    "armor_class": 45,
+    "stealth": -25,
+    "min_strength": 13,
+    "min_constitution": 12
   },
+
+
 
   "krahoz": {
     "label": "Krahoz",
@@ -683,6 +756,8 @@
     "cat": "bijoux",
     "size": "1x1"
   },
+
+
 
   "rune-aam": {
     "label": "Rune : Aam (Créer)",
