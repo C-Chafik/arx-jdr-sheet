@@ -206,14 +206,6 @@
     "size": "1x2",
     "weap_dmg": "1d2"
   },
-  "ritual-blooding-device": {
-    "label": "Outil sacrificiel",
-    "icon": "items/ritual-blooding-device.png",
-    "cat": "ambidextrie",
-    "size": "1x1",
-    "weap_dmg": "2d6",
-    "min_dexterity": 7
-  },
   "rolling-pin": {
     "label": "Roulleau à patisserie",
     "icon": "items/rolling-pin.png",
@@ -710,44 +702,618 @@
     "min_constitution": 12
   },
 
+
+
   "krahoz": {
     "label": "Krahoz",
     "icon": "items/krahoz.png",
     "cat": "bijoux",
     "size": "1x1",
-    "legendary": true
+    "legendary": true,
+    "special": "Immunisé contre le drain de mana"
   },
   "zohark": {
     "label": "Zohark",
     "icon": "items/zohark.png",
     "cat": "bijoux",
     "size": "1x1",
-    "legendary": true
+    "legendary": true,
+    "special": "Immunisé contre le drain de vie"
   },
   "ring-gold": {
-    "label": "Anneau en or",
+    "label": "Anneau en or [Ni]",
     "icon": "items/ring-gold.png",
     "cat": "bijoux",
     "size": "1x1"
   },
+  "ring-gold-dis": {
+    "label": "Anneau en or [DIS]",
+    "icon": "items/ring-gold.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "stealth": 10
+  },
+  "ring-gold-man": {
+    "label": "Anneau en or [MAN]",
+    "icon": "items/ring-gold.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "object_knowledge": 10
+  },
+  "ring-gold-tec": {
+    "label": "Anneau en or [TEC]",
+    "icon": "items/ring-gold.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "technical": 10
+  },
   "ring-silver": {
-    "label": "Anneau en argent",
+    "label": "Anneau en argent [Ni]",
     "icon": "items/ring-silver.png",
     "cat": "bijoux",
     "size": "1x1"
   },
-  "golden-bracelet": {
-    "label": "Bracelet doré",
-    "icon": "items/golden-bracelet.png",
+  "ring-silver-dis": {
+    "label": "Anneau en argent [DIS]",
+    "icon": "items/ring-silver.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "stealth": 5
+  },
+  "ring-silver-man": {
+    "label": "Anneau en argent [MAN]",
+    "icon": "items/ring-silver.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "object_knowledge": 5
+  },
+  "ring-silver-tec": {
+    "label": "Anneau en argent [TEC]",
+    "icon": "items/ring-silver.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "technical": 5
+  },
+  "mithril-ring": {
+    "label": "Anneau en mythril [Ni]",
+    "icon": "items/mithril-ring.png",
     "cat": "bijoux",
     "size": "1x1"
   },
+  "mithril-ring-dis": {
+    "label": "Anneau en mythril [DIS]",
+    "icon": "items/mithril-ring.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "stealth": 20
+  },
+  "mithril-ring-man": {
+    "label": "Anneau en mythril [MAN]",
+    "icon": "items/mithril-ring.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "object_knowledge": 20
+  },
+  "mithril-ring-tec": {
+    "label": "Anneau en mythril [TEC]",
+    "icon": "items/mithril-ring.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "technical": 20
+  },
   "golden-neckplace": {
-    "label": "Collier doré",
+    "label": "Collier en or [Ni]",
     "icon": "items/golden-neckplace.png",
     "cat": "bijoux",
     "size": "1x1"
   },
+  "golden-neckplace-inc": {
+    "label": "Collier en or [INC]",
+    "icon": "items/golden-neckplace.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "casting": 10
+  },
+  "golden-neckplace-int": {
+    "label": "Collier en or [INT]",
+    "icon": "items/golden-neckplace.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "intuition": 10
+  },
+  "golden-neckplace-psy": {
+    "label": "Collier en or [PSY]",
+    "icon": "items/golden-neckplace.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "ethereal_link": 10
+  },
+  "silver-neckplace": {
+    "label": "Collier en argent [Ni]",
+    "icon": "items/silver-neckplace.png",
+    "cat": "bijoux",
+    "size": "1x1"
+  },
+  "silver-neckplace-inc": {
+    "label": "Collier en argent [INC]",
+    "icon": "items/silver-neckplace.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "casting": 5
+  },
+  "silver-neckplace-int": {
+    "label": "Collier en argent [INT]",
+    "icon": "items/silver-neckplace.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "intuition": 5
+  },
+  "silver-neckplace-psy": {
+    "label": "Collier en argent [PSY]",
+    "icon": "items/silver-neckplace.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "ethereal_link": 5
+  },
+  "mithril-neckplace": {
+    "label": "Collier en mythril [Ni]",
+    "icon": "items/mithril-neckplace.png",
+    "cat": "bijoux",
+    "size": "1x1"
+  },
+  "mithril-neckplace-inc": {
+    "label": "Collier en mythril [INC]",
+    "icon": "items/mithril-neckplace.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "casting": 20
+  },
+  "mithril-neckplace-int": {
+    "label": "Collier en mythril [INT]",
+    "icon": "items/mithril-neckplace.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "intuition": 20
+  },
+  "mithril-neckplace-psy": {
+    "label": "Collier en mythril [PSY]",
+    "icon": "items/mithril-neckplace.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "ethereal_link": 20
+  },
+  "golden-bracelet": {
+    "label": "Bracelet en or [Ni]",
+    "icon": "items/golden-bracelet.png",
+    "cat": "bijoux",
+    "size": "1x1"
+  },
+  "golden-bracelet-cmb": {
+    "label": "Bracelet en or [CMB]",
+    "icon": "items/golden-bracelet.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "close_combat": 10
+  },
+  "golden-bracelet-def": {
+    "label": "Bracelet en or [DEF]",
+    "icon": "items/golden-bracelet.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "defense": 10
+  },
+  "golden-bracelet-dst": {
+    "label": "Bracelet en or [DST]",
+    "icon": "items/golden-bracelet.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "projectile": 10
+  },
+  "silver-bracelet": {
+    "label": "Bracelet en argent [Ni]",
+    "icon": "items/silver-bracelet.png",
+    "cat": "bijoux",
+    "size": "1x1"
+  },
+  "silver-bracelet-cmb": {
+    "label": "Bracelet en argent [CMB]",
+    "icon": "items/silver-bracelet.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "close_combat": 5
+  },
+  "silver-bracelet-def": {
+    "label": "Bracelet en argent [DEF]",
+    "icon": "items/silver-bracelet.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "defense": 5
+  },
+  "silver-bracelet-dst": {
+    "label": "Bracelet en argent [DST]",
+    "icon": "items/silver-bracelet.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "projectile": 5
+  },
+  "mithril-bracelet": {
+    "label": "Bracelet en mythril [Ni]",
+    "icon": "items/mithril-bracelet.png",
+    "cat": "bijoux",
+    "size": "1x1"
+  },
+  "mithril-bracelet-cmb": {
+    "label": "Bracelet en mythril [CMB]",
+    "icon": "items/mithril-bracelet.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "close_combat": 20
+  },
+  "mithril-bracelet-def": {
+    "label": "Bracelet en mythril [DEF]",
+    "icon": "items/mithril-bracelet.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "defense": 20
+  },
+  "mithril-bracelet-dst": {
+    "label": "Bracelet en mythril [DST]",
+    "icon": "items/mithril-bracelet.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "projectile": 20
+  },
+  "diamant-extraordinary": {
+    "label": "Joyau diamanté extraordinaire",
+    "icon": "items/diamant-extraordinary.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "strength": 3
+  },
+  "diamant-lesser": {
+    "label": "Joyau diamanté inférieur",
+    "icon": "items/diamant-lesser.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "strength": 1
+  },
+  "diamant-ni": {
+    "label": "Joyau diamanté [Ni]",
+    "icon": "items/diamant-ni.png",
+    "cat": "bijoux",
+    "size": "1x1"
+  },
+  "diamant-superior": {
+    "label": "Joyau diamanté supérieur",
+    "icon": "items/diamant-superior.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "strength": 2
+  },
+  "emerald-extraordinary": {
+    "label": "Joyau émeraude extraordinaire",
+    "icon": "items/emerald-extraordinary.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "dexterity": 3
+  },
+  "emerald-lesser": {
+    "label": "Joyau émeraude inférieur",
+    "icon": "items/emerald-lesser.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "dexterity": 1
+  },
+  "emerald-ni": {
+    "label": "Joyau émeraude [Ni]",
+    "icon": "items/emerald-ni.png",
+    "cat": "bijoux",
+    "size": "1x1"
+  },
+  "emerald-superior": {
+    "label": "Joyau émeraude supérieur",
+    "icon": "items/emerald-superior.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "dexterity": 2
+  },
+  "gem-extraordinary": {
+    "label": "Gemme gravée extraordinaire",
+    "icon": "items/gem-extraordinary.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "mental": 3
+  },
+  "gem-lesser": {
+    "label": "Gemme gravée inférieur",
+    "icon": "items/gem-lesser.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "mental": 1
+  },
+  "gem-ni": {
+    "label": "Gemme gravée [Ni]",
+    "icon": "items/gem-ni.png",
+    "cat": "bijoux",
+    "size": "1x1"
+  },
+  "gem-superior": {
+    "label": "Gemme gravée supérieur",
+    "icon": "items/gem-superior.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "mental": 2
+  },
+  "ruby-extraordinary": {
+    "label": "Joyau rubis extraordinaire",
+    "icon": "items/ruby-extraordinary.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "constitution": 3
+  },
+  "ruby-lesser": {
+    "label": "Joyau rubis inférieur",
+    "icon": "items/ruby-lesser.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "constitution": 1
+  },
+  "ruby-ni": {
+    "label": "Joyau rubis [Ni]",
+    "icon": "items/ruby-ni.png",
+    "cat": "bijoux",
+    "size": "1x1"
+  },
+  "ruby-superior": {
+    "label": "Joyau rubis supérieur",
+    "icon": "items/ruby-superior.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "constitution": 2
+  },
+  "ring-casting": {
+    "label": "Anneau d'incantation",
+    "icon": "items/ring-casting.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "casting": 20,
+    "ethereal_link": 20,
+    "min_mental": 11
+  },
+  "ring-cursed": {
+    "label": "Anneau maudit",
+    "icon": "items/ring-cursed.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "special": "Ajoute un bonus, et en contrepartie applique un malus consequent et diamétralement opposé"
+  },
+  "ring-daarka": {
+    "label": "Daarka",
+    "icon": "items/ring-daarka.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "legendary": true,
+    "damages": 25,
+    "special": "les attaques a mains nue infligent des saignement a la cible"
+  },
+  "ring-invisibility": {
+    "label": "Anneau d'invisibilité",
+    "icon": "items/ring-invisibility.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "special": "Confère l'invisibilité durant 5 tours, une fois par long repos, désactivé à l'action",
+    "min_mental": 14
+  },
+  "ring-invisibility-handmade": {
+    "label": "Anneau d'invisibilité inférieur",
+    "icon": "items/ring-invisibility-handmade.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "special": "Confère l'invisibilité durant 2 tours, une fois par long repos, désactivé à l'action",
+    "min_mental": 9
+  },
+  "ring-master-anselmo": {
+    "label": "Anneau de Maître Anselmo",
+    "icon": "items/ring-master-anselmo.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "legendary": true,
+    "casting": 15,
+    "ethereal_link": 15,
+    "special": "Possibilité d'incanter sans dessiner les runes",
+    "min_mental": 19
+  },
+  "ring-misery": {
+    "label": "Anneau de misère",
+    "icon": "items/ring-misery.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "special": "Accorde un bonus et en contrepartie applique une perte graduelle de pv"
+  },
+  "ring-oliver": {
+    "label": "Anneau d'Olivier",
+    "icon": "items/ring-oliver.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "legendary": true,
+    "special": "Perception des pièges et trésors cachés > 35m radius"
+  },
+  "ring-plain": {
+    "label": "Anneau [Ni]",
+    "icon": "items/ring-plain.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "special": "+10% en chance de persuasion/intimidation"
+  },
+  "ring-player": {
+    "label": "Anneau du joueur",
+    "icon": "items/ring-player.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "legendary": true,
+    "special": "1/2 chance de triger bonus ou malus en l'enfilant -ne peut être retiré de toute la journée quand enfilé- reset chaque jour > Bonus = +2 ALL STATS Malus = -2 ALL STATS"
+  },
+  "ring-protection": {
+    "label": "Anneau de protection",
+    "icon": "items/ring-protection.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "armor_class": 10,
+    "magic_resistance": 10,
+    "poison_resistance": 10
+  },
+  "ring-regeneration": {
+    "label": "Anneau de régénération",
+    "icon": "items/ring-regeneration.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "ethereal_link": 20,
+    "constitution": 2
+  },
+  "ring-regeneration-handmade": {
+    "label": "Anneau de régénération inférieur",
+    "icon": "items/ring-regeneration-handmade.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "ethereal_link": 10,
+    "constitution": 1
+  },
+  "ring-water-point": {
+    "label": "Anneau de l'étang",
+    "icon": "items/ring-water-point.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "legendary": true,
+    "special": "Effet secret"
+  },
+  "amulet-great-luck": {
+    "label": "Amulette de grande chance",
+    "icon": "items/amulet-great-luck.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "legendary": true,
+    "special": "1 fois par long repos offre la possibilité de rejouer un jet échoué (hors échec critique)"
+  },
+  "amulet-red": {
+    "label": "Amulette gobelin",
+    "icon": "items/amulet-red.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "special": "Amulette frappé du sigle d'un clan goblin - Signe d'appartenance - peut soulever des questions sur l'obtention"
+  },
+  "amulet-troll": {
+    "label": "Amulette Troll",
+    "icon": "items/amulet-troll.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "special": "Apaise les trolls hostiles - signe d'appartenance à un clan troll - peut soulever des questions sur l'obtention"
+  },
+  "clock": {
+    "label": "Sablier d'Exostia",
+    "icon": "items/clock.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "legendary": true,
+    "special": "Permet de remonter le temps - INTERVAL D'UTILISATION REGULE PAR MJ !",
+    "min_mental": 20
+  },
+  "coin": {
+    "label": "Pièce porte-bonheur",
+    "icon": "items/coin.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "special": "+10% de chance d'obtenir du loot supplémentaire une fois par jour"
+  },
+  "compass-guild": {
+    "label": "Compas d'ancrage de la guilde",
+    "icon": "items/compass-guild.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "special": "Permet de marquer une position - ne peut être reconfigurer qu'une fois par long repos — Protege de de la confusion et désorientation si équipé et ancré en safeplace"
+  },
+  "dragonbone-carved": {
+    "label": "Os de dragon gravé",
+    "icon": "items/dragonbone-carved.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "strength": 1,
+    "dexterity": 1,
+    "constitution": 1,
+    "mental": 1
+  },
+  "drowned-bones": {
+    "label": "Restes profanés [Ni]",
+    "icon": "items/drowned-bones.png",
+    "cat": "bijoux",
+    "size": "2x2",
+    "special": "Pactise avec ce qui habite les restes pour convenir d'une aide contre une contrepartie (RP)"
+  },
+  "garlic": {
+    "label": "Ail",
+    "icon": "items/garlic.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "special": "Repousse les vampires inferieur et les gouvernantes"
+  },
+  "golem-heart": {
+    "label": "Coeur de golem",
+    "icon": "items/golem-heart.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "armor_class": 10,
+    "special": "Divise les dégâts de feu par deux",
+    "min_mental": 8
+  },
+  "jewel-troll": {
+    "label": "Joyau troll",
+    "icon": "items/jewel-troll.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "strength": 1,
+    "constitution": 1,
+    "dexterity": -1,
+    "mental": -2
+  },
+  "king-gold-cup": {
+    "label": "Calice des rois",
+    "icon": "items/king-gold-cup.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "legendary": true,
+    "special": "Immunité totale contre l'empoisonnement et les maladies"
+  },
+  "mirror": {
+    "label": "Miroir de la reine",
+    "icon": "items/mirror.png",
+    "cat": "bijoux",
+    "size": "2x2",
+    "legendary": true,
+    "special": "Une fois par long repos permet de renvoyer un sort vers son incantateur"
+  },
+  "ritual-blooding-device": {
+    "label": "Outil sacrificiel d'Iserbius",
+    "icon": "items/ritual-blooding-device.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "legendary": true,
+    "special": "Effet secret — Savoir par quel sang cet outil a été souillé"
+  },
+  "shiny-orb": {
+    "label": "Cône de communication de la guilde",
+    "icon": "items/shiny-orb.png",
+    "cat": "bijoux",
+    "size": "1x1",
+    "special": "Permet de communiqué à travers les niveaux - limité à 1 utilisation par long repos ( 1 message codé morse lumineux ) - doit être jumelé avant"
+  },
+  "shiny-orb-end": {
+    "label": "Centrale de communication de la guilde",
+    "icon": "items/shiny-orb-end.png",
+    "cat": "bijoux",
+    "size": "1x2",
+    "special": "Permet de communiqué à travers les niveaux - limité à 6 utilisations par long repos (6 messages codé morse lumineux) - ne nécessite pas d'être jumelé avant"
+  },
+
+
 
   "rune-aam": {
     "label": "Rune : Aam (Créer)",
