@@ -1083,3 +1083,48 @@ def test_dark_surround_covers_the_sheet_window():
     css = build.build_css("x")
     assert "box-shadow: 0 0 0 100vmax #14100c;" in css
     assert ".charsheet {\n  background-color: #14100c;\n}" in css
+
+
+REGEN_PAIRS = [("heal_min", "heal_max"), ("mana_min", "mana_max")]
+
+
+def test_regen_items_declare_a_complete_percentage_range():
+    """Consuming restores a pool as soon as the item carries the values, with
+    no "effect" gate — that is what lets the wine heal while staying "drinks"
+    and keeping its "boit" verb. The flip side is that a half-declared range
+    is silent: arxRegenReport skips the pool and the potion just does nothing,
+    so both ends are pinned here."""
+    for item_id, item in build.load_items().items():
+        for lo_key, hi_key in REGEN_PAIRS:
+            assert (lo_key in item) == (hi_key in item), f"{item_id}: {lo_key}/{hi_key} half-declared"
+            if lo_key in item:
+                lo, hi = item[lo_key], item[hi_key]
+                assert isinstance(lo, int) and isinstance(hi, int), f"{item_id}: {lo_key}/{hi_key}"
+                assert 1 <= lo <= hi <= 100, f"{item_id}: {lo}%-{hi}% is not a usable range"
+
+
+def test_regen_is_wired_to_the_expected_items():
+    items = build.load_items()
+    healers = {k for k, v in items.items() if "heal_min" in v}
+    manaers = {k for k, v in items.items() if "mana_min" in v}
+    assert healers == {"health-potion", "bottle-wine"}, healers
+    assert manaers == {"potion-mana"}, manaers
+
+
+def test_consume_regen_is_wired_in_the_mod():
+    """The whole thing has to live in !arxconsume: a worker cannot emit a /me
+    and Roll20 never fires clicked: for a type="roll" button, so the mod is the
+    only place that knows an item was just consumed."""
+    mod = build.render_mod()
+    # the reader half of the reserved "_max" suffix — a plain arxGetAttr on
+    # "health_max" would read a bogus standalone attribute, not the real max
+    assert "function arxGetAttrMax(" in mod
+    assert 'attr.get("max")' in mod
+    # both pools, driven by the values rather than by the item's type
+    assert '{ pool: "health", min: "heal_min", max: "heal_max", unit: "PV" }' in mod
+    assert '{ pool: "mana",   min: "mana_min", max: "mana_max", unit: "PM" }' in mod
+    # rounded to the nearest point, floored at 1, overheal clamped to the max
+    assert "Math.max(1, Math.round(poolMax * pct / 100))" in mod
+    assert "Math.min(poolMax, before + gain)" in mod
+    # and it runs from the consume handler, after the emote
+    assert "arxRegenReport(charId, item).forEach(" in mod
