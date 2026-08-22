@@ -852,8 +852,13 @@ on("chat:message", function (msg) {
 const ARX_CONSUME_VERBS = { food: "mange", drinks: "boit", potions: "consomme" };
 
 /* Restoring health/mana on consume is driven by the VALUES an item carries,
-   never by its effect: heal_min/heal_max (health) and mana_min/mana_max
-   (mana) turn any consumable into a potion. That is what keeps the wine on
+   never by its effect: heal_pct_min/heal_pct_max (health) and
+   mana_pct_min/mana_pct_max (mana) turn any consumable into a potion. The
+   "_pct" is not decoration: "mana_max" is already a REAL stat — the max-mana
+   bonus, printed by the tooltip's abbr table and summed by the worker's
+   MOD_STATS — so naming the range after it made the mana potion advertise
+   "+35 PM" on hover, and would have granted it for real on anything
+   equippable. That is what keeps the wine on
    "drinks" — and its "boit" verb — while still healing, and it lets one item
    refill both pools without a "which pool" discriminator to keep in sync.
    Both ends are percentages of the MAX pool, rolled inclusive; the gain is
@@ -862,8 +867,8 @@ const ARX_CONSUME_VERBS = { food: "mange", drinks: "boit", potions: "consomme" }
    at full still spends the item — by the time we get here the case is empty
    either way, and refusing would need the removal above to be undone. */
 const ARX_REGEN_POOLS = [
-  { pool: "health", min: "heal_min", max: "heal_max", unit: "PV" },
-  { pool: "mana",   min: "mana_min", max: "mana_max", unit: "PM" }
+  { pool: "health", min: "heal_pct_min", max: "heal_pct_max", unit: "PV" },
+  { pool: "mana",   min: "mana_pct_min", max: "mana_pct_max", unit: "PM" }
 ];
 
 function arxRegenReport(charId, item) {

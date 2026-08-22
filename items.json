@@ -1411,16 +1411,15 @@
     "caster_level": 85
   },
 
-
-
   "potion-mana": {
     "label": "Potion de mana",
     "effect": "potions",
     "icon": "items/potion-mana.png",
     "cat": "objet",
     "size": "1x1",
-    "mana_min": 20,
-    "mana_max": 35
+    "mana_pct_min": 20,
+    "mana_pct_max": 35,
+    "special": "Regain de 20% à 35% de la mana maximum"
   },
   "health-potion": {
     "label": "Potion de vie",
@@ -1428,8 +1427,9 @@
     "icon": "items/health-potion.png",
     "cat": "objet",
     "size": "1x1",
-    "heal_min": 20,
-    "heal_max": 35
+    "heal_pct_min": 20,
+    "heal_pct_max": 35,
+    "special": "Regain de 20% à 35% de la vie maximum"
   },
   "potion-poison": {
     "label": "Fiole de poison",
@@ -1455,9 +1455,6 @@
     "size": "1x1",
     "special": "Rend le consommateur invisible durant 1d4 tours — annulé par l'action"
   },
-
-
-
 
   "applepie": {
     "label": "Tarte aux pommes",
@@ -1550,8 +1547,9 @@
     "icon": "items/bottle-wine.png",
     "cat": "objet",
     "size": "1x1",
-    "heal_min": 5,
-    "heal_max": 10
+    "heal_pct_min": 5,
+    "heal_pct_max": 10,
+    "special": "Regain de 5% à 10% de la vie maximum, mais peut rapidement provoquer une ivresse."
   },
   "water": {
     "label": "Eau",
