@@ -1,3 +1,4 @@
+import re
 import sys
 from pathlib import Path
 
@@ -1085,7 +1086,7 @@ def test_dark_surround_covers_the_sheet_window():
     assert ".charsheet {\n  background-color: #14100c;\n}" in css
 
 
-REGEN_PAIRS = [("heal_min", "heal_max"), ("mana_min", "mana_max")]
+REGEN_PAIRS = [("heal_pct_min", "heal_pct_max"), ("mana_pct_min", "mana_pct_max")]
 
 
 def test_regen_items_declare_a_complete_percentage_range():
@@ -1105,8 +1106,8 @@ def test_regen_items_declare_a_complete_percentage_range():
 
 def test_regen_is_wired_to_the_expected_items():
     items = build.load_items()
-    healers = {k for k, v in items.items() if "heal_min" in v}
-    manaers = {k for k, v in items.items() if "mana_min" in v}
+    healers = {k for k, v in items.items() if "heal_pct_min" in v}
+    manaers = {k for k, v in items.items() if "mana_pct_min" in v}
     assert healers == {"health-potion", "bottle-wine"}, healers
     assert manaers == {"potion-mana"}, manaers
 
@@ -1121,10 +1122,38 @@ def test_consume_regen_is_wired_in_the_mod():
     assert "function arxGetAttrMax(" in mod
     assert 'attr.get("max")' in mod
     # both pools, driven by the values rather than by the item's type
-    assert '{ pool: "health", min: "heal_min", max: "heal_max", unit: "PV" }' in mod
-    assert '{ pool: "mana",   min: "mana_min", max: "mana_max", unit: "PM" }' in mod
+    assert '{ pool: "health", min: "heal_pct_min", max: "heal_pct_max", unit: "PV" }' in mod
+    assert '{ pool: "mana",   min: "mana_pct_min", max: "mana_pct_max", unit: "PM" }' in mod
     # rounded to the nearest point, floored at 1, overheal clamped to the max
     assert "Math.max(1, Math.round(poolMax * pct / 100))" in mod
     assert "Math.min(poolMax, before + gain)" in mod
     # and it runs from the consume handler, after the emote
     assert "arxRegenReport(charId, item).forEach(" in mod
+
+
+def test_regen_keys_never_collide_with_a_real_stat():
+    """"mana_max" is the max-mana BONUS: the tooltip's abbr table prints it and
+    the worker's MOD_STATS sums it at equip time. Naming a regen bound after it
+    made the mana potion read "- [+35 PM]" on hover. The "_pct" suffix is what
+    keeps the two apart, so the separation is pinned rather than remembered."""
+    # abbr is a Jinja-time table: it shapes the output but never appears in it
+    template = (Path(build.SRC) / "templates" / "sheet.html.j2").read_text(encoding="utf-8")
+    abbr = set(re.findall(r'"(\w+)": "[A-Z]{2,3}"', template.split("{% set abbr = {")[1].split("} %}")[0]))
+    mod_stats = set(re.findall(r'"(\w+)"', build.render_html().split("const MOD_STATS = [")[1].split("]")[0]))
+    assert {"mana_max", "health_max", "armor_class"} <= abbr & mod_stats, (abbr, mod_stats)
+    for lo_key, hi_key in REGEN_PAIRS:
+        for key in (lo_key, hi_key):
+            assert key not in abbr, f"{key} would print as an equipment bonus on hover"
+            assert key not in mod_stats, f"{key} would be granted for real at equip time"
+
+
+def test_regen_range_is_spelled_out_in_special():
+    """The numbers live twice — as values for the mod, as prose for the hover —
+    because nothing renders raw regen keys. Drift between the two would show
+    players a range the mod does not roll."""
+    for item_id, item in build.load_items().items():
+        for lo_key, hi_key in REGEN_PAIRS:
+            if lo_key in item:
+                prose = item.get("special", "")
+                assert f"{item[lo_key]}%" in prose, f"{item_id}: {item[lo_key]}% missing from special"
+                assert f"{item[hi_key]}%" in prose, f"{item_id}: {item[hi_key]}% missing from special"
