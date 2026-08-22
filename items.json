@@ -466,8 +466,6 @@
     "special": "10% de chance d'enflammer la cible"
   },
 
-
-
   "chain-helmet": {
     "label": "Casque renforcé en maille",
     "icon": "items/chain-helmet.png",
@@ -531,8 +529,6 @@
     "min_strength": 12,
     "min_mental": 10
   },
-
-
 
   "ylside-chest": {
     "label": "Plastron ylside",
@@ -620,8 +616,6 @@
     "min_strength": 10,
     "min_mental": 9
   },
-
-
 
   "ylside-bottoms": {
     "label": "Jambière ylside",
@@ -716,8 +710,6 @@
     "min_constitution": 12
   },
 
-
-
   "krahoz": {
     "label": "Krahoz",
     "icon": "items/krahoz.png",
@@ -756,8 +748,6 @@
     "cat": "bijoux",
     "size": "1x1"
   },
-
-
 
   "rune-aam": {
     "label": "Rune : Aam (Créer)",
@@ -1421,20 +1411,53 @@
     "caster_level": 85
   },
 
+
+
   "potion-mana": {
     "label": "Potion de mana",
     "effect": "potions",
     "icon": "items/potion-mana.png",
     "cat": "objet",
-    "size": "1x1"
+    "size": "1x1",
+    "mana_min": 20,
+    "mana_max": 35
   },
   "health-potion": {
     "label": "Potion de vie",
     "effect": "potions",
     "icon": "items/health-potion.png",
     "cat": "objet",
-    "size": "1x1"
+    "size": "1x1",
+    "heal_min": 20,
+    "heal_max": 35
   },
+  "potion-poison": {
+    "label": "Fiole de poison",
+    "effect": "potions",
+    "icon": "items/potion-poison.png",
+    "cat": "objet",
+    "size": "1x1",
+    "special": "Applique un effet de poison à la cible"
+  },
+  "potion-antidote": {
+    "label": "Fiole d'antidote",
+    "effect": "potions",
+    "icon": "items/potion-antidote.png",
+    "cat": "objet",
+    "size": "1x1",
+    "special": "Annule les effets du poison"
+  },
+  "potion-invisibility": {
+    "label": "Concoction d'invisibilité",
+    "effect": "potions",
+    "icon": "items/potion-invisibility.png",
+    "cat": "objet",
+    "size": "1x1",
+    "special": "Rend le consommateur invisible durant 1d4 tours — annulé par l'action"
+  },
+
+
+
 
   "applepie": {
     "label": "Tarte aux pommes",
@@ -1526,7 +1549,9 @@
     "effect": "drinks",
     "icon": "items/bottle-wine.png",
     "cat": "objet",
-    "size": "1x1"
+    "size": "1x1",
+    "heal_min": 5,
+    "heal_max": 10
   },
   "water": {
     "label": "Eau",

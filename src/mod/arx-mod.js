@@ -90,6 +90,13 @@ function arxSetAttrMax(charId, baseName, value) {
   if (stray) { stray.remove(); }
 }
 
+/* Read side of the same reserved-suffix story: the MAX field of the
+   "health"/"mana" attribute, never an attribute called "health_max". */
+function arxGetAttrMax(charId, baseName) {
+  const attr = findObjs({ type: "attribute", characterid: charId, name: baseName })[0];
+  return attr ? String(attr.get("max") || "") : "";
+}
+
 function arxSizeOf(itemId) {
   const s = (ARX_ITEMS[itemId] && ARX_ITEMS[itemId].size) || "1x1";
   const parts = s.split("x");
@@ -844,6 +851,41 @@ on("chat:message", function (msg) {
    this map is the only one. */
 const ARX_CONSUME_VERBS = { food: "mange", drinks: "boit", potions: "consomme" };
 
+/* Restoring health/mana on consume is driven by the VALUES an item carries,
+   never by its effect: heal_min/heal_max (health) and mana_min/mana_max
+   (mana) turn any consumable into a potion. That is what keeps the wine on
+   "drinks" — and its "boit" verb — while still healing, and it lets one item
+   refill both pools without a "which pool" discriminator to keep in sync.
+   Both ends are percentages of the MAX pool, rolled inclusive; the gain is
+   rounded to the nearest point and floored at 1 so a low-level character is
+   never handed a +0. Overheal is clamped to the max, and a character already
+   at full still spends the item — by the time we get here the case is empty
+   either way, and refusing would need the removal above to be undone. */
+const ARX_REGEN_POOLS = [
+  { pool: "health", min: "heal_min", max: "heal_max", unit: "PV" },
+  { pool: "mana",   min: "mana_min", max: "mana_max", unit: "PM" }
+];
+
+function arxRegenReport(charId, item) {
+  const lines = [];
+  ARX_REGEN_POOLS.forEach(function (spec) {
+    if (item[spec.min] === undefined || item[spec.max] === undefined) { return; }
+    const lo = Number(item[spec.min]);
+    const hi = Number(item[spec.max]);
+    const pct = lo + Math.floor(Math.random() * (hi - lo + 1));
+    const poolMax = parseInt(arxGetAttrMax(charId, spec.pool), 10) || 0;
+    const before = parseInt(arxGetAttr(charId, spec.pool), 10) || 0;
+    const gain = Math.max(1, Math.round(poolMax * pct / 100));
+    const after = Math.min(poolMax, before + gain);
+    arxSetAttr(charId, spec.pool, after);
+    lines.push(lo + "% à " + hi + "% → " + pct + "% = +" + (after - before) + " " + spec.unit +
+               " (" + before + " → " + after + ")" +
+               (after === before ? " — déjà au maximum" : ""));
+  });
+  return lines;
+}
+
+
 on("chat:message", function (msg) {
   if (msg.type !== "api" || msg.content.indexOf("!arxconsume") !== 0) { return; }
   const charId = arxResolveCharacterForPlayer(msg);
@@ -872,6 +914,9 @@ on("chat:message", function (msg) {
     .forEach(function (n) { arxSetAttr(charId, n, ""); });
 
   sendChat("character|" + charId, "/me " + verb + " : " + item.label);
+  arxRegenReport(charId, item).forEach(function (line) {
+    sendChat("ARX", item.label + " — " + line);
+  });
 });
 
 on("chat:message", function (msg) {
