@@ -1105,20 +1105,22 @@ on(BREAKDOWN_GETATTRS.map(function (a) { return "change:" + a; }).join(" "),
 
 on("sheet:opened", function () { getAttrs(BREAKDOWN_GETATTRS, recomputeOwnShares); });
 
-/* Caster level: hidden (never shown to the player), wiki.arx-libertatis.org/
-   Caster_level — "(full_casting + full_mind) / 10", clamped 1-10 ("full_mind"
-   is that wiki's own name for the Mental attribute). Not equipment-moddable
-   (no item.json field for it) and never manually edited, so a plain
-   recompute-and-set is enough — no delta/seed tracking needed like the
-   visible stats above. Meant for spell power/duration/mana cost and scroll
-   potency later, not wired into anything yet. */
+/* Caster level: hidden (never shown to the player). The GM's own rule —
+   floor(casting / 10), clamped 1-10: Magie 91 is level 9, 100 is level 10.
+   (The wiki's "(full_casting + full_mind) / 10" added Mental on top and
+   landed players one level too high — his call overrides the wiki here.)
+   Not equipment-moddable (no item.json field for it) and never manually
+   edited, so a plain recompute-and-set is enough — no delta/seed tracking
+   needed like the visible stats above. Feeds the spell cards' dice counts
+   and mana costs (see spellRollExtras). */
 function recomputeCasterLevel(v) {
   const casting = parseInt(v.casting, 10) || 0;
-  const mental = parseInt(v.mental, 10) || 0;
-  setAttrs({ caster_level: Math.max(1, Math.min(10, Math.floor((casting + mental) / 10))) });
+  setAttrs({ caster_level: Math.max(1, Math.min(10, Math.floor(casting / 10))) });
 }
 
-on("change:casting change:mental", function () { getAttrs(["casting", "mental"], recomputeCasterLevel); });
+/* Mental no longer enters the formula directly, but a Mental change moves
+   the derived Magie skill itself, which fires change:casting anyway. */
+on("change:casting", function () { getAttrs(["casting"], recomputeCasterLevel); });
 
 on("sheet:opened", function () { getAttrs(["casting", "mental"], recomputeCasterLevel); });
 

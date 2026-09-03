@@ -1222,3 +1222,13 @@ def test_cast_rolls_include_spell_rules():
     # grimoire page (secret scrolls cast at 10), no mana line
     assert "const rules = SPELLS[spellId] || item;" in html
     assert "const lvl = SPELLS[spellId] && SPELLS[spellId].page ? SPELLS[spellId].page : 10;" in html
+
+
+def test_caster_level_is_casting_over_ten():
+    """The GM's rule: magic level = floor(casting / 10) clamped 1-10 — Magie
+    91 is level 9, 100 is level 10. Mental stays out of the formula (the wiki
+    added it and landed one level too high); it still moves the level
+    indirectly through the derived Magie skill itself."""
+    html = build.render_html()
+    assert "caster_level: Math.max(1, Math.min(10, Math.floor(casting / 10)))" in html
+    assert "(casting + mental) / 10" not in html
