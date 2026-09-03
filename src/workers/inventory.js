@@ -366,7 +366,9 @@ on("clicked:slot_grimoire", function () {
    with no rules — e.g. the free-form variant scrolls — adds nothing. */
 const SPELL_DMG_LABELS = { "soin": "Soin", "drain de PM": "Drain de mana",
   "drain de PV": "Drain de vie", "flétrissement": "Flétrissement",
-  "cercle proche": "Cercle proche", "cercle éloigné": "Cercle éloigné" };
+  "cercle proche": "Cercle proche", "cercle éloigné": "Cercle éloigné",
+  "absorption": "Absorption", "malus CA": "Malus de CA", "charges": "Charges",
+  "bonus attributs": "Bonus aux attributs", "malus attributs": "Malus aux attributs" };
 
 function spellDmgRow(spec, par, type, lvlExpr) {
   const m = /^(\d+)d(\d+)$/.exec(spec || "");
@@ -382,8 +384,10 @@ function spellRollExtras(rules, lvlExpr) {
   if (!rules) { return ""; }
   let out = spellDmgRow(rules.dmg, rules.dmg_par, rules.dmg_type, lvlExpr)
           + spellDmgRow(rules.dmg2, rules.dmg_par, rules.dmg2_type, lvlExpr);
+  /* Proc: just its name as the row title — the threshold stays data-side,
+     the GM compares. */
   if (rules.proc_pct) {
-    out += " {{Proc " + rules.proc_name + " (réussi ≤ " + rules.proc_pct + ")=[[1d100]]}}";
+    out += " {{" + rules.proc_name + "=[[1d100]]}}";
   }
   return out;
 }
@@ -404,9 +408,10 @@ function spellManaLine(rules, lvlExpr) {
   return cost ? " {{Coût=" + cost + "}}" : "";
 }
 
-/* Reading a scroll (items.json's scroll-* entries, effect "scroll"): 1d100
-   roll-under against the scroll's OWN fixed spell_casting and caster_level
-   — never the player's live @{casting}/@{caster_level} (wiki.arx-libertatis.
+/* Reading a scroll (items.json's scroll-* entries, effect "scroll"): the
+   casting check happens BEFORE, rolled by hand against the scroll's OWN
+   fixed spell_casting (shown as Valeur on the card) — never the player's
+   live @{casting}/@{caster_level} (wiki.arx-libertatis.
    org/Caster_level: "Precast spells from reading scrolls always have a
    fixed caster level") — labeled with its spell_label, then the scroll is
    consumed (it's one-shot, same as a memorized preset). */
@@ -424,7 +429,7 @@ on("clicked:read_scroll", function () {
     const spellId = hand.replace(/^scroll-/, "");
     const rules = SPELLS[spellId] || item;
     const lvl = SPELLS[spellId] && SPELLS[spellId].page ? SPELLS[spellId].page : 10;
-    startRoll("&{template:default} {{name=" + item.spell_label + "}} {{Valeur=" + item.spell_casting + "}} {{Niveau Magique=" + lvl + "}} {{Jet=[[1d100]]}}"
+    startRoll("&{template:default} {{name=" + item.spell_label + "}}"
       + spellRollExtras(rules, String(lvl)),
       function (results) { finishRoll(results.rollId, {}); });
     const update = { hand: "", hand_from: "", hand_cat: "", hand_effect: "", fit: "" };
@@ -621,7 +626,7 @@ on("clicked:craft_confirm", function () {
     });
     if (matchId) {
       const label = SPELLS[matchId].label;
-      startRoll("&{template:default} {{name=" + label + "}} {{Valeur=[[@{casting}+@{casting_gm_mod}]]}} {{Niveau Magique=@{caster_level}}} {{Jet=[[1d100]]}}"
+      startRoll("&{template:default} {{name=" + label + "}}"
         + spellRollExtras(SPELLS[matchId], "@{caster_level}") + spellManaLine(SPELLS[matchId], "@{caster_level}"),
         function (results) { finishRoll(results.rollId, {}); });
     }
@@ -665,7 +670,7 @@ on("clicked:craft_reset", function () {
       const presetId = v["preset_slot_" + n];
       if (!presetId || !PRESETS[presetId]) { return; }
       const label = PRESETS[presetId].label;
-      startRoll("&{template:default} {{name=Sort mémorisé : " + label + "}} {{Valeur=[[@{casting}+@{casting_gm_mod}]]}} {{Niveau Magique=@{caster_level}}} {{Jet=[[1d100]]}}"
+      startRoll("&{template:default} {{name=Sort mémorisé : " + label + "}}"
         + spellRollExtras(SPELLS[presetId], "@{caster_level}") + spellManaLine(SPELLS[presetId], "@{caster_level}"),
         function (results) { finishRoll(results.rollId, {}); });
       const update = {};

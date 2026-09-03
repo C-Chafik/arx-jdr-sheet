@@ -96,7 +96,10 @@
     "desc": "Confère une armure magique à la cible — se cumule",
     "mana": 5,
     "mana_par": "3 tours·lvl",
-    "note": "absorbe 5 PV par lvl"
+    "note": "absorbe 5 PV par lvl",
+    "dmg": "5d1",
+    "dmg_par": "lvl",
+    "dmg_type": "absorption"
   },
   "vulnerability": {
     "label": "Vulnérabilité",
@@ -110,7 +113,10 @@
     "desc": "Diminue la classe d'armure de la cible",
     "mana": 4,
     "mana_par": "lvl·tour",
-    "note": "−10 CA par lvl"
+    "note": "−10 CA par lvl",
+    "dmg": "10d1",
+    "dmg_par": "lvl",
+    "dmg_type": "malus CA"
   },
   "celerity": {
     "label": "Célérité",
@@ -184,7 +190,10 @@
     "icon": "spells/blessing.png",
     "desc": "Bénit le lanceur — +1 à tous les attributs par niveau",
     "mana": 5,
-    "mana_par": "lvl·tour"
+    "mana_par": "lvl·tour",
+    "dmg": "1d1",
+    "dmg_par": "lvl",
+    "dmg_type": "bonus attributs"
   },
   "negate_field": {
     "label": "Negation de champ",
@@ -265,7 +274,10 @@
     "slot": 3,
     "icon": "spells/antidote.png",
     "desc": "Soigne les effets du poison — 1 charge par niveau",
-    "mana": 10
+    "mana": 10,
+    "dmg": "1d1",
+    "dmg_par": "lvl",
+    "dmg_type": "charges"
   },
   "repell_undead": {
     "label": "Repousser les morts",

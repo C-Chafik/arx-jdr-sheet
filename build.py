@@ -123,6 +123,46 @@ __CONTENT__
   };
   window.setAttrs = function (upd) { Object.keys(upd).forEach(function (k) { setAttr(k, String(upd[k])); }); };
 
+  /* startRoll/finishRoll: absent du shim jusqu'ici — lancer un sort dans la
+     preview jetait une ReferenceError. Ce stub resout les @{attr} depuis le
+     DOM, lance reellement les des des [[...]] (formes NdF et (A*B)dF) et
+     affiche la carte dans un chat de dev. */
+  const chat = document.createElement("div");
+  chat.id = "arx-chat";
+  chat.style.cssText = "position:fixed;top:8px;right:8px;width:290px;max-height:70vh;overflow:auto;" +
+    "z-index:98;font:12px sans-serif;display:flex;flex-direction:column;gap:6px;";
+  document.body.appendChild(chat);
+  function rollDice(count, faces) {
+    let total = 0, parts = [];
+    for (let i = 0; i < count; i++) { const r = 1 + Math.floor(Math.random() * faces); total += r; parts.push(r); }
+    return { total: total, parts: parts };
+  }
+  window.startRoll = function (template, cb) {
+    let txt = template.replace(/@\\{([^}]+)\\}/g, function (_, n) { return getAttr(n) || "0"; });
+    txt = txt.replace(/\\[\\[([^\\]]+)\\]\\]/g, function (_, expr) {
+      const withDice = expr.replace(/(\\d+|\\([^()]*\\))d(\\d+)/g, function (_, cnt, faces) {
+        let count = 0;
+        try { count = Math.max(0, Math.floor(new Function("return (" + cnt + ")")())); } catch (e) { return "0"; }
+        const r = rollDice(count, parseInt(faces, 10));
+        return "(" + (r.parts.join("+") || "0") + ")";
+      });
+      try { return "\\u27E6" + new Function("return (" + withDice + ")")() + "\\u27E7"; } catch (e) { return expr; }
+    });
+    const card = document.createElement("div");
+    card.style.cssText = "background:#20242b;color:#e8e2d5;border:1px solid #3a404b;border-radius:6px;padding:7px 9px;";
+    txt.replace(/^&\\{template:default\\}\\s*/, "").split(/\\}\\}\\s*/).forEach(function (row) {
+      const m = /\\{\\{([^=]+)=([\\s\\S]*)$/.exec(row);
+      if (!m) { return; }
+      const line = document.createElement("div");
+      if (m[1] === "name") { line.style.cssText = "font-weight:bold;color:#d2a44a;border-bottom:1px solid #3a404b;margin-bottom:3px;"; line.textContent = m[2]; }
+      else { line.textContent = m[1] + " : " + m[2]; }
+      card.appendChild(line);
+    });
+    chat.prepend(card);
+    cb({ rollId: 0, results: {} });
+  };
+  window.finishRoll = function () {};
+
   const workerScript = document.querySelector('script[type="text/worker"]');
   if (workerScript) { new Function(workerScript.textContent)(); }
 

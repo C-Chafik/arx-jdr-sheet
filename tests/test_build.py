@@ -997,11 +997,14 @@ def test_gm_mods_count_in_every_roll_target():
     # lead term is the same [[skill+mod]] as the total's first two terms
     assert ('{{Valeur=[[@{stealth}+@{stealth_gm_mod}]] + Dextérité (Focus) = '
             '[[@{stealth}+@{stealth_gm_mod}+@{dexterity}+@{dexterity_gm_mod}]]}}') in html
-    # Spellcasting (crafted + memorized — the caster_level row tells them
-    # apart from the Magie skill button's own roll), but NOT scrolls: a
-    # scroll rolls its own fixed spell_casting, never the caster's live stat
-    assert html.count('{{Valeur=[[@{casting}+@{casting_gm_mod}]]}} {{Niveau Magique=@{caster_level}}}') == 2
-    assert '{{Valeur=" + item.spell_casting + "}}' in html
+    # Spellcasting: the casting check happens BEFORE the cast, on the Magie
+    # skill button (asserted above via the generic skill-roll shape) — the
+    # spell cards themselves roll no d100 and show no Valeur/Niveau Magique.
+    # Spell cards — grimoire and scroll alike — show only the spell's
+    # results (damage, heal, effect, proc, cost): no Valeur anywhere.
+    assert '{{Valeur=[[@{casting}+@{casting_gm_mod}]]}} {{Niveau Magique' not in html
+    assert '{{Valeur=" + item.spell_casting + "}}' not in html
+    assert '"}} {{Jet=[[1d100]]}}"\n      + spellRollExtras' not in html
     # Damages: the mod joins the stat before the 0.8-1.0 scaling
     handler = _damage_handler(html)
     assert '(parseInt(v.damages, 10) || 0) + (parseInt(v.damages_gm_mod, 10) || 0)' in handler
@@ -1212,7 +1215,7 @@ def test_cast_rolls_include_spell_rules():
     # dice count grows with the level: (N*lvl)dF
     assert '"(" + m[1] + "*" + lvlExpr + ")d" + m[2]' in html
     # proc: named, rolled under its percentage
-    assert '" {{Proc " + rules.proc_name + " (réussi ≤ " + rules.proc_pct + ")=[[1d100]]}}"' in html
+    assert '" {{" + rules.proc_name + "=[[1d100]]}}"' in html
     # the two grimoire paths carry dice AND cost
     assert html.count('spellManaLine(SPELLS[') == 2
     # the scroll path: rules fall back to the item, level = the spell's

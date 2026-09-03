@@ -1892,7 +1892,10 @@
     "caster_level": 50,
     "desc": "Maudit la cible — malus de 1 partout par niveau",
     "mana": 5,
-    "mana_par": "lvl·tour"
+    "mana_par": "lvl·tour",
+    "dmg": "1d1",
+    "dmg_par": "lvl",
+    "dmg_type": "malus attributs"
   },
   "scroll-life_drain": {
     "label": "Parchemin : Drain de vie",
@@ -1981,7 +1984,10 @@
     "caster_level": 50,
     "desc": "Projette un projectile empoisonné — 1 charge par niveau",
     "mana": 10,
-    "mana_par": "lvl"
+    "mana_par": "lvl",
+    "dmg": "1d1",
+    "dmg_par": "lvl",
+    "dmg_type": "charges"
   },
   "scroll-cold_protection": {
     "label": "Parchemin : Protection contre le froid",
