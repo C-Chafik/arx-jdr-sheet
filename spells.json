@@ -7,7 +7,11 @@
     ],
     "page": 1,
     "slot": 1,
-    "icon": "spells/magic-sight.png"
+    "icon": "spells/magic-sight.png",
+    "desc": "Octroie le don de nyctalopie",
+    "mana": 1,
+    "mana_par": "tour",
+    "note": "se désactive manuellement, à mana épuisée, ou si violemment attaqué"
   },
   "projectile_magique": {
     "label": "Projectile magique",
@@ -17,7 +21,12 @@
     ],
     "page": 1,
     "slot": 2,
-    "icon": "spells/magic-bolt.png"
+    "icon": "spells/magic-bolt.png",
+    "desc": "Envoie un ou plusieurs projectiles d'énergie magique",
+    "dmg": "1d4",
+    "dmg_par": "lvl",
+    "mana": 1,
+    "mana_par": "lvl"
   },
   "ignit": {
     "label": "Etincelle",
@@ -27,7 +36,10 @@
     ],
     "page": 1,
     "slot": 3,
-    "icon": "spells/ignit.png"
+    "icon": "spells/ignit.png",
+    "desc": "Embrase toute surface aisément inflammable autour de l'incantateur — dirigeable",
+    "mana": 1,
+    "mana_par": "surface"
   },
   "extinction": {
     "label": "Extinction",
@@ -37,7 +49,10 @@
     ],
     "page": 1,
     "slot": 4,
-    "icon": "spells/douse.png"
+    "icon": "spells/douse.png",
+    "desc": "Étouffe toute flamme à proximité de l'incantateur — dirigeable",
+    "mana": 1,
+    "mana_par": "feu rencontré"
   },
   "health": {
     "label": "Sphère de soin",
@@ -47,7 +62,13 @@
     ],
     "page": 2,
     "slot": 1,
-    "icon": "spells/heal.png"
+    "icon": "spells/heal.png",
+    "desc": "Soigne la cible",
+    "dmg": "1d10",
+    "dmg_par": "lvl",
+    "dmg_type": "soin",
+    "mana": 6,
+    "mana_par": "lvl"
   },
   "trap-detection": {
     "label": "Détection des pièges",
@@ -58,7 +79,10 @@
     ],
     "page": 2,
     "slot": 2,
-    "icon": "spells/trap-detection.png"
+    "icon": "spells/trap-detection.png",
+    "desc": "Détecte les pièges — radius selon le niveau de magie",
+    "mana": 5,
+    "mana_par": "10m"
   },
   "protection": {
     "label": "Aura de protection",
@@ -68,7 +92,11 @@
     ],
     "page": 2,
     "slot": 3,
-    "icon": "spells/armor.png"
+    "icon": "spells/armor.png",
+    "desc": "Confère une armure magique à la cible — se cumule",
+    "mana": 5,
+    "mana_par": "3 tours·lvl",
+    "note": "absorbe 5 PV par lvl"
   },
   "vulnerability": {
     "label": "Vulnérabilité",
@@ -78,7 +106,11 @@
     ],
     "page": 2,
     "slot": 4,
-    "icon": "spells/vulnerability.png"
+    "icon": "spells/vulnerability.png",
+    "desc": "Diminue la classe d'armure de la cible",
+    "mana": 4,
+    "mana_par": "lvl·tour",
+    "note": "−10 CA par lvl"
   },
   "celerity": {
     "label": "Célérité",
@@ -88,7 +120,11 @@
     ],
     "page": 3,
     "slot": 1,
-    "icon": "spells/celerity.png"
+    "icon": "spells/celerity.png",
+    "desc": "Augmente considérablement la vitesse de mouvement et d'exécution — cumulable",
+    "mana": 10,
+    "mana_par": "2 tours",
+    "mana_note": "30 puis 50 aux itérations suivantes"
   },
   "revelation": {
     "label": "Révélation",
@@ -99,7 +135,10 @@
     ],
     "page": 3,
     "slot": 2,
-    "icon": "spells/reveal.png"
+    "icon": "spells/reveal.png",
+    "desc": "Dissipe les illusions et autres altérations de la perception",
+    "mana": 10,
+    "mana_par": "tour"
   },
   "fireball": {
     "label": "Boule de feu",
@@ -110,7 +149,14 @@
     ],
     "page": 3,
     "slot": 3,
-    "icon": "spells/fireball.png"
+    "icon": "spells/fireball.png",
+    "desc": "Envoie une boule de feu — masse, radius, terreur et chaleur croissent par niveau",
+    "dmg": "2d6",
+    "dmg_par": "lvl",
+    "proc_pct": 30,
+    "proc_name": "Embrasement",
+    "mana": 5,
+    "mana_par": "lvl"
   },
   "sustentation": {
     "label": "Sustentation",
@@ -121,7 +167,10 @@
     ],
     "page": 3,
     "slot": 4,
-    "icon": "spells/sustentation.png"
+    "icon": "spells/sustentation.png",
+    "desc": "Crée de la nourriture comestible pour chaque entité souhaitée",
+    "mana": 5,
+    "mana_par": "profondeur"
   },
   "blessing": {
     "label": "Bénédiction",
@@ -132,7 +181,10 @@
     ],
     "page": 4,
     "slot": 1,
-    "icon": "spells/blessing.png"
+    "icon": "spells/blessing.png",
+    "desc": "Bénit le lanceur — +1 à tous les attributs par niveau",
+    "mana": 5,
+    "mana_par": "lvl·tour"
   },
   "negate_field": {
     "label": "Negation de champ",
@@ -142,7 +194,10 @@
     ],
     "page": 4,
     "slot": 2,
-    "icon": "spells/dispell-field.png"
+    "icon": "spells/dispell-field.png",
+    "desc": "Désactive un champ — force, flammes, glace, foudre…",
+    "mana": 12,
+    "mana_note": "proportionnel au champ"
   },
   "fire_protection": {
     "label": "Protection contre le feu",
@@ -152,7 +207,10 @@
     ],
     "page": 4,
     "slot": 3,
-    "icon": "spells/fire-protection.png"
+    "icon": "spells/fire-protection.png",
+    "desc": "Immunise contre le feu et la chaleur",
+    "mana": 10,
+    "mana_par": "tour"
   },
   "telekinezie": {
     "label": "Télékinezie",
@@ -162,7 +220,10 @@
     ],
     "page": 4,
     "slot": 4,
-    "icon": "spells/telekinezis.png"
+    "icon": "spells/telekinezis.png",
+    "desc": "Interaction à distance par force psychique — concentration à maintenir",
+    "mana": 10,
+    "mana_par": "tour"
   },
   "rune_guarding": {
     "label": "Rune explosive",
@@ -173,7 +234,12 @@
     ],
     "page": 5,
     "slot": 1,
-    "icon": "spells/rune-guarding.png"
+    "icon": "spells/rune-guarding.png",
+    "desc": "Crée une glyphe explosive sur une surface — 10 dégâts fixes par niveau au déclenchement",
+    "dmg": "10d1",
+    "dmg_par": "lvl",
+    "mana": 9,
+    "mana_par": "lvl"
   },
   "levitation": {
     "label": "Lévitation",
@@ -184,7 +250,10 @@
     ],
     "page": 5,
     "slot": 2,
-    "icon": "spells/levitate.png"
+    "icon": "spells/levitate.png",
+    "desc": "Permet de léviter",
+    "mana": 10,
+    "mana_par": "tour"
   },
   "antidote": {
     "label": "Antidote",
@@ -194,7 +263,9 @@
     ],
     "page": 5,
     "slot": 3,
-    "icon": "spells/antidote.png"
+    "icon": "spells/antidote.png",
+    "desc": "Soigne les effets du poison — 1 charge par niveau",
+    "mana": 10
   },
   "repell_undead": {
     "label": "Repousser les morts",
@@ -204,7 +275,10 @@
     ],
     "page": 5,
     "slot": 4,
-    "icon": "spells/repel-undead.png"
+    "icon": "spells/repel-undead.png",
+    "desc": "Tente de faire fuir certains morts-vivants et démons mineurs — contexte et niveau, MJ",
+    "mana": 10,
+    "mana_note": "+ selon contexte"
   },
   "raise_undead": {
     "label": "Invocation de mort vivant",
@@ -215,7 +289,10 @@
     ],
     "page": 6,
     "slot": 1,
-    "icon": "spells/raise-dead.png"
+    "icon": "spells/raise-dead.png",
+    "desc": "Réanime, exhume ou invoque un mort-vivant selon contexte et conditions — RP MJ",
+    "mana": 15,
+    "mana_note": "+ contexte"
   },
   "paralysis": {
     "label": "Paralysie",
@@ -225,7 +302,10 @@
     ],
     "page": 6,
     "slot": 2,
-    "icon": "spells/paralysis.png"
+    "icon": "spells/paralysis.png",
+    "desc": "Paralyse la cible — jet de fuite chaque tour, difficulté selon le niveau de magie",
+    "mana": 10,
+    "mana_par": "lvl·tour"
   },
   "force_field": {
     "label": "Champ de force",
@@ -236,7 +316,11 @@
     ],
     "page": 6,
     "slot": 3,
-    "icon": "spells/force-field.png"
+    "icon": "spells/force-field.png",
+    "desc": "Déploie un champ de force tangible",
+    "mana": 12,
+    "mana_par": "2 tours",
+    "mana_note": "selon radius — ou 100 définitif"
   },
   "disarm_trap": {
     "label": "Désactivation des pièges",
@@ -247,7 +331,10 @@
     ],
     "page": 6,
     "slot": 4,
-    "icon": "spells/disarm-trap.png"
+    "icon": "spells/disarm-trap.png",
+    "desc": "Désactive les pièges et mécanismes détectés",
+    "mana": 15,
+    "mana_par": "piège"
   },
   "third_eye": {
     "label": "Troisième Oeil",
@@ -257,7 +344,10 @@
     ],
     "page": 7,
     "slot": 1,
-    "icon": "spells/third-eye.png"
+    "icon": "spells/third-eye.png",
+    "desc": "Explore les environs hors de son corps — portée selon niveau, œil invisible à lvl 7",
+    "mana": 16,
+    "mana_note": "selon contexte"
   },
   "fire_field": {
     "label": "Champ de flammes",
@@ -268,7 +358,14 @@
     ],
     "page": 7,
     "slot": 2,
-    "icon": "spells/firewall.png"
+    "icon": "spells/firewall.png",
+    "desc": "Champ de flammes — concentration, rompue si attaqué",
+    "dmg": "3d4",
+    "dmg_par": "lvl·tour",
+    "proc_pct": 40,
+    "proc_name": "Embrasement",
+    "mana": 8,
+    "mana_par": "lvl·tour"
   },
   "lighting_strike": {
     "label": "Foudre (Projection)",
@@ -279,7 +376,14 @@
     ],
     "page": 7,
     "slot": 3,
-    "icon": "spells/lightning-strike.png"
+    "icon": "spells/lightning-strike.png",
+    "desc": "Projette une colossale tension électrique vers la cible — multi-cible selon contexte",
+    "dmg": "2d10",
+    "dmg_par": "lvl",
+    "proc_pct": 20,
+    "proc_name": "Paralysie 1 tour",
+    "mana": 9,
+    "mana_par": "lvl·tour"
   },
   "confusion": {
     "label": "Confusion",
@@ -289,7 +393,10 @@
     ],
     "page": 7,
     "slot": 4,
-    "icon": "spells/confusion.png"
+    "icon": "spells/confusion.png",
+    "desc": "Rend la cible confuse et désorientée — exige mental et/ou niveau supérieurs",
+    "mana": 30,
+    "mana_par": "tour"
   },
   "invisibility": {
     "label": "Invisibilité",
@@ -299,7 +406,10 @@
     ],
     "page": 8,
     "slot": 1,
-    "icon": "spells/invisibility.png"
+    "icon": "spells/invisibility.png",
+    "desc": "Rend le lanceur invisible — s'estompe à toute action",
+    "mana": 30,
+    "mana_par": "tour"
   },
   "mana_drain": {
     "label": "Drain de mana",
@@ -309,7 +419,13 @@
     ],
     "page": 8,
     "slot": 2,
-    "icon": "spells/mana-drain.png"
+    "icon": "spells/mana-drain.png",
+    "desc": "Draine la mana des entités à proximité — limité à la réserve de la cible",
+    "dmg": "2d13",
+    "dmg_par": "tour",
+    "dmg_type": "drain de PM",
+    "mana": 8,
+    "mana_par": "tour"
   },
   "chaos": {
     "label": "Chaos",
@@ -320,7 +436,16 @@
     ],
     "page": 8,
     "slot": 3,
-    "icon": "spells/chaos.png"
+    "icon": "spells/chaos.png",
+    "desc": "Libération de magie cinétique explosant/implosant autour de l'incantateur — radius selon niveau",
+    "dmg": "3d23",
+    "dmg_par": "lvl",
+    "dmg_type": "cercle proche",
+    "dmg2": "2d22",
+    "dmg2_type": "cercle éloigné",
+    "mana": 25,
+    "mana_par": "lvl",
+    "note": "le MJ répartit les deux jets entre les cibles"
   },
   "enchantement": {
     "label": "Enchantement",
@@ -331,7 +456,9 @@
     ],
     "page": 8,
     "slot": 4,
-    "icon": "spells/enchantment.png"
+    "icon": "spells/enchantment.png",
+    "desc": "Enchante un objet",
+    "mana_note": "selon l'objet à enchanter"
   },
   "invocation_demon": {
     "label": "Invocation démoniaque (Non contrôlé)",
@@ -342,7 +469,10 @@
     ],
     "page": 9,
     "slot": 1,
-    "icon": "spells/invocation-demon.png"
+    "icon": "spells/invocation-demon.png",
+    "desc": "Invoque une entité démoniaque hors de contrôle — dépend du niveau, lieu, contexte, SECRET",
+    "mana": 90,
+    "mana_note": "+ si choix spécifique"
   },
   "negate_magic": {
     "label": "Aura d'antimagie",
@@ -353,7 +483,10 @@
     ],
     "page": 9,
     "slot": 2,
-    "icon": "spells/negate-magic.png"
+    "icon": "spells/negate-magic.png",
+    "desc": "Annihile toute magie dans un périmètre autour du lanceur",
+    "mana": "tout",
+    "note": "vide toute sa mana"
   },
   "incineration": {
     "label": "Incandescence",
@@ -364,7 +497,11 @@
     ],
     "page": 9,
     "slot": 3,
-    "icon": "spells/incineration.png"
+    "icon": "spells/incineration.png",
+    "desc": "Combustion spontanée interne sur une cible — sauvegarde par tour (DEF ou PSY)",
+    "dmg": "2d25",
+    "dmg_par": "tour",
+    "mana": 150
   },
   "mass_paralysis": {
     "label": "Paralysie massive",
@@ -375,7 +512,10 @@
     ],
     "page": 9,
     "slot": 4,
-    "icon": "spells/mass-paralysis.png"
+    "icon": "spells/mass-paralysis.png",
+    "desc": "Paralyse toute entité à proximité sauf le lanceur — jet de fuite par tour",
+    "mana": 20,
+    "mana_par": "lvl·tour"
   },
   "mass_lightning_strike": {
     "label": "Champ de foudre",
@@ -386,7 +526,14 @@
     ],
     "page": 10,
     "slot": 1,
-    "icon": "spells/mass-lightning-strike.png"
+    "icon": "spells/mass-lightning-strike.png",
+    "desc": "Conjure un champ de foudre face à l'incantateur — maintien",
+    "dmg": "4d9",
+    "dmg_par": "lvl",
+    "proc_pct": 25,
+    "proc_name": "Paralysie 1 tour",
+    "mana": 15,
+    "mana_par": "lvl·tour"
   },
   "mind_control": {
     "label": "Contrôle mental",
@@ -396,7 +543,10 @@
     ],
     "page": 10,
     "slot": 2,
-    "icon": "spells/mind-control.png"
+    "icon": "spells/mind-control.png",
+    "desc": "Contrôle un démon préalablement invoqué ou une entité inférieure — maintien, contexte",
+    "mana": 40,
+    "mana_par": "tour"
   },
   "the_world": {
     "label": "Faille temporelle",
@@ -406,7 +556,11 @@
     ],
     "page": 10,
     "slot": 3,
-    "icon": "spells/the-world.png"
+    "icon": "spells/the-world.png",
+    "desc": "Ralentit le temps pour tout le monde sauf le lanceur — concentration",
+    "mana": 60,
+    "mana_par": "tour",
+    "mana_note": "+20 par lvl"
   },
   "mass_incineration": {
     "label": "Fournaise",
@@ -417,6 +571,10 @@
     ],
     "page": 10,
     "slot": 4,
-    "icon": "spells/mass-incineration.png"
+    "icon": "spells/mass-incineration.png",
+    "desc": "Combustion spontanée interne en zone (10 m par niveau) — sauvegarde par tour",
+    "dmg": "2d30",
+    "dmg_par": "tour",
+    "mana": 200
   }
 }

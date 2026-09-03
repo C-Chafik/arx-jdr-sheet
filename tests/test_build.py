@@ -1157,3 +1157,65 @@ def test_regen_range_is_spelled_out_in_special():
                 prose = item.get("special", "")
                 assert f"{item[lo_key]}%" in prose, f"{item_id}: {item[lo_key]}% missing from special"
                 assert f"{item[hi_key]}%" in prose, f"{item_id}: {item[hi_key]}% missing from special"
+
+
+SPELL_RULE_IDS_SECRET = [
+    "scroll-life_drain", "scroll-harm", "scroll-cold_protection", "scroll-ice_field",
+    "scroll-make_friend", "scroll-firewall", "scroll-poison_projection", "scroll-ice_bolt",
+    "scroll-curse", "scroll-slow_down", "scroll-portal_activation",
+]
+
+
+def test_spell_rules_are_valid():
+    """Every grimoire spell and every secret scroll carries well-formed table
+    rules: dice as NdF, a proc always paired pct+name (1-99, rolled 1d100
+    under it), mana a positive number or the special "tout"."""
+    entries = list(build.load_spells().values())
+    items = build.load_items()
+    for item_id in SPELL_RULE_IDS_SECRET:
+        assert "desc" in items[item_id], f"{item_id}: secret scroll without rules"
+        entries.append(items[item_id])
+    for e in entries:
+        assert e.get("desc"), e.get("label")
+        for key in ("dmg", "dmg2"):
+            if key in e:
+                assert re.fullmatch(r"\d+d\d+", e[key]), (e.get("label"), e[key])
+        assert ("proc_pct" in e) == ("proc_name" in e), e.get("label")
+        if "proc_pct" in e:
+            assert 1 <= e["proc_pct"] <= 99, e.get("label")
+        if "mana" in e:
+            assert e["mana"] == "tout" or (isinstance(e["mana"], int) and e["mana"] >= 1), e.get("label")
+
+
+def test_spell_secrets_never_ship():
+    """desc/note are RP material the players must discover in game: they stay
+    in the source JSONs and are stripped from every catalog injection — a
+    curious player reading the sheet's source must find nothing."""
+    html = build.render_html()
+    mod = build.render_mod()
+    for built in (html, mod):
+        assert '"desc":' not in built
+        assert '"note":' not in built
+    sample = build.load_spells()["fireball"]["desc"]
+    assert sample not in html and sample not in mod
+
+
+def test_cast_rolls_include_spell_rules():
+    """The three cast paths append damage dice (count × magic level), the
+    named proc (1d100 under the pct) and the indicative mana cost — result
+    only, debited by hand. Scrolls scale on the spell's grimoire
+    page (secret ones cast at 10) and never show a cost: their price is
+    being consumed."""
+    html = build.render_html()
+    assert "function spellRollExtras(" in html
+    assert "function spellManaLine(" in html
+    # dice count grows with the level: (N*lvl)dF
+    assert '"(" + m[1] + "*" + lvlExpr + ")d" + m[2]' in html
+    # proc: named, rolled under its percentage
+    assert '" {{Proc " + rules.proc_name + " (réussi ≤ " + rules.proc_pct + ")=[[1d100]]}}"' in html
+    # the two grimoire paths carry dice AND cost
+    assert html.count('spellManaLine(SPELLS[') == 2
+    # the scroll path: rules fall back to the item, level = the spell's
+    # grimoire page (secret scrolls cast at 10), no mana line
+    assert "const rules = SPELLS[spellId] || item;" in html
+    assert "const lvl = SPELLS[spellId] && SPELLS[spellId].page ? SPELLS[spellId].page : 10;" in html

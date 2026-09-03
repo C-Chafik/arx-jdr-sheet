@@ -43,6 +43,17 @@ GRID_ROWS = 3
 GRID_BAGS = 4
 
 
+PRIVATE_KEYS = ("desc", "note")
+
+
+def strip_private(catalog: dict) -> dict:
+    """Champs RP prives (desc, note) : utiles dans les JSON sources, mais jamais
+    embarques dans la feuille — un joueur curieux lirait les secrets dans le
+    code de la page. Retires de chaque injection de catalogue."""
+    return {key: {f: v for f, v in entry.items() if f not in PRIVATE_KEYS}
+            for key, entry in catalog.items()}
+
+
 def load_items() -> dict:
     return json.loads(ITEMS_FILE.read_text(encoding="utf-8"))
 
@@ -249,15 +260,15 @@ def render_worker() -> str:
     # the worker only ever needs to know about runes, not spells.
     parts = [(SRC / "workers" / name).read_text(encoding="utf-8") for name in WORKER_FILES]
     code = ("\n".join(parts)
-            .replace("{{ITEMS_JSON}}", json.dumps(load_items(), ensure_ascii=False))
+            .replace("{{ITEMS_JSON}}", json.dumps(strip_private(load_items()), ensure_ascii=False))
             .replace("{{PRESETS_JSON}}", json.dumps(load_presets(), ensure_ascii=False))
-            .replace("{{SPELLS_JSON}}", json.dumps(load_spells(), ensure_ascii=False)))
+            .replace("{{SPELLS_JSON}}", json.dumps(strip_private(load_spells()), ensure_ascii=False)))
     return f'<script type="text/worker">\n{inject_grid(code)}\n</script>\n'
 
 
 def render_mod() -> str:
     code = (SRC / "mod" / "arx-mod.js").read_text(encoding="utf-8")
-    return inject_grid(code.replace("{{ITEMS_JSON}}", json.dumps(load_items(), ensure_ascii=False)))
+    return inject_grid(code.replace("{{ITEMS_JSON}}", json.dumps(strip_private(load_items()), ensure_ascii=False)))
 
 
 def build() -> None:
@@ -268,7 +279,7 @@ def build() -> None:
     (BUILD / "preview.css").write_text(build_css(PREVIEW_ASSET_BASE), encoding="utf-8")
     preview = inject_grid(PREVIEW_WRAPPER
                           .replace("__CONTENT__", html)
-                          .replace("__ITEMS__", json.dumps(load_items(), ensure_ascii=False))
+                          .replace("__ITEMS__", json.dumps(strip_private(load_items()), ensure_ascii=False))
                           .replace("__PRESETS__", json.dumps(load_presets(), ensure_ascii=False)))
     (BUILD / "preview.html").write_text(preview, encoding="utf-8")
     (BUILD / "arx-mod.js").write_text(render_mod(), encoding="utf-8")

@@ -357,6 +357,53 @@ on("clicked:slot_grimoire", function () {
   });
 });
 
+/* Spell roll extras — the table rules Chafik fixed for spells: damage dice
+   whose COUNT grows with the magic level ("2d6 par lvl" at level 5 rolls
+   10d6), an optional proc rolled 1d100 under its percentage right after the
+   damage, and an indicative mana cost (result only, never the formula) that
+   the player debits by hand, adjusted by the GM. Rules live in spells.json
+   (grimoire) or on the scroll item itself (the 11 secret scrolls); an id
+   with no rules — e.g. the free-form variant scrolls — adds nothing. */
+const SPELL_DMG_LABELS = { "soin": "Soin", "drain de PM": "Drain de mana",
+  "drain de PV": "Drain de vie", "flétrissement": "Flétrissement",
+  "cercle proche": "Cercle proche", "cercle éloigné": "Cercle éloigné" };
+
+function spellDmgRow(spec, par, type, lvlExpr) {
+  const m = /^(\d+)d(\d+)$/.exec(spec || "");
+  if (!m) { return ""; }
+  const scaled = (par || "").indexOf("lvl") !== -1;
+  const expr = scaled ? "(" + m[1] + "*" + lvlExpr + ")d" + m[2] : spec;
+  const label = SPELL_DMG_LABELS[type] || "Dégâts";
+  const perTurn = (par || "").indexOf("tour") !== -1 ? " / tour" : "";
+  return " {{" + label + perTurn + "=[[" + expr + "]]}}";
+}
+
+function spellRollExtras(rules, lvlExpr) {
+  if (!rules) { return ""; }
+  let out = spellDmgRow(rules.dmg, rules.dmg_par, rules.dmg_type, lvlExpr)
+          + spellDmgRow(rules.dmg2, rules.dmg_par, rules.dmg2_type, lvlExpr);
+  if (rules.proc_pct) {
+    out += " {{Proc " + rules.proc_name + " (réussi ≤ " + rules.proc_pct + ")=[[1d100]]}}";
+  }
+  return out;
+}
+
+function spellManaLine(rules, lvlExpr) {
+  if (!rules) { return ""; }
+  let cost = null;
+  const par = rules.mana_par || "";
+  if (rules.mana === "tout") { cost = "toute la mana"; }
+  else if (typeof rules.mana === "number") {
+    const base = par.indexOf("lvl") !== -1 ? "[[" + rules.mana + "*" + lvlExpr + "]]" : String(rules.mana);
+    let per = "";
+    if (par === "lvl·tour") { per = " / tour"; }
+    else if (par && par !== "lvl") { per = " / " + par.replace("·lvl", ""); }
+    cost = base + " PM" + per;
+    if (rules.mana_note) { cost += " (" + rules.mana_note + ")"; }
+  } else if (rules.mana_note) { cost = rules.mana_note; }
+  return cost ? " {{Coût=" + cost + "}}" : "";
+}
+
 /* Reading a scroll (items.json's scroll-* entries, effect "scroll"): 1d100
    roll-under against the scroll's OWN fixed spell_casting and caster_level
    — never the player's live @{casting}/@{caster_level} (wiki.arx-libertatis.
@@ -368,7 +415,17 @@ on("clicked:read_scroll", function () {
     const hand = v.hand || "";
     const item = ITEMS[hand];
     if (!item || item.effect !== "scroll") { return; }
-    startRoll("&{template:default} {{name=" + item.spell_label + "}} {{Valeur=" + item.spell_casting + "}} {{Niveau Magique=" + item.caster_level + "}} {{Jet=[[1d100]]}}",
+    /* Rules come from the grimoire entry when the spell has one, else from
+       the scroll item itself (secret scrolls). A scroll's magic level is the
+       spell's grimoire PAGE (1-10); a secret scroll casts at 10. The item's
+       caster_level field is its incantation value (same scale as
+       spell_casting), NOT a level — the template now shows the real level.
+       No mana line: a scroll's price is being consumed. */
+    const spellId = hand.replace(/^scroll-/, "");
+    const rules = SPELLS[spellId] || item;
+    const lvl = SPELLS[spellId] && SPELLS[spellId].page ? SPELLS[spellId].page : 10;
+    startRoll("&{template:default} {{name=" + item.spell_label + "}} {{Valeur=" + item.spell_casting + "}} {{Niveau Magique=" + lvl + "}} {{Jet=[[1d100]]}}"
+      + spellRollExtras(rules, String(lvl)),
       function (results) { finishRoll(results.rollId, {}); });
     const update = { hand: "", hand_from: "", hand_cat: "", hand_effect: "", fit: "" };
     ownCells(v.hand_from || "", hand).forEach(function (c) { update[c] = ""; });
@@ -564,7 +621,8 @@ on("clicked:craft_confirm", function () {
     });
     if (matchId) {
       const label = SPELLS[matchId].label;
-      startRoll("&{template:default} {{name=" + label + "}} {{Valeur=[[@{casting}+@{casting_gm_mod}]]}} {{Niveau Magique=@{caster_level}}} {{Jet=[[1d100]]}}",
+      startRoll("&{template:default} {{name=" + label + "}} {{Valeur=[[@{casting}+@{casting_gm_mod}]]}} {{Niveau Magique=@{caster_level}}} {{Jet=[[1d100]]}}"
+        + spellRollExtras(SPELLS[matchId], "@{caster_level}") + spellManaLine(SPELLS[matchId], "@{caster_level}"),
         function (results) { finishRoll(results.rollId, {}); });
     }
     const update = craftPositions([]);
@@ -607,7 +665,8 @@ on("clicked:craft_reset", function () {
       const presetId = v["preset_slot_" + n];
       if (!presetId || !PRESETS[presetId]) { return; }
       const label = PRESETS[presetId].label;
-      startRoll("&{template:default} {{name=Sort mémorisé : " + label + "}} {{Valeur=[[@{casting}+@{casting_gm_mod}]]}} {{Niveau Magique=@{caster_level}}} {{Jet=[[1d100]]}}",
+      startRoll("&{template:default} {{name=Sort mémorisé : " + label + "}} {{Valeur=[[@{casting}+@{casting_gm_mod}]]}} {{Niveau Magique=@{caster_level}}} {{Jet=[[1d100]]}}"
+        + spellRollExtras(SPELLS[presetId], "@{caster_level}") + spellManaLine(SPELLS[presetId], "@{caster_level}"),
         function (results) { finishRoll(results.rollId, {}); });
       const update = {};
       update["preset_slot_" + n] = "";

@@ -702,8 +702,6 @@
     "min_constitution": 12
   },
 
-
-
   "krahoz": {
     "label": "Krahoz",
     "icon": "items/krahoz.png",
@@ -1313,8 +1311,6 @@
     "special": "Permet de communiqué à travers les niveaux - limité à 6 utilisations par long repos (6 messages codé morse lumineux) - ne nécessite pas d'être jumelé avant"
   },
 
-
-
   "rune-aam": {
     "label": "Rune : Aam (Créer)",
     "icon": "runes/aam.png",
@@ -1864,7 +1860,9 @@
     "effect": "scroll",
     "spell_label": "Parchemin : Activation de portail",
     "spell_casting": 50,
-    "caster_level": 50
+    "caster_level": 50,
+    "desc": "Active un portail de l'ordre d'Ederneum — mémorisation définitive",
+    "mana": 5
   },
   "scroll-ice_field": {
     "label": "Parchemin : Champ de glace",
@@ -1874,7 +1872,14 @@
     "effect": "scroll",
     "spell_label": "Parchemin : Champ de glace",
     "spell_casting": 50,
-    "caster_level": 50
+    "caster_level": 50,
+    "desc": "Conjure un champ de glace face à l'incantateur — maintien",
+    "dmg": "3d4",
+    "dmg_par": "lvl",
+    "proc_pct": 60,
+    "proc_name": "Ralentissement 1 tour",
+    "mana": 15,
+    "mana_par": "lvl·tour"
   },
   "scroll-curse": {
     "label": "Parchemin : Malédiction",
@@ -1884,7 +1889,10 @@
     "effect": "scroll",
     "spell_label": "Parchemin : Malédiction",
     "spell_casting": 50,
-    "caster_level": 50
+    "caster_level": 50,
+    "desc": "Maudit la cible — malus de 1 partout par niveau",
+    "mana": 5,
+    "mana_par": "lvl·tour"
   },
   "scroll-life_drain": {
     "label": "Parchemin : Drain de vie",
@@ -1894,7 +1902,13 @@
     "effect": "scroll",
     "spell_label": "Parchemin : Drain de vie",
     "spell_casting": 50,
-    "caster_level": 50
+    "caster_level": 50,
+    "desc": "Draine la vie des entités à proximité — limité à la réserve de la cible",
+    "dmg": "2d13",
+    "dmg_par": "tour",
+    "dmg_type": "drain de PV",
+    "mana": 15,
+    "mana_par": "tour"
   },
   "scroll-firewall": {
     "label": "Parchemin : Mur de feu",
@@ -1904,7 +1918,14 @@
     "effect": "scroll",
     "spell_label": "Parchemin : Mur de feu",
     "spell_casting": 50,
-    "caster_level": 50
+    "caster_level": 50,
+    "desc": "Mur de flammes — stoppe les projectiles légers",
+    "dmg": "3d3",
+    "dmg_par": "lvl",
+    "proc_pct": 50,
+    "proc_name": "Embrasement à la traversée",
+    "mana": 25,
+    "mana_par": "tour"
   },
   "scroll-harm": {
     "label": "Parchemin : Sphère de douleur",
@@ -1914,7 +1935,11 @@
     "effect": "scroll",
     "spell_label": "Parchemin : Sphère de douleur",
     "spell_casting": 50,
-    "caster_level": 50
+    "caster_level": 50,
+    "desc": "Sphère de douleur — affaiblit toutes les créatures proches ; érosion 30% des dégâts totaux",
+    "dmg": "2d17",
+    "dmg_type": "flétrissement",
+    "mana": 20
   },
   "scroll-ice_bolt": {
     "label": "Parchemin : Boule de glace",
@@ -1924,7 +1949,14 @@
     "effect": "scroll",
     "spell_label": "Parchemin : Boule de glace",
     "spell_casting": 50,
-    "caster_level": 50
+    "caster_level": 50,
+    "desc": "Projette une boule ou pique de glace",
+    "dmg": "2d6",
+    "dmg_par": "lvl",
+    "proc_pct": 50,
+    "proc_name": "Ralentissement",
+    "mana": 5,
+    "mana_par": "lvl"
   },
   "scroll-make_friend": {
     "label": "Parchemin : Devenir amis",
@@ -1934,7 +1966,9 @@
     "effect": "scroll",
     "spell_label": "Parchemin : Devenir amis",
     "spell_casting": 50,
-    "caster_level": 50
+    "caster_level": 50,
+    "desc": "Apprivoise les entités inférieures non douées de raison — selon lvl, CON et/ou MEN",
+    "mana": 10
   },
   "scroll-poison_projection": {
     "label": "Parchemin : Projection de poison",
@@ -1944,7 +1978,10 @@
     "effect": "scroll",
     "spell_label": "Parchemin : Projection de poison",
     "spell_casting": 50,
-    "caster_level": 50
+    "caster_level": 50,
+    "desc": "Projette un projectile empoisonné — 1 charge par niveau",
+    "mana": 10,
+    "mana_par": "lvl"
   },
   "scroll-cold_protection": {
     "label": "Parchemin : Protection contre le froid",
@@ -1954,7 +1991,10 @@
     "effect": "scroll",
     "spell_label": "Parchemin : Protection contre le froid",
     "spell_casting": 50,
-    "caster_level": 50
+    "caster_level": 50,
+    "desc": "Immunité au froid, aux dégâts de froid et à la paralysie du froid",
+    "mana": 10,
+    "mana_par": "tour"
   },
   "scroll-slow_down": {
     "label": "Parchemin : Ralentissement",
@@ -1964,7 +2004,10 @@
     "effect": "scroll",
     "spell_label": "Parchemin : Ralentissement",
     "spell_casting": 50,
-    "caster_level": 50
+    "caster_level": 50,
+    "desc": "Ralentit les mouvements de la cible — selon niveau, contexte et cible",
+    "mana": 5,
+    "mana_par": "lvl·tour"
   },
   "scroll-mind_control-iserbius": {
     "label": "Parchemin : Contrôle mental (Iserbius)",
