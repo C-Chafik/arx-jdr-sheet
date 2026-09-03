@@ -1219,9 +1219,12 @@ def test_cast_rolls_include_spell_rules():
     # the two grimoire paths carry dice AND cost
     assert html.count('spellManaLine(SPELLS[') == 2
     # the scroll path: rules fall back to the item, level = the spell's
-    # grimoire page (secret scrolls cast at 10), no mana line
+    # grimoire page (secret scrolls cast at 10), no mana line — and scrolls
+    # ALONE show their level on the card (grimoire casts stay bare)
     assert "const rules = SPELLS[spellId] || item;" in html
     assert "const lvl = SPELLS[spellId] && SPELLS[spellId].page ? SPELLS[spellId].page : 10;" in html
+    assert html.count('{{Niveau Magique=" + lvl + "}}') == 1
+    assert '{{Niveau Magique=@{caster_level}}}' not in html
 
 
 def test_caster_level_is_casting_over_ten():

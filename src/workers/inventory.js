@@ -429,7 +429,10 @@ on("clicked:read_scroll", function () {
     const spellId = hand.replace(/^scroll-/, "");
     const rules = SPELLS[spellId] || item;
     const lvl = SPELLS[spellId] && SPELLS[spellId].page ? SPELLS[spellId].page : 10;
-    startRoll("&{template:default} {{name=" + item.spell_label + "}}"
+    /* Scrolls alone show their magic level on the card — the reader has no
+       way to know the parchment's power otherwise. Grimoire casts stay bare:
+       the caster's own level lives on his sheet. */
+    startRoll("&{template:default} {{name=" + item.spell_label + "}} {{Niveau Magique=" + lvl + "}}"
       + spellRollExtras(rules, String(lvl)),
       function (results) { finishRoll(results.rollId, {}); });
     const update = { hand: "", hand_from: "", hand_cat: "", hand_effect: "", fit: "" };
