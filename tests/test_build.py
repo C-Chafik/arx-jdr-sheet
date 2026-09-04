@@ -1261,4 +1261,36 @@ def test_conditional_spell_rows():
     assert (spells["third_eye"]["bonus_lvl"], spells["third_eye"]["bonus_label"]) == (7, "Oeil invisible")
     assert spells["confusion"]["show_levels"] is True
     # both grimoire cast paths now read the numeric level at click time
-    assert 'getAttrs(["craft_runes", "caster_level"]' in html
+    assert 'getAttrs(["craft_runes", "caster_level", "chosen_level"]' in html
+
+
+def test_chosen_magic_level_picker():
+    """The Roman numerals on the grimoire's craft row let the player throttle
+    his casts below his real caster_level — power and cost follow. A numeral
+    above the character's level stays inert (CSS gate + worker guard), the
+    active one toggles off back to full power, and a level drop clears a
+    choice that outgrew its owner."""
+    html = build.render_html()
+    css = build.build_css("x")
+    for n in range(1, 11):
+        assert f'name="act_choose_level_{n}"' in html, n
+        assert f".sheet-mlevel--{n} {{ left:" in css, n
+    # gate: numeral n opens only for caster_level >= n — the level-10 numeral
+    # has exactly one enabling value, the level-1 numeral has ten
+    assert css.count('input[name="attr_caster_level"][value="10"]) .sheet-mlevel--10') == 1
+    assert '"attr_caster_level"][value="1"]) .sheet-mlevel--1' in css
+    # selection highlight + worker toggle/guard/clamp
+    assert 'input[name="attr_chosen_level"][value="4"]) .sheet-mlevel--4' in css
+    assert "function effectiveCastLevel(" in html
+    assert 'chosen_level: v.chosen_level === String(n) ? "" : String(n)' in html
+    assert html.count("const lvl = effectiveCastLevel(v);") == 2
+
+
+def test_attribute_breakdown_shows_gm_bonus():
+    """The hover breakdown of the four attributes carries the GM bonus/malus
+    (!arxmod) next to base and equipment — a malus displays negative on its
+    own (the span mirrors attr_<name>_gm_mod, e.g. "bonus -5")."""
+    html = build.render_html()
+    for attr in ("strength", "mental", "dexterity", "constitution"):
+        assert (f'équipement <span name="attr_{attr}_applied_mod">0</span> | '
+                f'bonus <span name="attr_{attr}_gm_mod">0</span>]') in html, attr

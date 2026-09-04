@@ -200,7 +200,7 @@
      already reached. Attributes have no attribute-derived share, so they
      read with two terms instead of three. #}
   <div class="sheet-statbar sheet-statbar--{{ name }}">{{ label }} &mdash; {{ text }}
-{%- if name in attributes %}<span class="sheet-stat-breakdown"> - [base <span name="attr_{{ name }}_own">{{ defaults[name] }}</span> | équipement <span name="attr_{{ name }}_applied_mod">0</span>]</span>
+{%- if name in attributes %}<span class="sheet-stat-breakdown"> - [base <span name="attr_{{ name }}_own">{{ defaults[name] }}</span> | équipement <span name="attr_{{ name }}_applied_mod">0</span> | bonus <span name="attr_{{ name }}_gm_mod">0</span>]</span>
 {%- elif name in skills or name in singles %}<span class="sheet-stat-breakdown"> - [base <span name="attr_{{ name }}_own">0</span> | bonus <span name="attr_{{ name }}_applied_stat_mod">{{ defaults[name] }}</span> | équipement <span name="attr_{{ name }}_applied_mod">0</span>]</span>
 {%- endif %}</div>
 {% endfor %}

@@ -154,6 +154,51 @@ input[name="attr_hand_effect"][value="rune"] ~ .sheet-book .sheet-grimoire {
 .sheet-arx:has(.sheet-craft-memorize:hover) .sheet-statbar--craft-memorize { display: block; }
 .sheet-arx:has(.sheet-craft-reset:hover) .sheet-statbar--craft-reset { display: block; }
 
+/* ---- Chosen magic level: Roman numerals I-X, same row as the craft
+   buttons (top 82%), aligned left-to-right on the left page. Engraved-book
+   look: dim bronze at rest, lit gold when hovered or selected. A numeral
+   above the character's caster_level stays faded and inert — the worker
+   guards the click too. ---- */
+.sheet-mlevel {
+  position: absolute;
+  height: 4.5%;
+  width: 3%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 19px;
+  font-weight: bold;
+  color: #382508;
+  text-shadow: 0 1px 0 rgba(255, 240, 205, 0.55);   /* relief grave dans le parchemin */
+  opacity: 0.15;               /* verrouille par defaut : ouvert par niveau ci-dessous */
+  pointer-events: none;
+  z-index: 5;
+  transition: opacity 0.2s ease-out, filter 0.2s ease-out;
+}
+{# Deux etages de cinq — I-V puis VI-X — pour laisser l'air entre les
+   chiffres que la ligne unique n'offrait pas. #}
+{% for n in range(1, 11) %}.sheet-mlevel--{{ n }} { left: {{ "%.1f" | format(10.0 + ((n - 1) % 5) * 5.5) }}%; top: {{ "79.5" if n <= 5 else "84.5" }}%; }
+{% endfor %}
+{% for n in range(1, 11) %}
+{% for v in range(n, 11) %}.sheet-arx:has(input[name="attr_caster_level"][value="{{ v }}"]) .sheet-mlevel--{{ n }}{{ "," if not loop.last }}
+{% endfor %} {
+  opacity: 0.95;
+  pointer-events: auto;
+  cursor: url('{{ "{{ASSET_BASE}}" }}/ui/cursor-hover.png') 6 4, pointer;
+}
+{% endfor %}
+.sheet-mlevel:hover { opacity: 1; filter: drop-shadow(0 0 6px rgba(255, 220, 130, 0.9)); }
+{% for n in range(1, 11) %}.sheet-arx:has(input[name="attr_chosen_level"][value="{{ n }}"]) .sheet-mlevel--{{ n }}{{ "," if not loop.last }}
+{% endfor %} {
+  opacity: 1;
+  color: #8a5a10;
+  transform: scale(1.45);
+  text-shadow: 0 0 2px rgba(255, 214, 106, 1), 0 0 9px rgba(255, 196, 60, 0.95),
+               0 0 16px rgba(255, 170, 30, 0.7);
+}
+.sheet-arx:has(.sheet-mlevel:hover) .sheet-statbar--mlevel { display: block; }
+
 /* Forget-a-preset mode (Reset clicked with no rune in the combo): the
    preset slots swap to a delete cursor until one is picked (or Reset is
    clicked again to cancel) — see inventory.js's clicked:preset_N. */

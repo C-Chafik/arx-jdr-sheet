@@ -61,6 +61,17 @@
   <div class="sheet-statbar sheet-statbar--craft-reset">Supprimer le sort</div>
   <div class="sheet-statbar sheet-statbar--craft-confirm">Lancer le sort</div>
   <div class="sheet-statbar sheet-statbar--craft-memorize">Mémoriser le sort</div>
+  {# Chosen magic level: Roman numerals I-X on the craft row, left of the
+     three buttons. Clicking one locks the NEXT casts at that level so the
+     player throttles spell power (and cost); clicking it again returns to
+     full power. Numerals above the character's own caster_level stay dimmed
+     and inert (CSS gate below + worker guard). #}
+  <input type="hidden" name="attr_chosen_level" value="" />
+{% set romans = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"] %}
+{% for n in range(1, 11) %}
+  <button type="action" class="sheet-mlevel sheet-mlevel--{{ n }}" name="act_choose_level_{{ n }}">{{ romans[n - 1] }}</button>
+{% endfor %}
+  <div class="sheet-statbar sheet-statbar--mlevel">Niveau de magie du sort</div>
   {# Craft sequence: shows, in click order, the rune's own inventory icon
      (not the magicbook variant) so the player sees exactly what they've
      incanted so far before validating. Fixed 5 positions (CRAFT_MAX in

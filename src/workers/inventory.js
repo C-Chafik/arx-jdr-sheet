@@ -644,7 +644,7 @@ for (let i = 1; i <= 20; i++) {
    roll-under against Magie/casting labeled with the spell's own translated
    name. Consumes the combo either way, matched or not. */
 on("clicked:craft_confirm", function () {
-  getAttrs(["craft_runes", "caster_level"], function (v) {
+  getAttrs(["craft_runes", "caster_level", "chosen_level"], function (v) {
     const combo = craftList(v);
     if (!combo.length) { return; }
     const comboKey = combo.join("|");
@@ -655,9 +655,10 @@ on("clicked:craft_confirm", function () {
     });
     if (matchId) {
       const label = SPELLS[matchId].label;
+      const lvl = effectiveCastLevel(v);
       startRoll("&{template:default} {{name=" + label + "}}"
-        + spellRollExtras(SPELLS[matchId], "@{caster_level}", parseInt(v.caster_level, 10) || 1, false)
-        + spellManaLine(SPELLS[matchId], "@{caster_level}"),
+        + spellRollExtras(SPELLS[matchId], String(lvl), lvl, false)
+        + spellManaLine(SPELLS[matchId], String(lvl)),
         function (results) { finishRoll(results.rollId, {}); });
     }
     const update = craftPositions([]);
@@ -690,7 +691,7 @@ on("clicked:craft_reset", function () {
    right after. */
 [1, 2, 3].forEach(function (n) {
   on("clicked:preset_" + n, function () {
-    getAttrs(["forget_mode", "preset_slot_" + n, "caster_level"], function (v) {
+    getAttrs(["forget_mode", "preset_slot_" + n, "caster_level", "chosen_level"], function (v) {
       if (v.forget_mode === "1") {
         const update = { forget_mode: "0" };
         update["preset_slot_" + n] = "";
@@ -700,9 +701,10 @@ on("clicked:craft_reset", function () {
       const presetId = v["preset_slot_" + n];
       if (!presetId || !PRESETS[presetId]) { return; }
       const label = PRESETS[presetId].label;
+      const lvl = effectiveCastLevel(v);
       startRoll("&{template:default} {{name=Sort mémorisé : " + label + "}}"
-        + spellRollExtras(SPELLS[presetId], "@{caster_level}", parseInt(v.caster_level, 10) || 1, false)
-        + spellManaLine(SPELLS[presetId], "@{caster_level}"),
+        + spellRollExtras(SPELLS[presetId], String(lvl), lvl, false)
+        + spellManaLine(SPELLS[presetId], String(lvl)),
         function (results) { finishRoll(results.rollId, {}); });
       const update = {};
       update["preset_slot_" + n] = "";
@@ -1152,6 +1154,35 @@ function recomputeCasterLevel(v) {
 /* Mental no longer enters the formula directly, but a Mental change moves
    the derived Magie skill itself, which fires change:casting anyway. */
 on("change:casting", function () { getAttrs(["casting"], recomputeCasterLevel); });
+
+/* Chosen magic level (the Roman numerals on the grimoire's craft row): the
+   player throttles his casts below his real caster_level — spell power AND
+   cost follow. Toggle semantics like the postures: clicking the active
+   numeral returns to full power. The CSS already refuses clicks above
+   caster_level; the guard here keeps a stale click harmless, and the level
+   drop listener clears a choice that outgrew its owner. */
+[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].forEach(function (n) {
+  on("clicked:choose_level_" + n, function () {
+    getAttrs(["caster_level", "chosen_level"], function (v) {
+      if (n > (parseInt(v.caster_level, 10) || 1)) { return; }
+      setAttrs({ chosen_level: v.chosen_level === String(n) ? "" : String(n) });
+    });
+  });
+});
+on("change:caster_level", function () {
+  getAttrs(["caster_level", "chosen_level"], function (v) {
+    const chosen = parseInt(v.chosen_level, 10) || 0;
+    if (chosen > (parseInt(v.caster_level, 10) || 1)) { setAttrs({ chosen_level: "" }); }
+  });
+});
+
+/* Effective cast level: the chosen throttle when set (and still owned),
+   else full power. */
+function effectiveCastLevel(v) {
+  const cl = parseInt(v.caster_level, 10) || 1;
+  const chosen = parseInt(v.chosen_level, 10) || 0;
+  return chosen >= 1 && chosen <= cl ? chosen : cl;
+}
 
 on("sheet:opened", function () { getAttrs(["casting", "mental"], recomputeCasterLevel); });
 
