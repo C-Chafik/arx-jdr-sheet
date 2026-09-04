@@ -1188,6 +1188,8 @@ def test_spell_rules_are_valid():
             assert 1 <= e["proc_pct"] <= 99, e.get("label")
         if "mana" in e:
             assert e["mana"] == "tout" or (isinstance(e["mana"], int) and e["mana"] >= 1), e.get("label")
+        save = [k for k in ("save_base", "save_step", "save_floor") if k in e]
+        assert len(save) in (0, 3), f"{e.get('label')}: jet de sauvegarde incomplet"
 
 
 def test_spell_secrets_never_ship():
@@ -1235,3 +1237,28 @@ def test_caster_level_is_casting_over_ten():
     html = build.render_html()
     assert "caster_level: Math.max(1, Math.min(10, Math.floor(casting / 10)))" in html
     assert "(casting + mental) / 10" not in html
+
+
+def test_paralysis_save_threshold_row():
+    """Paralysie shows the escape threshold on its card: roll-under
+    80 − 10 × level with a floor of 20 (level 6 already reaches it),
+    rendered as a Roll20 grouped roll {…,20}kh1 = max."""
+    html = build.render_html()
+    assert '" {{Jet de sauvegarde nécessaire=[[{" + rules.save_base + "-" + rules.save_step' in html
+    spell = build.load_spells()["paralysis"]
+    assert (spell["save_base"], spell["save_step"], spell["save_floor"]) == (80, 10, 20)
+
+
+def test_conditional_spell_rows():
+    """Troisième Oeil earns its "Oeil invisible : Oui" row only from magic
+    level 7 — decided in the worker at click time (Roll20 templates have no
+    conditionals). Confusion prints the two values the GM compares; a scroll
+    already shows its own magic level so only the reader's level is added."""
+    html = build.render_html()
+    assert "if (rules.bonus_lvl && lvlNum >= rules.bonus_lvl)" in html
+    assert '{{Niveau du lanceur=@{level}}}' in html
+    spells = build.load_spells()
+    assert (spells["third_eye"]["bonus_lvl"], spells["third_eye"]["bonus_label"]) == (7, "Oeil invisible")
+    assert spells["confusion"]["show_levels"] is True
+    # both grimoire cast paths now read the numeric level at click time
+    assert 'getAttrs(["craft_runes", "caster_level"]' in html

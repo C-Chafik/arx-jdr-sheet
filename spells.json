@@ -317,7 +317,10 @@
     "icon": "spells/paralysis.png",
     "desc": "Paralyse la cible — jet de fuite chaque tour, difficulté selon le niveau de magie",
     "mana": 10,
-    "mana_par": "lvl·tour"
+    "mana_par": "lvl·tour",
+    "save_base": 80,
+    "save_step": 10,
+    "save_floor": 20
   },
   "force_field": {
     "label": "Champ de force",
@@ -359,7 +362,9 @@
     "icon": "spells/third-eye.png",
     "desc": "Explore les environs hors de son corps — portée selon niveau, œil invisible à lvl 7",
     "mana": 16,
-    "mana_note": "selon contexte"
+    "mana_note": "selon contexte",
+    "bonus_lvl": 7,
+    "bonus_label": "Oeil invisible"
   },
   "fire_field": {
     "label": "Champ de flammes",
@@ -408,7 +413,8 @@
     "icon": "spells/confusion.png",
     "desc": "Rend la cible confuse et désorientée — exige mental et/ou niveau supérieurs",
     "mana": 30,
-    "mana_par": "tour"
+    "mana_par": "tour",
+    "show_levels": true
   },
   "invisibility": {
     "label": "Invisibilité",
@@ -527,7 +533,10 @@
     "icon": "spells/mass-paralysis.png",
     "desc": "Paralyse toute entité à proximité sauf le lanceur — jet de fuite par tour",
     "mana": 20,
-    "mana_par": "lvl·tour"
+    "mana_par": "lvl·tour",
+    "save_base": 80,
+    "save_step": 10,
+    "save_floor": 20
   },
   "mass_lightning_strike": {
     "label": "Champ de foudre",
@@ -572,7 +581,7 @@
     "desc": "Ralentit le temps pour tout le monde sauf le lanceur — concentration",
     "mana": 60,
     "mana_par": "tour",
-    "mana_note": "+20 par lvl"
+    "mana_lvl_add": 20
   },
   "mass_incineration": {
     "label": "Fournaise",

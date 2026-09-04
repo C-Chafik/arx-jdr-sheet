@@ -380,7 +380,7 @@ function spellDmgRow(spec, par, type, lvlExpr) {
   return " {{" + label + perTurn + "=[[" + expr + "]]}}";
 }
 
-function spellRollExtras(rules, lvlExpr) {
+function spellRollExtras(rules, lvlExpr, lvlNum, isScroll) {
   if (!rules) { return ""; }
   let out = spellDmgRow(rules.dmg, rules.dmg_par, rules.dmg_type, lvlExpr)
           + spellDmgRow(rules.dmg2, rules.dmg_par, rules.dmg2_type, lvlExpr);
@@ -388,6 +388,27 @@ function spellRollExtras(rules, lvlExpr) {
      the GM compares. */
   if (rules.proc_pct) {
     out += " {{" + rules.proc_name + "=[[1d100]]}}";
+  }
+  /* Save threshold (roll-under, like every check in this game): the target
+     escapes on 1d100 <= save_base - save_step x level, never below
+     save_floor. Paralysie: 80 - 10/lvl, floor 20 — level 6 already hits it. */
+  if (rules.save_base) {
+    out += " {{Jet de sauvegarde nécessaire=[[{" + rules.save_base + "-" + rules.save_step
+         + "*" + lvlExpr + "," + rules.save_floor + "}kh1]]}}";
+  }
+  /* Level-gated bonus (Troisième Oeil: invisible eye from level 7): a Roll20
+     template has no conditionals, so the row is decided HERE from the
+     numeric level at click time — shown only once earned. */
+  if (rules.bonus_lvl && lvlNum >= rules.bonus_lvl) {
+    out += " {{" + rules.bonus_label + "=Oui}}";
+  }
+  /* Comparison spells (Confusion: works only on a target with lower Mental
+     and/or level): print what the GM must compare. A scroll's card already
+     shows its own magic level, so only the reader's character level is
+     added there. */
+  if (rules.show_levels) {
+    if (!isScroll) { out += " {{Niveau de magie du lanceur=" + lvlExpr + "}}"; }
+    out += " {{Niveau du lanceur=@{level}}}";
   }
   return out;
 }
@@ -398,7 +419,12 @@ function spellManaLine(rules, lvlExpr) {
   const par = rules.mana_par || "";
   if (rules.mana === "tout") { cost = "toute la mana"; }
   else if (typeof rules.mana === "number") {
-    const base = par.indexOf("lvl") !== -1 ? "[[" + rules.mana + "*" + lvlExpr + "]]" : String(rules.mana);
+    /* Three shapes: N x lvl (par contains "lvl"), N + add x lvl (mana_lvl_add
+       — Faille temporelle: 60 + 20/lvl), or plain N. Result only, never the
+       formula. */
+    const base = par.indexOf("lvl") !== -1 ? "[[" + rules.mana + "*" + lvlExpr + "]]"
+               : rules.mana_lvl_add ? "[[" + rules.mana + "+" + rules.mana_lvl_add + "*" + lvlExpr + "]]"
+               : String(rules.mana);
     let per = "";
     if (par === "lvl·tour") { per = " / tour"; }
     else if (par && par !== "lvl") { per = " / " + par.replace("·lvl", ""); }
@@ -433,7 +459,7 @@ on("clicked:read_scroll", function () {
        way to know the parchment's power otherwise. Grimoire casts stay bare:
        the caster's own level lives on his sheet. */
     startRoll("&{template:default} {{name=" + item.spell_label + "}} {{Niveau Magique=" + lvl + "}}"
-      + spellRollExtras(rules, String(lvl)),
+      + spellRollExtras(rules, String(lvl), lvl, true),
       function (results) { finishRoll(results.rollId, {}); });
     const update = { hand: "", hand_from: "", hand_cat: "", hand_effect: "", fit: "" };
     ownCells(v.hand_from || "", hand).forEach(function (c) { update[c] = ""; });
@@ -618,7 +644,7 @@ for (let i = 1; i <= 20; i++) {
    roll-under against Magie/casting labeled with the spell's own translated
    name. Consumes the combo either way, matched or not. */
 on("clicked:craft_confirm", function () {
-  getAttrs(["craft_runes"], function (v) {
+  getAttrs(["craft_runes", "caster_level"], function (v) {
     const combo = craftList(v);
     if (!combo.length) { return; }
     const comboKey = combo.join("|");
@@ -630,7 +656,8 @@ on("clicked:craft_confirm", function () {
     if (matchId) {
       const label = SPELLS[matchId].label;
       startRoll("&{template:default} {{name=" + label + "}}"
-        + spellRollExtras(SPELLS[matchId], "@{caster_level}") + spellManaLine(SPELLS[matchId], "@{caster_level}"),
+        + spellRollExtras(SPELLS[matchId], "@{caster_level}", parseInt(v.caster_level, 10) || 1, false)
+        + spellManaLine(SPELLS[matchId], "@{caster_level}"),
         function (results) { finishRoll(results.rollId, {}); });
     }
     const update = craftPositions([]);
@@ -663,7 +690,7 @@ on("clicked:craft_reset", function () {
    right after. */
 [1, 2, 3].forEach(function (n) {
   on("clicked:preset_" + n, function () {
-    getAttrs(["forget_mode", "preset_slot_" + n], function (v) {
+    getAttrs(["forget_mode", "preset_slot_" + n, "caster_level"], function (v) {
       if (v.forget_mode === "1") {
         const update = { forget_mode: "0" };
         update["preset_slot_" + n] = "";
@@ -674,7 +701,8 @@ on("clicked:craft_reset", function () {
       if (!presetId || !PRESETS[presetId]) { return; }
       const label = PRESETS[presetId].label;
       startRoll("&{template:default} {{name=Sort mémorisé : " + label + "}}"
-        + spellRollExtras(SPELLS[presetId], "@{caster_level}") + spellManaLine(SPELLS[presetId], "@{caster_level}"),
+        + spellRollExtras(SPELLS[presetId], "@{caster_level}", parseInt(v.caster_level, 10) || 1, false)
+        + spellManaLine(SPELLS[presetId], "@{caster_level}"),
         function (results) { finishRoll(results.rollId, {}); });
       const update = {};
       update["preset_slot_" + n] = "";

@@ -140,7 +140,8 @@ __CONTENT__
   window.startRoll = function (template, cb) {
     let txt = template.replace(/@\\{([^}]+)\\}/g, function (_, n) { return getAttr(n) || "0"; });
     txt = txt.replace(/\\[\\[([^\\]]+)\\]\\]/g, function (_, expr) {
-      const withDice = expr.replace(/(\\d+|\\([^()]*\\))d(\\d+)/g, function (_, cnt, faces) {
+      const grouped = expr.replace(/\\{([^{}]+)\\}kh1/g, function (_, inner) { return "Math.max(" + inner + ")"; });
+      const withDice = grouped.replace(/(\\d+|\\([^()]*\\))d(\\d+)/g, function (_, cnt, faces) {
         let count = 0;
         try { count = Math.max(0, Math.floor(new Function("return (" + cnt + ")")())); } catch (e) { return "0"; }
         const r = rollDice(count, parseInt(faces, 10));
