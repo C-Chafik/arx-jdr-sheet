@@ -12,7 +12,7 @@ Nothing is hand-written directly in the final HTML/CSS: everything starts in `sr
 - **Inventory**: 15×3 bag grid, up to 4 unlockable levels, multi-cell items, equipment (head/torso/belt/weapons/jewelry), purse (gold), trash, coin merging.
 - **Magic**: grimoire (rune learning), spell crafting via rune combinations, memorized spells (presets), scroll reading.
 - **Map**: 8 unlockable dungeon levels via consumable map cards, each with its own handwritten note.
-- **Notes**: free-form notes page (multi-page, navigation currently frozen on page 1).
+- **Notes**: left page is the player's free-form notes (multi-page, navigation currently frozen on page 1); right page is fixed text written at build time (`src/templates/data/notes.j2`) plus a live tracker of the attribute/skill points left to assign (16 + 1/level, 18 + 15/level).
 
 ## Getting started
 
@@ -44,10 +44,11 @@ src/
         base.html.j2       base page (stats, postures)
         magic.html.j2      grimoire, crafting, presets
         map.html.j2        map + per-level notes
-        notes.html.j2      free-form notes page
+        notes.html.j2      notes page (player's left page + fixed right page)
     css/                    .css.j2 counterparts of the pages above, rendered via Jinja
     data/
       stats.j2             stat tooltip texts
+      notes.j2             fixed text of the Notes page's right side
   css/                      static CSS (no Jinja): base, tabs, inventory
   workers/
     inventory.js            THE sheet worker (all player-side logic)

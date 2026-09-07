@@ -1115,6 +1115,19 @@ on("sheet:opened", function () { getAttrs(SINGLE_STAT_MOD_GETATTRS, recomputeSin
    _applied_stat_mod, which reads as 0 here — they have no derived share. */
 const BREAKDOWN_STATS = ATTR_NAMES.concat(SKILL_NAMES).concat(SINGLE_STAT_NAMES);
 
+/* Points left to assign (Notes page, right side — see notes.html.j2): a
+   level-0 character has 16 attribute points and 18 skill points to place,
+   each level grants 1 and 15 more. What is already placed is read straight
+   from the own shares computed just above — attributes minus the 6 every
+   one starts at, skills as-is (their own share starts at 0, the default
+   being entirely attribute-derived). Negative = too many placed. Derived
+   stats (damages, CA...) are not point-buy and do not count. */
+const STAT_POINTS_BASE = 16;
+const STAT_POINTS_PER_LEVEL = 1;
+const SKILL_POINTS_BASE = 18;
+const SKILL_POINTS_PER_LEVEL = 15;
+const ATTR_START_VALUE = 6;
+
 function recomputeOwnShares(v) {
   const update = {};
   BREAKDOWN_STATS.forEach(function (name) {
@@ -1123,10 +1136,17 @@ function recomputeOwnShares(v) {
     const derived = parseInt(v[name + "_applied_stat_mod"], 10) || 0;
     update[name + "_own"] = total - gear - derived;
   });
+  const level = parseInt(v.level, 10) || 0;
+  let statPlaced = 0, skillPlaced = 0;
+  ATTR_NAMES.forEach(function (name) { statPlaced += update[name + "_own"] - ATTR_START_VALUE; });
+  SKILL_NAMES.forEach(function (name) { skillPlaced += update[name + "_own"]; });
+  update.stat_points_left = STAT_POINTS_BASE + STAT_POINTS_PER_LEVEL * level - statPlaced;
+  update.skill_points_left = SKILL_POINTS_BASE + SKILL_POINTS_PER_LEVEL * level - skillPlaced;
   setAttrs(update);
 }
 
-const BREAKDOWN_GETATTRS = BREAKDOWN_STATS
+/* level first: a level-up changes the points budget without moving any stat. */
+const BREAKDOWN_GETATTRS = ["level"].concat(BREAKDOWN_STATS)
   .concat(BREAKDOWN_STATS.map(function (s) { return s + "_applied_mod"; }))
   .concat(BREAKDOWN_STATS.map(function (s) { return s + "_applied_stat_mod"; }));
 

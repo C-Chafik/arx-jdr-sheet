@@ -1294,3 +1294,40 @@ def test_attribute_breakdown_shows_gm_bonus():
     for attr in ("strength", "mental", "dexterity", "constitution"):
         assert (f'équipement <span name="attr_{attr}_applied_mod">0</span> | '
                 f'bonus <span name="attr_{attr}_gm_mod">0</span>]') in html, attr
+
+
+def test_notes_right_page_is_fixed_text_from_the_data_file():
+    """The Notes page's right side is no longer the player's: it is written by
+    the sheet at build time (src/templates/data/notes.j2), the left side stays
+    the player's free-form field."""
+    html = build.render_html()
+    for n in range(1, 6):
+        assert f'name="attr_notes_left_{n}"' in html, n
+        assert f'name="attr_notes_right_{n}"' not in html, n
+    assert 'class="sheet-notes-fixed"' in html
+    css = build.build_css("x")
+    assert ".sheet-notes-fixed {" in css
+    assert ".sheet-notes-field--right" not in css
+
+
+def test_notes_page_tracks_the_points_left_to_assign():
+    """Bottom of the right Notes page: how many attribute ("Principales") and
+    skill ("Secondaires") points the player still has to place. Level 0 grants
+    16 + 18, each level 1 + 15 more; what is already placed is read from the
+    hand-assigned share (attr_<stat>_own), attributes minus their 6 start."""
+    html = build.render_html()
+    assert '<span name="attr_stat_points_left">16</span>' in html
+    assert '<span name="attr_skill_points_left">18</span>' in html
+    assert "Principales" in html and "Secondaires" in html
+    # worker: constants + formula, computed alongside the own shares
+    assert "const STAT_POINTS_BASE = 16;" in html
+    assert "const STAT_POINTS_PER_LEVEL = 1;" in html
+    assert "const SKILL_POINTS_BASE = 18;" in html
+    assert "const SKILL_POINTS_PER_LEVEL = 15;" in html
+    assert "const ATTR_START_VALUE = 6;" in html
+    assert "update.stat_points_left = STAT_POINTS_BASE + STAT_POINTS_PER_LEVEL * level - statPlaced;" in html
+    assert "update.skill_points_left = SKILL_POINTS_BASE + SKILL_POINTS_PER_LEVEL * level - skillPlaced;" in html
+    # a level-up must refresh the count, not just a stat edit
+    assert 'const BREAKDOWN_GETATTRS = ["level"]' in html
+    css = build.build_css("x")
+    assert ".sheet-notes-points {" in css

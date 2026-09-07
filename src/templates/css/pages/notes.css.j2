@@ -3,9 +3,10 @@
    not a printed stat block. */
 @import url('https://fonts.googleapis.com/css2?family=Homemade+Apple&display=swap');
 
-/* Free text, 5 independent pages (left+right per page) — all in the DOM,
-   only the pair matching attr_notes_page shown (see clicked:notes_prev/next
-   in inventory.js). First-pass rectangle over notes.png's writable area. */
+/* Free text, 5 independent pages (left page only — the right page is the
+   sheet's own, see .sheet-notes-fixed below) — all in the DOM, only the one
+   matching attr_notes_page shown (see clicked:notes_prev/next in
+   inventory.js). First-pass rectangle over notes.png's writable area. */
 .sheet-notes-field {
   position: absolute !important;
   /* Fixed px, not %: .sheet-book is a fixed 1100x677 box (see base.css) — no
@@ -38,7 +39,39 @@
      here: the right field hasn't shown the same overhang. */
   padding-left: 8px !important;
 }
-.sheet-notes-field--right { left: 594px !important; }
+
+/* Right page: fixed text written at build time (data/notes.j2) — printed
+   look (the sheet's own EB Garamond, see base.css), on purpose NOT the
+   player's handwriting used on the left. Same rectangle the old right-hand
+   textarea used, shortened to leave the bottom to the points tracker. */
+.sheet-notes-fixed {
+  position: absolute;
+  top: 68px;
+  left: 594px;
+  width: 433px;
+  height: 400px;
+  overflow: hidden;
+  white-space: pre-line;
+  font-size: 19px;
+  line-height: 1.35;
+  color: #2b1d0e;
+}
+
+/* Points left to assign (see recomputeOwnShares in inventory.js) — bottom
+   of the right page, with air around it: it does not hug the page's edge. */
+.sheet-notes-points {
+  position: absolute;
+  top: 500px;
+  left: 594px;
+  width: 433px;
+  font-size: 18px;
+  line-height: 1.5;
+  color: #2b1d0e;
+}
+.sheet-notes-points-title {
+  font-weight: 700;
+  margin-bottom: 4px;
+}
 
 {% for n in range(1, 6) %}
 .sheet-arx:has(input[name="attr_notes_page"][value="{{ n }}"]) .sheet-notes-field--page-{{ n }} {

@@ -1,14 +1,27 @@
+{% import "data/notes.j2" as notes %}
 <div class="sheet-page sheet-page--notes">
   {# Which of the 5 note-pages is showing — worker-driven (clicked:notes_prev/
      next, see inventory.js), same button+worker mechanism as everywhere else
-     on this sheet. Left/right textareas for every page are all in the DOM at
-     once; CSS shows only the pair matching attr_notes_page (see notes.css.j2). #}
+     on this sheet. Left textareas for every page are all in the DOM at
+     once; CSS shows only the one matching attr_notes_page (see notes.css.j2). #}
   {# Navigation is disabled for now (see tabs.css/inventory.js history) —
      only page 1 is reachable. The 5 pages' fields stay in the DOM/CSS so
      the data model is ready once navigation comes back. #}
   <input type="hidden" class="sheet-hand-mirror" name="attr_notes_page" value="1" />
 {% for n in range(1, 6) %}
   <textarea class="sheet-notes-field sheet-notes-field--left sheet-notes-field--page-{{ n }}" name="attr_notes_left_{{ n }}"></textarea>
-  <textarea class="sheet-notes-field sheet-notes-field--right sheet-notes-field--page-{{ n }}" name="attr_notes_right_{{ n }}"></textarea>
 {% endfor %}
+  {# Right page: fixed, written by the sheet itself at build time — the text
+     lives in data/notes.j2. One block for every note-page (it is not
+     per-page data), so it stays outside the attr_notes_page CSS gate. #}
+  <div class="sheet-notes-fixed">{{ notes.notes_right | trim }}</div>
+  {# Points left to assign, bottom of the right page — live values kept by
+     recomputeOwnShares in inventory.js (attributes = "Principales", skills =
+     "Secondaires"; negative = too many placed, to take back). Spans, not
+     inputs: Roll20 refreshes named spans reliably (see base.html.j2). #}
+  <div class="sheet-notes-points">
+    <div class="sheet-notes-points-title">Points de statistiques à attribuer / retirer</div>
+    <div>Principales : <span name="attr_stat_points_left">16</span></div>
+    <div>Secondaires : <span name="attr_skill_points_left">18</span></div>
+  </div>
 </div>
