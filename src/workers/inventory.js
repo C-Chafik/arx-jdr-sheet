@@ -413,7 +413,7 @@ function spellRollExtras(rules, lvlExpr, lvlNum, isScroll) {
   return out;
 }
 
-function spellManaLine(rules, lvlExpr) {
+function spellManaLine(rules, lvlExpr, focus) {
   if (!rules) { return ""; }
   let cost = null;
   const par = rules.mana_par || "";
@@ -421,14 +421,21 @@ function spellManaLine(rules, lvlExpr) {
   else if (typeof rules.mana === "number") {
     /* Three shapes: N x lvl (par contains "lvl"), N + add x lvl (mana_lvl_add
        — Faille temporelle: 60 + 20/lvl), or plain N. Result only, never the
-       formula. */
-    const base = par.indexOf("lvl") !== -1 ? "[[" + rules.mana + "*" + lvlExpr + "]]"
-               : rules.mana_lvl_add ? "[[" + rules.mana + "+" + rules.mana_lvl_add + "*" + lvlExpr + "]]"
-               : String(rules.mana);
+       formula — the total is computed HERE rather than handed to the dice
+       engine, so Focus's cut below can round the way the table's rule says
+       (Roll20's ceil() would work in play but not in build/preview.html). */
+    const lvl = parseInt(lvlExpr, 10) || 1;
+    let total = par.indexOf("lvl") !== -1 ? rules.mana * lvl
+              : rules.mana_lvl_add ? rules.mana + rules.mana_lvl_add * lvl
+              : rules.mana;
+    /* Focus posture: a quarter off the cost, rounded UP — same direction as
+       the failed-incantation rule, a rounding never favours the caster.
+       "tout" is deliberately left alone: that spell's price IS the whole pool. */
+    if (focus) { total = Math.ceil(total * 0.75); }
     let per = "";
     if (par === "lvl·tour") { per = " / tour"; }
     else if (par && par !== "lvl") { per = " / " + par.replace("·lvl", ""); }
-    cost = base + " PM" + per;
+    cost = "[[" + total + "]] PM" + per + (focus ? " (Focus)" : "");
     if (rules.mana_note) { cost += " (" + rules.mana_note + ")"; }
   } else if (rules.mana_note) { cost = rules.mana_note; }
   return cost ? " {{Coût=" + cost + "}}" : "";
@@ -644,7 +651,7 @@ for (let i = 1; i <= 20; i++) {
    roll-under against Magie/casting labeled with the spell's own translated
    name. Consumes the combo either way, matched or not. */
 on("clicked:craft_confirm", function () {
-  getAttrs(["craft_runes", "caster_level", "chosen_level"], function (v) {
+  getAttrs(["craft_runes", "caster_level", "chosen_level", "posture"], function (v) {
     const combo = craftList(v);
     if (!combo.length) { return; }
     const comboKey = combo.join("|");
@@ -658,7 +665,7 @@ on("clicked:craft_confirm", function () {
       const lvl = effectiveCastLevel(v);
       startRoll("&{template:default} {{name=" + label + "}}"
         + spellRollExtras(SPELLS[matchId], String(lvl), lvl, false)
-        + spellManaLine(SPELLS[matchId], String(lvl)),
+        + spellManaLine(SPELLS[matchId], String(lvl), v.posture === "focus"),
         function (results) { finishRoll(results.rollId, {}); });
     }
     const update = craftPositions([]);
@@ -691,7 +698,7 @@ on("clicked:craft_reset", function () {
    right after. */
 [1, 2, 3].forEach(function (n) {
   on("clicked:preset_" + n, function () {
-    getAttrs(["forget_mode", "preset_slot_" + n, "caster_level", "chosen_level"], function (v) {
+    getAttrs(["forget_mode", "preset_slot_" + n, "caster_level", "chosen_level", "posture"], function (v) {
       if (v.forget_mode === "1") {
         const update = { forget_mode: "0" };
         update["preset_slot_" + n] = "";
@@ -704,7 +711,7 @@ on("clicked:craft_reset", function () {
       const lvl = effectiveCastLevel(v);
       startRoll("&{template:default} {{name=Sort mémorisé : " + label + "}}"
         + spellRollExtras(SPELLS[presetId], String(lvl), lvl, false)
-        + spellManaLine(SPELLS[presetId], String(lvl)),
+        + spellManaLine(SPELLS[presetId], String(lvl), v.posture === "focus"),
         function (results) { finishRoll(results.rollId, {}); });
       const update = {};
       update["preset_slot_" + n] = "";

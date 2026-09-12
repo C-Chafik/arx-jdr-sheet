@@ -1261,7 +1261,7 @@ def test_conditional_spell_rows():
     assert (spells["third_eye"]["bonus_lvl"], spells["third_eye"]["bonus_label"]) == (7, "Oeil invisible")
     assert spells["confusion"]["show_levels"] is True
     # both grimoire cast paths now read the numeric level at click time
-    assert 'getAttrs(["craft_runes", "caster_level", "chosen_level"]' in html
+    assert 'getAttrs(["craft_runes", "caster_level", "chosen_level"' in html
 
 
 def test_chosen_magic_level_picker():
