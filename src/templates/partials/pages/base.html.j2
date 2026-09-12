@@ -27,7 +27,7 @@
   "stealth": 12, "technical": 12, "intuition": 12, "ethereal_link": 12,
   "object_knowledge": 15, "casting": 12,
   "close_combat": 18, "projectile": 18, "defense": 18,
-  "armor_class": 1, "magic_resistance": 12, "poison_resistance": 16, "damages": 3,
+  "armor_class": 1, "magic_resistance": 12, "poison_resistance": 16, "damages": 8,
   "health": 12, "mana": 6,
 } %}
 {# Seeds for attribute/skill-derived "singles" (wiki.arx-libertatis.org/Stats'
@@ -38,7 +38,7 @@
    inventory.js. (The HP/mana max × level mechanic was tried and removed
    once, then reintroduced properly — see git history.) #}
 {% set single_stat_mod_seeds = {
-  "damages": 3, "armor_class": 1, "magic_resistance": 12, "poison_resistance": 16,
+  "damages": 8, "armor_class": 1, "magic_resistance": 12, "poison_resistance": 16,
 } %}
 <div class="sheet-page sheet-page--base">
   {# character_name is Roll20-magic: it syncs with the journal name both ways. #}
@@ -95,7 +95,14 @@
        a readonly <input>: Roll20 doesn't reliably refresh a readonly
        input's DISPLAYED value from setAttrs, spans do (see
        recomputeModifiers/recomputeSingleStatMods in inventory.js, and the
-       notes-page saga earlier in this project). #}
+       notes-page saga earlier in this project).
+       The hidden input beside it carries the DEFAULT. A span alone gives the
+       attribute no default at all, so it does not exist until something
+       writes it, and the first recompute read 0 and applied its delta on top
+       of 0 instead of on top of the displayed value — a brand-new character
+       levelling up once landed on Vie max 6 instead of 18, and his first
+       Force point dropped Dégâts from 8 to 4. #}
+    <input type="hidden" name="attr_{{ name }}" value="{{ defaults[name] }}" />
     <span name="attr_{{ name }}">{{ defaults[name] }}</span>
 {% else %}
     {# The one and only visible/editable value — manual edits (leveling,
@@ -143,7 +150,9 @@
     {# Max isn't manually editable, only equipment mods touch it — a
        <span name="attr_X"> instead of a readonly <input>, same reasoning
        as attr_damages above (readonly inputs don't reliably refresh from
-       setAttrs on Roll20). #}
+       setAttrs on Roll20). Same hidden-input default as the read-only stats
+       above: without it the first level-up computed the new max on top of 0. #}
+    <input type="hidden" name="attr_{{ name }}_max" value="{{ defaults[name] }}" />
     <span class="sheet-gauge-max" name="attr_{{ name }}_max">{{ defaults[name] }}</span>
   </div>
   {# Only the MAX side takes equipment modifiers (same delta technique as
@@ -182,9 +191,17 @@
      The Focus lead term is the same [[skill+mod]] so the displayed
      equation still adds up under a skill mod; the attribute term stays a
      label, its own mod (rare) is only visible in the total's breakdown. #}
-{% set roll_value = "&{template:default} {{" ~ "name=" ~ label ~ "}} {{" ~ "Valeur=[[@{" ~ name ~ "}+@{" ~ name ~ "_gm_mod}]]}} {{" ~ "Jet=[[1d100]]}}" %}
+  {# Roll target is capped at 90 (the table's own rule): past that a point of
+     skill buys no reliability, it buys CRITICAL RANGE instead — +1 per 5
+     points of overflow, from 5 up to 12 at a skill of 125. Both are computed
+     inline so the card shows what to compare against without the GM doing the
+     arithmetic. The outer cap matters for the Focus variant below, where the
+     governing attribute can push the sum well past 125. #}
+{% set sum = "@{" ~ name ~ "}+@{" ~ name ~ "_gm_mod}" %}
+{% set roll_value = "&{template:default} {{" ~ "name=" ~ label ~ "}} {{" ~ "Valeur=[[{" ~ sum ~ ",90}kl1]]}} {{" ~ "Critique=[[{{5+floor((" ~ sum ~ "-90)/5),5}kh1,12}kl1]]}} {{" ~ "Jet=[[1d100]]}}" %}
   <button type="roll" class="sheet-hover-zone sheet-hover--{{ name }} sheet-roll--no-focus" name="roll_{{ name }}" value="{{ roll_value }}"></button>
-{% set roll_value_focus = "&{template:default} {{" ~ "name=" ~ label ~ "}} {{" ~ "Valeur=[[@{" ~ name ~ "}+@{" ~ name ~ "_gm_mod}]] + " ~ attr_labels[skill_primary_attr[name]] ~ " (Focus) = [[@{" ~ name ~ "}+@{" ~ name ~ "_gm_mod}+@{" ~ skill_primary_attr[name] ~ "}+@{" ~ skill_primary_attr[name] ~ "_gm_mod}]]}} {{" ~ "Jet=[[1d100]]}}" %}
+{% set sum_focus = sum ~ "+@{" ~ skill_primary_attr[name] ~ "}+@{" ~ skill_primary_attr[name] ~ "_gm_mod}" %}
+{% set roll_value_focus = "&{template:default} {{" ~ "name=" ~ label ~ "}} {{" ~ "Valeur=[[{" ~ sum ~ ",90}kl1]] + " ~ attr_labels[skill_primary_attr[name]] ~ " (Focus) = [[{" ~ sum_focus ~ ",90}kl1]]}} {{" ~ "Critique=[[{{5+floor((" ~ sum_focus ~ "-90)/5),5}kh1,12}kl1]]}} {{" ~ "Jet=[[1d100]]}}" %}
   <button type="roll" class="sheet-hover-zone sheet-hover--{{ name }} sheet-roll--focus" name="roll_{{ name }}_focus" value="{{ roll_value_focus }}"></button>
 {% else %}
   <button type="roll" class="sheet-hover-zone sheet-hover--{{ name }}" name="roll_{{ name }}" value=""></button>

@@ -140,7 +140,15 @@ __CONTENT__
   window.startRoll = function (template, cb) {
     let txt = template.replace(/@\\{([^}]+)\\}/g, function (_, n) { return getAttr(n) || "0"; });
     txt = txt.replace(/\\[\\[([^\\]]+)\\]\\]/g, function (_, expr) {
-      const grouped = expr.replace(/\\{([^{}]+)\\}kh1/g, function (_, inner) { return "Math.max(" + inner + ")"; });
+      /* Group rolls, innermost first (the character class excludes braces, so
+         a nested {..}kh1 resolves before the {..}kl1 wrapping it), then the
+         rounding helpers Roll20 offers inside an inline roll. */
+      let grouped = expr;
+      for (let pass = 0; pass < 3; pass++) {
+        grouped = grouped.replace(/\\{([^{}]+)\\}kh1/g, function (_, inner) { return "Math.max(" + inner + ")"; })
+                         .replace(/\\{([^{}]+)\\}kl1/g, function (_, inner) { return "Math.min(" + inner + ")"; });
+      }
+      grouped = grouped.replace(/\\bfloor\\(/g, "Math.floor(").replace(/\\bceil\\(/g, "Math.ceil(");
       const withDice = grouped.replace(/(\\d+|\\([^()]*\\))d(\\d+)/g, function (_, cnt, faces) {
         let count = 0;
         try { count = Math.max(0, Math.floor(new Function("return (" + cnt + ")")())); } catch (e) { return "0"; }

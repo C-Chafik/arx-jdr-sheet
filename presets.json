@@ -390,7 +390,7 @@
   "harm": {
     "label": "Sphère de douleur",
     "runes": [
-      "rune-rha",
+      "rune-rhaa",
       "rune-vitae"
     ],
     "icon": "presets/harm.png",
@@ -439,7 +439,7 @@
   "slow_down": {
     "label": "Ralentissement",
     "runes": [
-      "rune-rha",
+      "rune-rhaa",
       "rune-movis"
     ],
     "icon": "presets/slow-down.png",

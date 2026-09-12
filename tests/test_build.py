@@ -643,7 +643,7 @@ def test_gm_panel_does_not_touch_stats():
     assert "GM_GAUGE_MAX" not in html
     assert "forceGmStats" not in html
     # no stat listener reads the flag any more — the CSS gate is its only use
-    for block in ("function recomputeGaugeMax(v) {", 'on("change:" + attr, function () {'):
+    for block in ("function recomputeGaugeMax(v) {", 'on("change:" + attr, function (eventInfo) {'):
         assert "gm_panel_unlocked" not in html.split(block)[1].split("\n}")[0]
     # the caps stand for everyone, GM sheet included
     skill_cap = html.split('on("change:" + skill, function () {')[1].split("});")[0]
@@ -687,10 +687,15 @@ def test_attribute_cap_writes_off_what_it_refuses():
     assert _cap_write_off(23, [-2, 3]) == 23         # malus equipped first
 
     html = build.render_html()
-    body = html.split('on("change:" + attr, function () {')[1].split("\n  });")[0]
+    body = html.split('on("change:" + attr, function (eventInfo) {')[1].split("\n  });")[0]
     assert 'getAttrs([attr, attr + "_applied_mod"]' in body
     assert 'update[attr + "_applied_mod"] = Math.max(0, applied - (total - ATTR_CAP));' in body
     assert "const ATTR_CAP = 24;" in html
+    # ...but only for a GEAR-driven overflow. A player typing a number above
+    # the cap is spending his own points; writing those off the gear tracker
+    # handed him the gear share for free (22 Force + a +5 weapon, type 30,
+    # take the weapon off, keep 24).
+    assert 'if (!eventInfo || eventInfo.sourceType !== "player") {' in body
     # the skill cap does the same across its two trackers, gear first
     skill = html.split('on("change:" + skill, function () {')[1].split("\n  });")[0]
     assert "const offGear = Math.min(gear, refused);" in skill
@@ -796,8 +801,8 @@ def test_consume_verbs_cover_exactly_the_effects_used():
     assert "scroll" in in_items
 
 
-WEAPON_DICE = {"dagger": "2d4", "club": "1d8", "long-sword": "2d16",
-               "bow": "1d20", "sword-mx": "2d80",
+WEAPON_DICE = {"dagger": "2d4", "club": "1d8", "long-sword": "2d8",
+               "bow": "1d20", "sword-mx": "2d21",
                # a shield's dice are rolled like any other hand's (see
                # rollHandDamage), which is why they may carry weap_dmg at all
                "shield": "1d8", "shield-elder": "1d19"}
@@ -854,8 +859,11 @@ def test_damage_roll_is_computed_in_the_worker():
     # RNG is the eleven-step ladder 0, 0.1 … 1.0, not a continuous draw
     assert "Math.floor(Math.random() * 11) / 10" in handler
     assert "const base = offensive ? damages : Math.round(damages * (0.8 + 0.2 * rng));" in handler
-    # Offensive takes each die at its maximum instead of rolling it
-    assert "values.push(offensive ? dice.faces : rollDie(dice.faces));" in handler
+    # Offensive guarantees three quarters of each die and rolls the last
+    # quarter — it no longer hands out the maximum
+    assert "values.push(offensive ? offensiveDie(dice.faces) : rollDie(dice.faces));" in handler
+    assert "const OFFENSIVE_FLOOR = 0.75;" in html
+    assert "const floor = Math.ceil(faces * OFFENSIVE_FLOOR);" in html
     # the total is accumulated here, never rebuilt by finishRoll
     assert "values.forEach(function (value) { total += value; });" in handler
     assert "finishRoll(results.rollId, {})" in handler
@@ -991,20 +999,24 @@ def test_gm_mods_count_in_every_roll_target():
     derived-stat cascade (a strength mod never recomputes close_combat: the
     GM mods close_combat directly instead)."""
     html = build.render_html()
-    # Skill rolls, plain and Focus (skill mod + governing attribute's own mod)
-    assert '{{Valeur=[[@{stealth}+@{stealth_gm_mod}]]}}' in html
+    # Skill rolls, plain and Focus (skill mod + governing attribute's own mod),
+    # both capped at the table's roll ceiling of 90
+    assert '{{Valeur=[[{@{stealth}+@{stealth_gm_mod},90}kl1]]}}' in html
     # Focus's displayed equation must keep adding up under a skill mod: the
-    # lead term is the same [[skill+mod]] as the total's first two terms
-    assert ('{{Valeur=[[@{stealth}+@{stealth_gm_mod}]] + Dextérité (Focus) = '
-            '[[@{stealth}+@{stealth_gm_mod}+@{dexterity}+@{dexterity_gm_mod}]]}}') in html
+    # lead term is the same capped [[skill+mod]] as the total's first two terms
+    assert ('{{Valeur=[[{@{stealth}+@{stealth_gm_mod},90}kl1]] + Dextérité (Focus) = '
+            '[[{@{stealth}+@{stealth_gm_mod}+@{dexterity}+@{dexterity_gm_mod},90}kl1]]}}') in html
+    # Past 90 a point buys critical range instead: +1 per 5 of overflow, 5 to 12
+    assert '{{Critique=[[{{5+floor((@{stealth}+@{stealth_gm_mod}-90)/5),5}kh1,12}kl1]]}}' in html
     # Spellcasting: the casting check happens BEFORE the cast, on the Magie
-    # skill button (asserted above via the generic skill-roll shape) — the
-    # spell cards themselves roll no d100 and show no Valeur/Niveau Magique.
-    # Spell cards — grimoire and scroll alike — show only the spell's
-    # results (damage, heal, effect, proc, cost): no Valeur anywhere.
+    # skill button (asserted above via the generic skill-roll shape) — a
+    # grimoire cast rolls no d100 of its own and shows no Valeur.
     assert '{{Valeur=[[@{casting}+@{casting_gm_mod}]]}} {{Niveau Magique' not in html
-    assert '{{Valeur=" + item.spell_casting + "}}' not in html
     assert '"}} {{Jet=[[1d100]]}}"\n      + spellRollExtras' not in html
+    # A SCROLL is the exception: the spell is already woven into it, so the
+    # reading cannot fail and the reader's own power never amplifies it
+    assert '{{Niveau Magique=" + lvl + "}} {{Valeur=100}}' in html
+    assert "spellRollExtras(rules, String(lvl), lvl, true, offensive, 0)" in html
     # Damages: the mod joins the stat before the 0.8-1.0 scaling
     handler = _damage_handler(html)
     assert '(parseInt(v.damages, 10) || 0) + (parseInt(v.damages_gm_mod, 10) || 0)' in handler
@@ -1040,11 +1052,19 @@ def test_randstats_formulas_match_the_worker_and_button_is_wired():
     assert 'if (!getObj("character", parts[3]))' in mod  # explicit-id branch
     assert ".sheet-gm-rand-btn" in css
     assert '.sheet-arx:has(input[name="attr_gm_panel_open"][value="1"]) .sheet-gm-cmd-btn' in css
-    # the wiki's budget ON TOP of the base values: attributes start at 6 each
-    # (4×6), then 16 + 1/level points; skills get 18 + 15/level raw points
+    # the table's budget ON TOP of the base values: attributes start at 6 each
+    # (4×6), then the levelling schedule; skills get 18 + 15/level raw points
     # (their base is already the formulas at 6/6/6/6)
-    assert "arxDistribute(4 * 6 + 16 + level, spec.attrs, 6)" in mod
+    assert "arxDistribute(4 * 6 + arxStatPointsAt(level), spec.attrs, 6, ARX_ATTR_CAP)" in mod
     assert "arxDistribute(18 + 15 * level, spec.skills, 0)" in mod
+    # the generator must not write an attribute the sheet would refuse: its
+    # own ceiling has to be the worker's ATTR_CAP
+    assert "const ATTR_CAP = 24;" in html
+    assert "const ARX_ATTR_CAP = 24;" in mod
+    # 8 at creation, 1/level to 4, 2/level to 8, 3 for the last two = 26 at
+    # level 10 — the mod's copy of the schedule must match the worker's
+    schedule = "for (let l = 1; l <= level; l++) { total += l <= 4 ? 1 : l <= 8 ? 2 : 3; }"
+    assert schedule in html and schedule in mod
     # a guerrier never puts a point in Magie (weight 0 = never drawn)
     assert "casting: 0, close_combat: 3" in mod
     # a rerun overwrites the WHOLE character: the shared factory reset runs
@@ -1208,9 +1228,9 @@ def test_spell_secrets_never_ship():
 def test_cast_rolls_include_spell_rules():
     """The three cast paths append damage dice (count × magic level), the
     named proc (1d100 under the pct) and the indicative mana cost — result
-    only, debited by hand. Scrolls scale on the spell's grimoire
-    page (secret ones cast at 10) and never show a cost: their price is
-    being consumed."""
+    only, debited by hand. Scrolls scale on the spell's obtention level: the
+    grimoire page for book spells, an explicit "niveau" on the scroll for the
+    secret ones. They never show a cost: their price is being consumed."""
     html = build.render_html()
     assert "function spellRollExtras(" in html
     assert "function spellManaLine(" in html
@@ -1218,13 +1238,23 @@ def test_cast_rolls_include_spell_rules():
     assert '"(" + m[1] + "*" + lvlExpr + ")d" + m[2]' in html
     # proc: named, rolled under its percentage
     assert '" {{" + rules.proc_name + "=[[1d100]]}}"' in html
-    # the two grimoire paths carry dice AND cost
-    assert html.count('spellManaLine(SPELLS[') == 2
-    # the scroll path: rules fall back to the item, level = the spell's
-    # grimoire page (secret scrolls cast at 10), no mana line — and scrolls
-    # ALONE show their level on the card (grimoire casts stay bare)
+    # both cast paths carry dice AND cost: the grimoire one reads spells.json
+    # directly, the memorized one goes through `rules` so a SECRET preset can
+    # fall back to its own scroll item (it has no grimoire entry)
+    assert 'spellManaLine(SPELLS[matchId], String(lvl), v.posture === "focus")' in html
+    assert 'spellManaLine(rules, String(lvl), v.posture === "focus")' in html
+    assert 'const rules = SPELLS[presetId] || ITEMS["scroll-" + presetId];' in html
+    # the scroll path: rules fall back to the item, level = the grimoire page
+    # or the scroll's own obtention level, no mana line — and scrolls ALONE
+    # show their level on the card (grimoire casts stay bare)
     assert "const rules = SPELLS[spellId] || item;" in html
-    assert "const lvl = SPELLS[spellId] && SPELLS[spellId].page ? SPELLS[spellId].page : 10;" in html
+    assert "const lvl = (SPELLS[spellId] && SPELLS[spellId].page) || Number(item.niveau) || 10;" in html
+    # every secret scroll carries that level, mirroring the spell it follows
+    items = build.load_items()
+    secret = [k for k, v in items.items()
+              if v.get("effect") == "scroll" and k.replace("scroll-", "") not in build.load_spells()]
+    for key in secret:
+        assert 1 <= items[key].get("niveau", 0) <= 10, key
     assert html.count('{{Niveau Magique=" + lvl + "}}') == 1
     assert '{{Niveau Magique=@{caster_level}}}' not in html
 
@@ -1316,16 +1346,15 @@ def test_notes_page_tracks_the_points_left_to_assign():
     16 + 18, each level 1 + 15 more; what is already placed is read from the
     hand-assigned share (attr_<stat>_own), attributes minus their 6 start."""
     html = build.render_html()
-    assert '<span name="attr_stat_points_left">16</span>' in html
+    assert '<span name="attr_stat_points_left">8</span>' in html
     assert '<span name="attr_skill_points_left">18</span>' in html
     assert "Principales" in html and "Secondaires" in html
     # worker: constants + formula, computed alongside the own shares
-    assert "const STAT_POINTS_BASE = 16;" in html
-    assert "const STAT_POINTS_PER_LEVEL = 1;" in html
+    assert "const STAT_POINTS_BASE = 8;" in html
     assert "const SKILL_POINTS_BASE = 18;" in html
     assert "const SKILL_POINTS_PER_LEVEL = 15;" in html
     assert "const ATTR_START_VALUE = 6;" in html
-    assert "update.stat_points_left = STAT_POINTS_BASE + STAT_POINTS_PER_LEVEL * level - statPlaced;" in html
+    assert "update.stat_points_left = statPointsAt(level) - statPlaced;" in html
     assert "update.skill_points_left = SKILL_POINTS_BASE + SKILL_POINTS_PER_LEVEL * level - skillPlaced;" in html
     # a level-up must refresh the count, not just a stat edit
     assert 'const BREAKDOWN_GETATTRS = ["level"]' in html

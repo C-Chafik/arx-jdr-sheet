@@ -53,10 +53,10 @@ const ARX_DEFAULTS = {
   stealth: 12, technical: 12, intuition: 12, ethereal_link: 12,
   object_knowledge: 15, casting: 12,
   close_combat: 18, projectile: 18, defense: 18,
-  armor_class: 1, magic_resistance: 12, poison_resistance: 16, damages: 3,
+  armor_class: 1, magic_resistance: 12, poison_resistance: 16, damages: 8,
   health: 12, mana: 6
 };
-const ARX_SINGLE_STAT_MOD_SEEDS = { damages: 3, armor_class: 1, magic_resistance: 12, poison_resistance: 16 };
+const ARX_SINGLE_STAT_MOD_SEEDS = { damages: 8, armor_class: 1, magic_resistance: 12, poison_resistance: 16 };
 
 function arxCharIdFromMsg(msg) {
   if (!msg.selected || !msg.selected.length) { return null; }
@@ -368,7 +368,7 @@ const ARX_SKILL_FORMULAS = {
   defense: function (a) { return a.constitution * 3; }
 };
 const ARX_SINGLE_STAT_FORMULAS = {
-  damages: function (a) { return Math.round(Math.max(1, a.strength / 2 - 5) + a.close_combat / 10); },
+  damages: function (a) { return Math.round(Math.max(1, a.strength * 2 - 6) + a.close_combat / 10); },
   armor_class: function (a) { return Math.max(1, Math.floor(a.defense / 10 - 1)); },
   magic_resistance: function (a) { return Math.floor(a.mental * (2 + a.casting / 100)); },
   poison_resistance: function (a) { return Math.floor(a.constitution * 2 + a.defense / 4); }
@@ -409,6 +409,9 @@ const ARX_ARCHETYPES = {
   }
 };
 const ARX_ATTRS = ["strength", "mental", "dexterity", "constitution"];
+/* Mirrors ATTR_CAP in inventory.js: the sheet refuses an attribute above 24,
+   so the generator must not write one either. */
+const ARX_ATTR_CAP = 24;
 
 /* Share out `total` points by fixed proportions (weight / line total): every
    stat gets its guaranteed floor + its exact share rounded down, the integer
@@ -418,7 +421,7 @@ const ARX_ATTRS = ["strength", "mental", "dexterity", "constitution"];
    while two draws never come out identical. Zero-weight stats can never
    receive a point, floor is what a stat can never drop below (1 for
    attributes — the health/mana/CA formulas need every attribute alive). */
-function arxDistribute(total, weights, floorValue) {
+function arxDistribute(total, weights, floorValue, capValue) {
   const names = Object.keys(weights);
   let weightSum = 0;
   names.forEach(function (n) { weightSum += weights[n]; });
@@ -442,12 +445,39 @@ function arxDistribute(total, weights, floorValue) {
     const to = pool[Math.floor(Math.random() * pool.length)];
     if (from !== to && out[from] > floorValue) { out[from] -= 1; out[to] += 1; }
   }
+  /* The jitter above can pile its moves onto the accent stat and push it past
+     the cap the SHEET enforces (ATTR_CAP 24) — roughly one level-10 mage in
+     250 came out at Mental 25, and every derived value (mana max, Magie,
+     CAM) was then computed from the illegal figure before the sheet clamped
+     it on the next edit. Spill the excess onto another WEIGHTED stat, so the
+     budget is still fully spent and a 0-weight stat still never receives a
+     point. */
+  if (capValue) {
+    let guard = 0;
+    names.forEach(function (n) {
+      while (out[n] > capValue && guard++ < 500) {
+        const room = names.filter(function (x) { return weights[x] > 0 && out[x] < capValue; });
+        if (!room.length) { break; }
+        out[n] -= 1;
+        out[room[Math.floor(Math.random() * room.length)]] += 1;
+      }
+    });
+  }
   return out;
 }
 
-/* The wiki's own budget (wiki.arx-libertatis.org/Stats): 16 attribute points
-   + 18 skill points at level 0, then 1 + 15 per level — added ON TOP of the
-   base values, exactly like a real player: every attribute starts at 6 (the
+/* Attribute budget, mirroring statPointsAt in inventory.js (a build test keeps
+   the two schedules identical): 8 at creation, then 1 per level through 4, 2
+   through 8, 3 for the last two — 26 at level 10. */
+function arxStatPointsAt(level) {
+  let total = 8;
+  for (let l = 1; l <= level; l++) { total += l <= 4 ? 1 : l <= 8 ? 2 : 3; }
+  return total;
+}
+
+/* The table's own budget: 8 attribute points (see arxStatPointsAt above)
+   + 18 skill points at level 0, then the schedule + 15 per level — added ON
+   TOP of the base values, exactly like a real player: every attribute starts at 6 (the
    fresh sheet's own defaults, also the floor the jitter can never go below —
    a 0-weight attribute like the guerrier's Mental just stays there), and the
    skills' bases need nothing here since their sheet defaults ARE the Arx
@@ -455,7 +485,7 @@ function arxDistribute(total, weights, floorValue) {
 function arxDrawRandomStats(level, archetype) {
   const spec = ARX_ARCHETYPES[archetype];
   return {
-    attrs: arxDistribute(4 * 6 + 16 + level, spec.attrs, 6),
+    attrs: arxDistribute(4 * 6 + arxStatPointsAt(level), spec.attrs, 6, ARX_ATTR_CAP),
     raw: arxDistribute(18 + 15 * level, spec.skills, 0)
   };
 }
@@ -649,6 +679,13 @@ on("chat:message", function (msg) {
     if (charId && charIds.indexOf(charId) === -1) { charIds.push(charId); }
   });
   if (!charIds.length) { whisper("Aucun des tokens sélectionnés ne représente un personnage."); return; }
+  /* Close the pool that was open first. Replacing state.ARX_LOOT wholesale
+     left the previous viewers with a live panel showing the OLD contents and
+     working take buttons — and !arxloottake reads state.ARX_LOOT, so those
+     buttons served the NEW pool. No command could close such a panel. */
+  state.ARX_LOOT.subscribers.forEach(function (previous) {
+    if (charIds.indexOf(previous) === -1) { arxSetAttr(previous, "loot_open", "0"); }
+  });
   state.ARX_LOOT = { skin: skin, cells: {}, subscribers: charIds };
   arxLootRefresh();
   arxRefreshAdminLootFlag(true);
@@ -707,6 +744,13 @@ on("chat:message", function (msg) {
   if (!itemId || !ARX_ITEMS[itemId]) { return; }
   const charId = arxResolveCharacterForPlayer(msg);
   if (!charId) { arxWhisperTo(msg, "Impossible de savoir quel personnage récupère l'objet — sélectionne ton token."); return; }
+  /* The pool being open at all was the only gate, so anyone in the game could
+     type the command and drain a pool they were never shown — including from
+     a panel left open by a previous !arxlootopen. Membership is the gate. */
+  if (state.ARX_LOOT.subscribers.indexOf(charId) === -1) {
+    arxWhisperTo(msg, "Ce butin ne t'est pas ouvert.");
+    return;
+  }
   if (!arxGiveToCharacter(charId, itemId)) {
     arxWhisperTo(msg, "Sac plein, impossible de prendre : " + ARX_ITEMS[itemId].label);
     return;
@@ -880,8 +924,17 @@ function arxRegenReport(charId, item) {
     const pct = lo + Math.floor(Math.random() * (hi - lo + 1));
     const poolMax = parseInt(arxGetAttrMax(charId, spec.pool), 10) || 0;
     const before = parseInt(arxGetAttr(charId, spec.pool), 10) || 0;
+    /* No max on the gauge (a token-bar edit, an imported character, a sheet
+       on which recomputeGaugeMax never ran) used to mean poolMax 0, and the
+       clamp below then wrote the pool straight to ZERO. Say so instead. */
+    if (poolMax <= 0) {
+      lines.push("maximum inconnu sur cette fiche — rien n'a été rendu");
+      return;
+    }
     const gain = Math.max(1, Math.round(poolMax * pct / 100));
-    const after = Math.min(poolMax, before + gain);
+    /* Never below the current value: a GM-granted overheal has to survive
+       someone drinking a potion. */
+    const after = Math.max(before, Math.min(poolMax, before + gain));
     arxSetAttr(charId, spec.pool, after);
     lines.push(lo + "% à " + hi + "% → " + pct + "% = +" + (after - before) + " " + spec.unit +
                " (" + before + " → " + after + ")" +

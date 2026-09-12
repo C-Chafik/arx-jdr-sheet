@@ -325,6 +325,14 @@ on("clicked:trash", function () {
     const own = ownCells(from, hand);
     own.forEach(function (c) { clear[c] = ""; });
     if (own.length === 0) { clear[from] = ""; }
+    /* A two-handed weapon owns BOTH hand slots (see ownCells). Binning it
+       from either one has to release the mirror flag as well — clicked:slot_
+       already does, the bin did not, and the off hand then stayed dimmed
+       (inventory-slots.css.j2's blocked-mirror look) with nothing able to
+       clear it short of equipping and removing another two-hander. */
+    if (clear.equip_main_hand !== undefined && clear.equip_off_hand !== undefined) {
+      clear.two_handed_primary = "";
+    }
     setAttrs(clear);
   });
 });
@@ -365,25 +373,77 @@ on("clicked:slot_grimoire", function () {
    (grimoire) or on the scroll item itself (the 11 secret scrolls); an id
    with no rules — e.g. the free-form variant scrolls — adds nothing. */
 const SPELL_DMG_LABELS = { "soin": "Soin", "drain de PM": "Drain de mana",
+  "pct mana": "Mana drainée par cible (%)",
   "drain de PV": "Drain de vie", "flétrissement": "Flétrissement",
   "cercle proche": "Cercle proche", "cercle éloigné": "Cercle éloigné",
   "absorption": "Absorption", "malus CA": "Malus de CA", "charges": "Charges",
   "bonus attributs": "Bonus aux attributs", "malus attributs": "Malus aux attributs" };
 
-function spellDmgRow(spec, par, type, lvlExpr) {
+/* Offensive posture, same rule for a weapon die and a spell's dice (see
+   offensiveDie below): three quarters of the maximum are guaranteed, the last
+   quarter is still rolled. A spell's dice stay with Roll20's own engine
+   rather than moving to Math.random like weapon damage did, so the guaranteed
+   floor is expressed as a flat number and the variable quarter as a real die:
+   8d6 (max 48) becomes 36+1d12. */
+const OFFENSIVE_FLOOR = 0.75;
+
+/* Magical damage base — the exact mirror of the physical Dégâts formula (see
+   SINGLE_STAT_FORMULAS), Mental standing in for Force and Incantation for
+   Corps à corps. Without it the caster's own statistic never struck: a spell
+   was 100% dice while a weapon attack is 60% the character. Computed at cast
+   time rather than stored, since no field on the sheet displays it. */
+function magicBase(v) {
+  const mental = parseInt(v.mental, 10) || 0;
+  const casting = parseInt(v.casting, 10) || 0;
+  return Math.max(0, Math.round(mental * 2 - 6 + casting / 10));
+}
+
+/* Rows the base amplifies: damage only. Healing is deliberately left out (the
+   table's call), and the other dmg_type values (absorption, malus CA, bonus
+   attributs, charges, percentages) carry a rule value in the dmg field rather
+   than a hit, so magical power has nothing to add to them. */
+const MAGIC_BASE_TYPES = [undefined, "flétrissement", "cercle proche"];
+
+/* Foudre alone grows on a curve instead of a straight line: its die count is
+   (level² + level) / 3, so it is weaker than the old formula up to level 6
+   and overtakes the area spells at 9 and 10. That is what pays for being
+   single-target with a longer reach. */
+function spellDiceCount(base, scale, scaled, lvlNum) {
+  if (scale === "quad") { return Math.ceil((lvlNum * lvlNum + lvlNum) / 3); }
+  return base * (scaled ? lvlNum : 1);
+}
+
+function spellDmgRow(spec, par, type, lvlExpr, offensive, base, scale) {
   const m = /^(\d+)d(\d+)$/.exec(spec || "");
   if (!m) { return ""; }
   const scaled = (par || "").indexOf("lvl") !== -1;
-  const expr = scaled ? "(" + m[1] + "*" + lvlExpr + ")d" + m[2] : spec;
+  const lvlNum = parseInt(lvlExpr, 10) || 1;
+  const count = spellDiceCount(parseInt(m[1], 10), scale, scaled, lvlNum);
+  const faces = parseInt(m[2], 10);
+  let expr = scale === "quad" ? count + "d" + m[2]
+           : scaled ? "(" + m[1] + "*" + lvlExpr + ")d" + m[2] : spec;
+  if (offensive) {
+    const max = count * faces;
+    const floor = Math.ceil(max * OFFENSIVE_FLOOR);
+    expr = max > floor ? floor + "+1d" + (max - floor) : String(max);
+  }
+  const perTurn = (par || "").indexOf("tour") !== -1;
+  /* Capped at what the spell's own dice average, so a weak spell stays weak.
+     Never on a per-turn state: a burn that already ignores armour would
+     become the best weapon in the game. */
+  if (base > 0 && !perTurn && MAGIC_BASE_TYPES.indexOf(type) !== -1) {
+    expr += "+" + Math.min(base, Math.round(count * (faces + 1) / 2));
+  }
   const label = SPELL_DMG_LABELS[type] || "Dégâts";
-  const perTurn = (par || "").indexOf("tour") !== -1 ? " / tour" : "";
-  return " {{" + label + perTurn + "=[[" + expr + "]]}}";
+  return " {{" + label + (perTurn ? " / tour" : "") + "=[[" + expr + "]]}}";
 }
 
-function spellRollExtras(rules, lvlExpr, lvlNum, isScroll) {
+function spellRollExtras(rules, lvlExpr, lvlNum, isScroll, offensive, base) {
   if (!rules) { return ""; }
-  let out = spellDmgRow(rules.dmg, rules.dmg_par, rules.dmg_type, lvlExpr)
-          + spellDmgRow(rules.dmg2, rules.dmg_par, rules.dmg2_type, lvlExpr);
+  /* Chaos's second circle gets no base of its own — the caster's power lands
+     once per cast, not once per row. */
+  let out = spellDmgRow(rules.dmg, rules.dmg_par, rules.dmg_type, lvlExpr, offensive, base, rules.dmg_scale)
+          + spellDmgRow(rules.dmg2, rules.dmg_par, rules.dmg2_type, lvlExpr, offensive, 0, rules.dmg_scale);
   /* Proc: just its name as the row title — the threshold stays data-side,
      the GM compares. */
   if (rules.proc_pct) {
@@ -449,7 +509,7 @@ function spellManaLine(rules, lvlExpr, focus) {
    fixed caster level") — labeled with its spell_label, then the scroll is
    consumed (it's one-shot, same as a memorized preset). */
 on("clicked:read_scroll", function () {
-  getAttrs(["hand", "hand_from"], function (v) {
+  getAttrs(["hand", "hand_from", "posture"], function (v) {
     const hand = v.hand || "";
     const item = ITEMS[hand];
     if (!item || item.effect !== "scroll") { return; }
@@ -461,12 +521,21 @@ on("clicked:read_scroll", function () {
        No mana line: a scroll's price is being consumed. */
     const spellId = hand.replace(/^scroll-/, "");
     const rules = SPELLS[spellId] || item;
-    const lvl = SPELLS[spellId] && SPELLS[spellId].page ? SPELLS[spellId].page : 10;
+    /* A spell's obtention level: its grimoire page for book spells, and an
+       explicit "niveau" on the scroll for the secret ones, which take the
+       level of the spell they mirror (Champ de glace follows Champ de
+       flammes, Drain de vie follows Drain de mana, and so on). */
+    const lvl = (SPELLS[spellId] && SPELLS[spellId].page) || Number(item.niveau) || 10;
     /* Scrolls alone show their magic level on the card — the reader has no
        way to know the parchment's power otherwise. Grimoire casts stay bare:
-       the caster's own level lives on his sheet. */
-    startRoll("&{template:default} {{name=" + item.spell_label + "}} {{Niveau Magique=" + lvl + "}}"
-      + spellRollExtras(rules, String(lvl), lvl, true),
+       the caster's own level lives on his sheet.
+       The spell is already woven into the parchment: reading it CANNOT fail
+       (value 100), and the caster's own magical power does not amplify it —
+       no magicBase here, unlike a spell he incants himself. */
+    const offensive = v.posture === "offensive";
+    startRoll("&{template:default} {{name=" + item.spell_label + (offensive ? " (Offensive)" : "") + "}}"
+      + " {{Niveau Magique=" + lvl + "}} {{Valeur=100}}"
+      + spellRollExtras(rules, String(lvl), lvl, true, offensive, 0),
       function (results) { finishRoll(results.rollId, {}); });
     const update = { hand: "", hand_from: "", hand_cat: "", hand_effect: "", fit: "" };
     ownCells(v.hand_from || "", hand).forEach(function (c) { update[c] = ""; });
@@ -651,7 +720,7 @@ for (let i = 1; i <= 20; i++) {
    roll-under against Magie/casting labeled with the spell's own translated
    name. Consumes the combo either way, matched or not. */
 on("clicked:craft_confirm", function () {
-  getAttrs(["craft_runes", "caster_level", "chosen_level", "posture"], function (v) {
+  getAttrs(["craft_runes", "caster_level", "chosen_level", "posture", "mental", "casting"], function (v) {
     const combo = craftList(v);
     if (!combo.length) { return; }
     const comboKey = combo.join("|");
@@ -663,8 +732,9 @@ on("clicked:craft_confirm", function () {
     if (matchId) {
       const label = SPELLS[matchId].label;
       const lvl = effectiveCastLevel(v);
-      startRoll("&{template:default} {{name=" + label + "}}"
-        + spellRollExtras(SPELLS[matchId], String(lvl), lvl, false)
+      const offensive = v.posture === "offensive";
+      startRoll("&{template:default} {{name=" + label + (offensive ? " (Offensive)" : "") + "}}"
+        + spellRollExtras(SPELLS[matchId], String(lvl), lvl, false, offensive, magicBase(v))
         + spellManaLine(SPELLS[matchId], String(lvl), v.posture === "focus"),
         function (results) { finishRoll(results.rollId, {}); });
     }
@@ -698,7 +768,7 @@ on("clicked:craft_reset", function () {
    right after. */
 [1, 2, 3].forEach(function (n) {
   on("clicked:preset_" + n, function () {
-    getAttrs(["forget_mode", "preset_slot_" + n, "caster_level", "chosen_level", "posture"], function (v) {
+    getAttrs(["forget_mode", "preset_slot_" + n, "caster_level", "chosen_level", "posture", "mental", "casting"], function (v) {
       if (v.forget_mode === "1") {
         const update = { forget_mode: "0" };
         update["preset_slot_" + n] = "";
@@ -709,9 +779,15 @@ on("clicked:craft_reset", function () {
       if (!presetId || !PRESETS[presetId]) { return; }
       const label = PRESETS[presetId].label;
       const lvl = effectiveCastLevel(v);
-      startRoll("&{template:default} {{name=Sort mémorisé : " + label + "}}"
-        + spellRollExtras(SPELLS[presetId], String(lvl), lvl, false)
-        + spellManaLine(SPELLS[presetId], String(lvl), v.posture === "focus"),
+      const offensive = v.posture === "offensive";
+      /* A SECRET spell has no grimoire entry, so its dice, proc and cost live
+         on its own scroll item — the same fallback read_scroll already uses.
+         Without it a memorized secret spell rolled a card with nothing but
+         its name on it. */
+      const rules = SPELLS[presetId] || ITEMS["scroll-" + presetId];
+      startRoll("&{template:default} {{name=Sort mémorisé : " + label + (offensive ? " (Offensive)" : "") + "}}"
+        + spellRollExtras(rules, String(lvl), lvl, false, offensive, magicBase(v))
+        + spellManaLine(rules, String(lvl), v.posture === "focus"),
         function (results) { finishRoll(results.rollId, {}); });
       const update = {};
       update["preset_slot_" + n] = "";
@@ -748,8 +824,10 @@ function weaponDice(itemId) {
      Base            Dégâts × (0.8 + 0.2 × RNG), RNG being one of
                      0, 0.1, 0.2 … 1.0 — or plainly Dégâts in Offensive,
                      which is what "dégâts maximum" means.
-     one row/weapon  every die shown individually ("10 + 5"), at its maximum
-                     in Offensive.
+     one row/weapon  every die shown individually ("10 + 5"); in Offensive
+                     each die keeps three quarters of its maximum guaranteed
+                     and rolls the last quarter, so the same breakdown shows
+                     the player where the variable part landed.
      Total           the sum of all of it.
 
    EVERYTHING IS COMPUTED HERE, and the template only ever receives finished
@@ -771,6 +849,16 @@ function weaponDice(itemId) {
    here, unlike recomputeModifiers: two clicks are two deliberate rolls, and
    the player knows a two-handed weapon strikes once. */
 function rollDie(faces) { return 1 + Math.floor(Math.random() * faces); }
+
+/* Offensive posture: ceil(75% of the face count) is guaranteed, the remaining
+   quarter is rolled — a d80 lands somewhere in 60..80 instead of a flat 80.
+   The Base is NOT put through this: it already sits at 80-100% of Dégâts
+   outside Offensive, so cutting it to 75% would make the posture worse than
+   no posture at all. */
+function offensiveDie(faces) {
+  const floor = Math.ceil(faces * OFFENSIVE_FLOOR);
+  return floor + Math.floor(Math.random() * (faces - floor + 1));
+}
 
 const HAND_LABELS = { equip_main_hand: "Main principale", equip_off_hand: "Main secondaire" };
 
@@ -796,7 +884,7 @@ function rollHandDamage(slot) {
     if (dice) {
       const values = [];
       for (let i = 0; i < dice.count; i++) {
-        values.push(offensive ? dice.faces : rollDie(dice.faces));
+        values.push(offensive ? offensiveDie(dice.faces) : rollDie(dice.faces));
       }
       values.forEach(function (value) { total += value; });
       rows = " {{" + ITEMS[itemId].label + "=" + values.join(" + ") + "}}";
@@ -990,14 +1078,23 @@ on("sheet:opened", function () { getAttrs(STAT_MOD_GETATTRS, recomputeStatMods);
 const ATTR_CAP = 24;
 
 ATTR_NAMES.forEach(function (attr) {
-  on("change:" + attr, function () {
+  on("change:" + attr, function (eventInfo) {
     getAttrs([attr, attr + "_applied_mod"], function (v) {
       const total = parseInt(v[attr], 10) || 0;
       if (total <= ATTR_CAP) { return; }
       const applied = parseInt(v[attr + "_applied_mod"], 10) || 0;
       const update = {};
       update[attr] = ATTR_CAP;
-      update[attr + "_applied_mod"] = Math.max(0, applied - (total - ATTR_CAP));
+      /* Only a GEAR-driven overflow is written off the gear tracker. A player
+         typing a number above the cap is spending his own points, and writing
+         those off handed him the gear share for free: at Force 22 with a +5
+         weapon on, typing 30 left him at 24 with the tracker emptied, so
+         taking the weapon off no longer gave anything back and he kept 24.
+         With no eventInfo (older runtime, local preview) keep the old
+         behaviour: the gear round-trip is the case that must not break. */
+      if (!eventInfo || eventInfo.sourceType !== "player") {
+        update[attr + "_applied_mod"] = Math.max(0, applied - (total - ATTR_CAP));
+      }
       setAttrs(update);
     });
   });
@@ -1076,7 +1173,7 @@ on("change:character_name", function () {
    rounded rather than floored (matches this sheet's own default of 3;
    floor would give 2) since the wiki doesn't specify either way. ======== */
 const SINGLE_STAT_FORMULAS = {
-  damages: function (a) { return Math.round(Math.max(1, a.strength / 2 - 5) + a.close_combat / 10); },
+  damages: function (a) { return Math.round(Math.max(1, a.strength * 2 - 6) + a.close_combat / 10); },
   armor_class: function (a) { return Math.max(1, Math.floor(a.defense / 10 - 1)); },
   magic_resistance: function (a) { return Math.floor(a.mental * (2 + a.casting / 100)); },
   poison_resistance: function (a) { return Math.floor(a.constitution * 2 + a.defense / 4); }
@@ -1129,11 +1226,23 @@ const BREAKDOWN_STATS = ATTR_NAMES.concat(SKILL_NAMES).concat(SINGLE_STAT_NAMES)
    one starts at, skills as-is (their own share starts at 0, the default
    being entirely attribute-derived). Negative = too many placed. Derived
    stats (damages, CA...) are not point-buy and do not count. */
-const STAT_POINTS_BASE = 16;
-const STAT_POINTS_PER_LEVEL = 1;
+const STAT_POINTS_BASE = 8;
 const SKILL_POINTS_BASE = 18;
 const SKILL_POINTS_PER_LEVEL = 15;
 const ATTR_START_VALUE = 6;
+
+/* Attribute budget: 8 at creation, then 1 per level through 4, 2 per level
+   through 8, 3 for each of the last two — still 26 in total at level 10, but
+   weighted toward the late game. Two consequences the table wanted: a level-0
+   character tops out at 14 in any attribute (6 + 8), and the min_strength
+   gates on heavy gear turn into a real calendar (FOR 17 at level 3, FOR 22 at
+   level 6) instead of being reachable straight out of creation. Skills keep
+   their own flat 18 + 15 per level. */
+function statPointsAt(level) {
+  let total = STAT_POINTS_BASE;
+  for (let l = 1; l <= level; l++) { total += l <= 4 ? 1 : l <= 8 ? 2 : 3; }
+  return total;
+}
 
 function recomputeOwnShares(v) {
   const update = {};
@@ -1147,7 +1256,7 @@ function recomputeOwnShares(v) {
   let statPlaced = 0, skillPlaced = 0;
   ATTR_NAMES.forEach(function (name) { statPlaced += update[name + "_own"] - ATTR_START_VALUE; });
   SKILL_NAMES.forEach(function (name) { skillPlaced += update[name + "_own"]; });
-  update.stat_points_left = STAT_POINTS_BASE + STAT_POINTS_PER_LEVEL * level - statPlaced;
+  update.stat_points_left = statPointsAt(level) - statPlaced;
   update.skill_points_left = SKILL_POINTS_BASE + SKILL_POINTS_PER_LEVEL * level - skillPlaced;
   setAttrs(update);
 }

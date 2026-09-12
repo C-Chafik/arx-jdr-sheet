@@ -4,8 +4,7 @@
     "icon": "items/axe.png",
     "cat": "main_principale",
     "size": "1x2",
-    "weap_dmg": "2d5",
-    "damages": 3,
+    "weap_dmg": "2d6",
     "min_strength": 10
   },
   "club": {
@@ -22,8 +21,7 @@
     "icon": "items/long-sword.png",
     "cat": "main_principale",
     "size": "1x3",
-    "weap_dmg": "2d16",
-    "damages": 8,
+    "weap_dmg": "2d8",
     "min_strength": 12
   },
   "long-sword-feather": {
@@ -31,7 +29,7 @@
     "icon": "items/long-sword-feather.png",
     "cat": "main_principale",
     "size": "1x3",
-    "weap_dmg": "3d14",
+    "weap_dmg": "2d11",
     "close_combat": 20,
     "min_strength": 11,
     "min_dexterity": 14
@@ -41,8 +39,7 @@
     "icon": "items/long-sword-jeweld.png",
     "cat": "main_principale",
     "size": "1x3",
-    "weap_dmg": "2d18",
-    "damages": 10,
+    "weap_dmg": "2d10",
     "min_strength": 12
   },
   "long-sword-recovery": {
@@ -50,10 +47,9 @@
     "icon": "items/long-sword-recovery.png",
     "cat": "main_principale",
     "size": "3x1",
-    "weap_dmg": "3d16",
+    "weap_dmg": "2d16",
     "strength": 3,
     "dexterity": 1,
-    "damages": 15,
     "min_strength": 13,
     "min_dexterity": 10,
     "special": "Vole de vie : 15% des degats finaux > PV",
@@ -64,8 +60,7 @@
     "icon": "items/sabre.png",
     "cat": "main_principale",
     "size": "1x3",
-    "weap_dmg": "2d25",
-    "damages": 20,
+    "weap_dmg": "2d12",
     "min_strength": 16,
     "min_dexterity": 9
   },
@@ -74,7 +69,7 @@
     "icon": "items/sabre-meteor.png",
     "cat": "main_principale",
     "size": "1x3",
-    "weap_dmg": "3d35",
+    "weap_dmg": "2d19",
     "strength": 5,
     "dexterity": 2,
     "mental": 2,
@@ -88,10 +83,9 @@
     "icon": "items/sabre-mythril.png",
     "cat": "main_principale",
     "size": "1x3",
-    "weap_dmg": "2d37",
+    "weap_dmg": "2d14",
     "dexterity": 1,
     "mental": 1,
-    "damages": 15,
     "casting": 5,
     "min_strength": 16,
     "min_dexterity": 10
@@ -101,7 +95,7 @@
     "icon": "items/sword-mx.png",
     "cat": "main_principale",
     "size": "3x3",
-    "weap_dmg": "2d80",
+    "weap_dmg": "2d21",
     "strength": 3,
     "dexterity": 2,
     "defense": -5,
@@ -134,7 +128,7 @@
     "icon": "items/dagger-assassin.png",
     "cat": "ambidextrie",
     "size": "1x2",
-    "weap_dmg": "2d13",
+    "weap_dmg": "2d7",
     "dexterity": 1,
     "close_combat": 10,
     "stealth": 5,
@@ -194,7 +188,7 @@
     "icon": "items/long-sword-ciprian.png",
     "cat": "ambidextrie",
     "size": "1x2",
-    "weap_dmg": "3d8",
+    "weap_dmg": "2d7",
     "defense": 10,
     "constitution": 1,
     "min_strength": 10
@@ -218,7 +212,7 @@
     "icon": "items/sabre-ylside.png",
     "cat": "ambidextrie",
     "size": "1x2",
-    "weap_dmg": "1d22"
+    "weap_dmg": "2d6"
   },
   "short-sword": {
     "label": "Epée courte vulgaire",
@@ -259,8 +253,7 @@
     "icon": "items/axe-2handed.png",
     "cat": "deux_mains",
     "size": "1x3",
-    "weap_dmg": "1d20",
-    "damages": 8,
+    "weap_dmg": "2d22",
     "min_strength": 16
   },
   "bow": {
@@ -277,7 +270,7 @@
     "icon": "items/bow-mx.png",
     "cat": "deux_mains",
     "size": "3x1",
-    "weap_dmg": "3d30",
+    "weap_dmg": "3d19",
     "dexterity": 4,
     "projectile": 30,
     "min_dexterity": 20,
@@ -298,7 +291,7 @@
     "icon": "items/giant-slayer.png",
     "cat": "deux_mains",
     "size": "1x3",
-    "weap_dmg": "1d120",
+    "weap_dmg": "3d17",
     "strength": 4,
     "dexterity": -2,
     "stealth": -20,
@@ -310,7 +303,7 @@
     "icon": "items/hammer-club.png",
     "cat": "deux_mains",
     "size": "1x3",
-    "weap_dmg": "1d35",
+    "weap_dmg": "2d20",
     "strength": 2,
     "dexterity": -1,
     "stealth": -20,
@@ -321,7 +314,7 @@
     "icon": "items/ederneum-scepter.png",
     "cat": "deux_mains",
     "size": "2x3",
-    "weap_dmg": "1d70",
+    "weap_dmg": "3d16",
     "ethereal_link": 25,
     "casting": 25,
     "mental": 4,
@@ -334,7 +327,7 @@
     "icon": "items/pick-axe.png",
     "cat": "deux_mains",
     "size": "1x2",
-    "weap_dmg": "1d16",
+    "weap_dmg": "2d10",
     "object_knowledge": 5,
     "min_strength": 12,
     "special": "+25 DMG Contre les Golems"
@@ -359,8 +352,7 @@
     "icon": "items/sword-2handed.png",
     "cat": "deux_mains",
     "size": "1x3",
-    "weap_dmg": "1d80",
-    "damages": 30,
+    "weap_dmg": "3d15",
     "close_combat": 10,
     "dexterity": -1,
     "min_strength": 17
@@ -370,7 +362,7 @@
     "icon": "items/sword-2handed-meteor.png",
     "cat": "deux_mains",
     "size": "1x3",
-    "weap_dmg": "1d175",
+    "weap_dmg": "3d24",
     "strength": 2,
     "mental": 2,
     "min_strength": 22,
@@ -382,9 +374,8 @@
     "icon": "items/sword-2handed-mythril.png",
     "cat": "deux_mains",
     "size": "1x3",
-    "weap_dmg": "1d100",
+    "weap_dmg": "3d18",
     "mental": 1,
-    "damages": 20,
     "casting": 5,
     "min_strength": 19
   },
@@ -581,7 +572,7 @@
     "armor_class": 55,
     "stealth": -25,
     "min_strength": 13,
-    "min_constitution": 13
+    "min_constitution": 12
   },
   "golden-chestplate": {
     "label": "Plastron de plate doré",
@@ -687,7 +678,7 @@
     "armor_class": 45,
     "stealth": -25,
     "min_strength": 14,
-    "min_constitution": 13
+    "min_constitution": 12
   },
   "golden-legging-plate": {
     "label": "Jambière de plate doré",
@@ -1861,6 +1852,7 @@
     "spell_label": "Parchemin : Activation de portail",
     "spell_casting": 50,
     "caster_level": 50,
+    "niveau": 1,
     "desc": "Active un portail de l'ordre d'Ederneum — mémorisation définitive",
     "mana": 5
   },
@@ -1873,12 +1865,13 @@
     "spell_label": "Parchemin : Champ de glace",
     "spell_casting": 50,
     "caster_level": 50,
+    "niveau": 7,
     "desc": "Conjure un champ de glace face à l'incantateur — maintien",
     "dmg": "3d4",
     "dmg_par": "lvl",
     "proc_pct": 60,
     "proc_name": "Ralentissement 1 tour",
-    "mana": 15,
+    "mana": 11,
     "mana_par": "lvl·tour"
   },
   "scroll-curse": {
@@ -1890,6 +1883,7 @@
     "spell_label": "Parchemin : Malédiction",
     "spell_casting": 50,
     "caster_level": 50,
+    "niveau": 4,
     "desc": "Maudit la cible — malus de 1 partout par niveau",
     "mana": 5,
     "mana_par": "lvl·tour",
@@ -1906,11 +1900,12 @@
     "spell_label": "Parchemin : Drain de vie",
     "spell_casting": 50,
     "caster_level": 50,
+    "niveau": 8,
     "desc": "Draine la vie des entités à proximité — limité à la réserve de la cible",
-    "dmg": "2d13",
+    "dmg": "1d13",
     "dmg_par": "tour",
     "dmg_type": "drain de PV",
-    "mana": 15,
+    "mana": 12,
     "mana_par": "tour"
   },
   "scroll-firewall": {
@@ -1922,6 +1917,7 @@
     "spell_label": "Parchemin : Mur de feu",
     "spell_casting": 50,
     "caster_level": 50,
+    "niveau": 6,
     "desc": "Mur de flammes — stoppe les projectiles légers",
     "dmg": "3d3",
     "dmg_par": "lvl",
@@ -1939,10 +1935,13 @@
     "spell_label": "Parchemin : Sphère de douleur",
     "spell_casting": 50,
     "caster_level": 50,
+    "niveau": 2,
     "desc": "Sphère de douleur — affaiblit toutes les créatures proches ; érosion 30% des dégâts totaux",
-    "dmg": "2d17",
+    "dmg": "1d10",
+    "dmg_par": "lvl",
     "dmg_type": "flétrissement",
-    "mana": 20
+    "mana": 6,
+    "mana_par": "lvl"
   },
   "scroll-ice_bolt": {
     "label": "Parchemin : Boule de glace",
@@ -1953,6 +1952,7 @@
     "spell_label": "Parchemin : Boule de glace",
     "spell_casting": 50,
     "caster_level": 50,
+    "niveau": 3,
     "desc": "Projette une boule ou pique de glace",
     "dmg": "2d6",
     "dmg_par": "lvl",
@@ -1970,6 +1970,7 @@
     "spell_label": "Parchemin : Devenir amis",
     "spell_casting": 50,
     "caster_level": 50,
+    "niveau": 1,
     "desc": "Apprivoise les entités inférieures non douées de raison — selon lvl, CON et/ou MEN",
     "mana": 10
   },
@@ -1982,6 +1983,7 @@
     "spell_label": "Parchemin : Projection de poison",
     "spell_casting": 50,
     "caster_level": 50,
+    "niveau": 5,
     "desc": "Projette un projectile empoisonné — 1 charge par niveau",
     "mana": 10,
     "mana_par": "lvl",
@@ -1998,6 +2000,7 @@
     "spell_label": "Parchemin : Protection contre le froid",
     "spell_casting": 50,
     "caster_level": 50,
+    "niveau": 4,
     "desc": "Immunité au froid, aux dégâts de froid et à la paralysie du froid",
     "mana": 10,
     "mana_par": "tour"
@@ -2011,6 +2014,7 @@
     "spell_label": "Parchemin : Ralentissement",
     "spell_casting": 50,
     "caster_level": 50,
+    "niveau": 3,
     "desc": "Ralentit les mouvements de la cible — selon niveau, contexte et cible",
     "mana": 5,
     "mana_par": "lvl·tour"
@@ -2023,7 +2027,8 @@
     "effect": "scroll",
     "spell_label": "Parchemin : Puissant Contrôle mental d'Iserbius",
     "spell_casting": 85,
-    "caster_level": 85
+    "caster_level": 85,
+    "niveau": 10
   },
 
   "potion-mana": {

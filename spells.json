@@ -397,7 +397,8 @@
     "desc": "Projette une colossale tension électrique vers la cible — multi-cible selon contexte",
     "dmg": "2d10",
     "dmg_par": "lvl",
-    "proc_pct": 20,
+    "dmg_scale": "quad",
+    "proc_pct": 35,
     "proc_name": "Paralysie 1 tour",
     "mana": 9,
     "mana_par": "lvl·tour"
@@ -439,10 +440,10 @@
     "slot": 2,
     "icon": "spells/mana-drain.png",
     "desc": "Draine la mana des entités à proximité — limité à la réserve de la cible",
-    "dmg": "2d13",
-    "dmg_par": "tour",
-    "dmg_type": "drain de PM",
-    "mana": 8,
+    "dmg": "5d1",
+    "dmg_par": "lvl",
+    "dmg_type": "pct mana",
+    "mana": 10,
     "mana_par": "tour"
   },
   "chaos": {
@@ -463,6 +464,7 @@
     "dmg2_type": "cercle éloigné",
     "mana": 25,
     "mana_par": "lvl",
+    "mana_note": "charge 1 tour, libération forcée au suivant",
     "note": "le MJ répartit les deux jets entre les cibles"
   },
   "enchantement": {
@@ -517,9 +519,15 @@
     "slot": 3,
     "icon": "spells/incineration.png",
     "desc": "Combustion spontanée interne sur une cible — sauvegarde par tour (DEF ou PSY)",
-    "dmg": "2d25",
-    "dmg_par": "tour",
-    "mana": 150
+    "dmg": "1d4",
+    "dmg_par": "lvl·tour",
+    "save_base": 70,
+    "save_step": 4,
+    "save_floor": 40,
+    "proc_pct": 50,
+    "proc_name": "Explosion à la mort",
+    "mana": 10,
+    "mana_par": "lvl"
   },
   "mass_paralysis": {
     "label": "Paralysie massive",
@@ -594,8 +602,14 @@
     "slot": 4,
     "icon": "spells/mass-incineration.png",
     "desc": "Combustion spontanée interne en zone (10 m par niveau) — sauvegarde par tour",
-    "dmg": "2d30",
-    "dmg_par": "tour",
-    "mana": 200
+    "dmg": "1d4",
+    "dmg_par": "lvl·tour",
+    "save_base": 70,
+    "save_step": 4,
+    "save_floor": 40,
+    "proc_pct": 50,
+    "proc_name": "Explosion à la mort",
+    "mana": 15,
+    "mana_par": "lvl"
   }
 }
